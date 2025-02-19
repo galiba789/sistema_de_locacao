@@ -2,18 +2,20 @@
 <html lang="pt-br">
 <?= $this->include('dashboard/partials/header') ?>
 
-<body class="tt-smooth-scroll">
+<body class="hold-transition sidebar-mini">
 
-    <div class="wrapper pt-80">
+    <div class="wrapper">
         <!-- Navbar -->
-         <?= $this->include('dashboard/partials/navbar') ?> 
+        <?= $this->include('dashboard/partials/navbar') ?>
         <!-- /.navbar -->
+
+        <?= $this->include('dashboard/partials/menu') ?>
 
         <?= $this->renderSection('content-wrapper') ?>
 
         <!-- <aside class="control-sidebar control-sidebar-dark">
         </aside> -->
-         <?= $this->include('dashboard/partials/footer') ?> 
+        <?= $this->include('dashboard/partials/footer') ?>
     </div>
     <?= $this->include('dashboard/partials/scripts'); ?>
 </body>

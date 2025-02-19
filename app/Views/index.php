@@ -1,50 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Playcom</title>
-    <link rel="stylesheet" href="<?= PL_BASE_DIST . '/css/bootstrap.min.css' ?>">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
 
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?= PL_BASE_DIST ?>/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="<?= PL_BASE_DIST ?>/css/bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="<?= PL_BASE_DIST ?>/css/adminlte.min.css">
 </head>
 
-<body>
-    <div class="login-container">
-        <h3 class="text-center">Login</h3>
-        <form action="/login" method="post">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" id="email" placeholder="Digite seu email">
+<body class="hold-transition login-page">
+    <?php if (session()->getFlashdata('error')) { ?>
+        <div class="alert alert-danger">
+            <?= session()->getFlashdata('error') ?>
+        </div>
+    <?php } ?>
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a class="h1">Painel</a>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Senha</label>
-                <input type="password" name="password" class="form-control" id="password" placeholder="Digite sua senha">
+            <div class="card-body">
+                <p class="login-box-msg">Faça o login para entrar no painel</p>
+
+                <form action="<?= base_url('login/') ?>" method="post">
+                    <div class="input-group mb-3 content_normal_user">
+                        <input type="text" name="email" id="email" name="email" placeholder="Email" class="form-control" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="input-group mb-3 content_admin" style="display: none;">
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Email">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="input-group" style="width:100%; height:5px;">
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text" onclick="showPass()">
+                                <span class="fas fa-eye"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <!-- /.col -->
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+                <!-- /.social-auth-links -->
             </div>
-            <button type="submit" class="btn btn-primary w-100">Entrar</button>
-        </form>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
     </div>
+    <!-- /.login-box -->
 
+    <!-- jQuery -->
+    <script src="<?= PL_BASE_DIST ?>/js/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="<?= PL_BASE_DIST ?>/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="<?= PL_BASE_DIST ?>/js/adminlte.min.js"></script>
 
-    <!-- JS -->
-    <script src="<?= PL_BASE_DIST . '/js/bootstrap.bundle.min.js' ?>"></script>
+    <script>
+
+        function showPass() {
+
+            const passInput = document.querySelector('#password');
+
+            if (passInput.type === "password") {
+                passInput.type = 'text';
+            } else {
+                passInput.type = 'password';
+            }
+        }
+    </script>
 </body>
 
 </html>
