@@ -6,6 +6,14 @@ class Home extends BaseController
 {
     public function index()
     {
-        return view('index');
+    
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+
+
+        return view('dashboard/home/index');
     }
+
+
 }

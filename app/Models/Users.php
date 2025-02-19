@@ -12,35 +12,35 @@ class Users extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = ['id', 'nome','email', 'password'];
 
-    protected bool $allowEmptyInserts = false;
-    protected bool $updateOnlyChanged = true;
+    public function getUserByEmail($email)
+    {
+        return $this->asArray()->where(['email' => $email])->first();
+    }
 
-    protected array $casts = [];
-    protected array $castHandlers = [];
+    function encrypt($plaintext, $key)
+    {
+        // Define o método de criptografia (AES-256-CBC) e um IV de 16 bytes
+        $cipher = "AES-256-CBC";
+        $iv = openssl_random_pseudo_bytes(16); // Gera um IV de 16 bytes aleatórios
 
-    // Dates
-    protected $useTimestamps = false;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+        // Criptografa o texto
+        $encrypted = openssl_encrypt($plaintext, $cipher, $key, 0, $iv);
 
-    // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
+        // Retorna o texto criptografado com o IV concatenado (codificados em base64)
+        return base64_encode($encrypted . '::' . $iv);
+    }
 
-    // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
-    protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    function decrypt($encryptedData, $key)
+    {
+        // Define o método de criptografia
+        $cipher = "AES-256-CBC";
+
+        // Decodifica o texto criptografado e separa o IV do dado criptografado
+        list($encrypted, $iv) = explode('::', base64_decode($encryptedData), 2);
+
+        // Descriptografa o texto usando o IV correto (16 bytes)
+        return openssl_decrypt($encrypted, $cipher, $key, 0, $iv);
+    }
 }
