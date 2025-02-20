@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\ConsultasCep;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Clientes extends BaseController
@@ -22,5 +23,18 @@ class Clientes extends BaseController
         }
         
         return view('dashboard/cadastros/clientes/cadastro');
+    }
+
+    public function salvar(){
+        
+    }
+
+    public function consulta()
+	{
+        $cep = $this->request->getPost('cep');
+        
+        $Consulta = new ConsultasCep();
+        
+        echo $Consulta->consulta($cep);
     }
 }
