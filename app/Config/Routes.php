@@ -15,6 +15,10 @@ $routes->get('/clientes', 'Clientes::index');
 $routes->get('/clientes/cadastrar', 'Clientes::cadastrar');
 $routes->post('/clientes/salvar', 'Clientes::salvar');
 $routes->post('/clientes/consulta', 'Clientes::consulta');
+$routes->get('/clientes/excluir/(:num)', 'Clientes::excluir/$1');
+$routes->get('/clientes/editar/(:num)', 'Clientes::editar/$1');
+$routes->post('/clientes/update/(:num)', 'Clientes::update/$1');
 
+$routes->get('/clientes/categoria', 'Categorias::index');
 
 $routes->get('/home', 'Home::index');

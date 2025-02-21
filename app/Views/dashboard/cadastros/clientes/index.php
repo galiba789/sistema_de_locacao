@@ -42,17 +42,34 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php foreach($clientes as $cliente){  
+                    ?>
                     <tr>
-                        <td>001</td>
-                        <td>João Silva</td>
-                        <td>joao@email.com</td>
-                        <td>(11) 98765-4321</td>
-                        <td>123.456.789-00</td>
+                        <td><?=$cliente['id']?></td>
+                        <?php if ($cliente['tipo'] == 1):?>
+                            <td><?=$cliente['nome']?></td>
+                        <?php endif;?>
+                        <?php if ($cliente['tipo'] == 2):?>
+                            <td><?=$cliente['razao_social']?></td>
+                        <?php endif;?>
+                        <td><?= $cliente['email']?></td>
+                        <td><?=$cliente['telefone_contato']?></td>
+                        <?php if ($cliente['tipo'] == 1):?>
+                            <td><?=$cliente['cpf']?></td>
+                        <?php endif;?>
+                        <?php if ($cliente['tipo'] == 2):?>
+                            <td><?=$cliente['cnpj']?></td>
+                        <?php endif;?>
                         <td>
-                            <button class="btn btn-warning btn-sm">Editar</button>
-                            <button class="btn btn-danger btn-sm">Excluir</button>
+                            <a href="<?=base_url('clientes/editar/'). $cliente['id']?>">
+                                <button class="btn btn-warning btn-sm">Editar</button>
+                            </a>
+                            <a href="<?=base_url('clientes/excluir/'). $cliente['id']?>">
+                                <button class="btn btn-danger btn-sm">Excluir</button>
+                            </a>
                         </td>
                     </tr>
+                    <?php } ?>
                     <!-- Outras linhas podem ser adicionadas aqui -->
                 </tbody>
             </table>

@@ -7,7 +7,7 @@
    
         <div class="mb-3">
             <label for="type" class="form-label">Tipo de Cliente</label>
-            <select id="type" name="tipo" class="form-control" onchange="clientesForm()" require>
+            <select id="type" name="type" class="form-control" onchange="clientesForm()" require>
                 <option value="">Selecione...</option>
                 <option value="1">Pessoa Física</option>
                 <option value="2">Pessoa Jurídica</option>
@@ -40,7 +40,7 @@
                         console.log(dados);
 
                         $('#endereco').val(dados.logradouro);
-                        $('#estado').val(dados.estado);
+                        $('#estado').val(dados.uf);
                         $('#logradouro').val(dados.logradouro);
                         $('#localidade').val(dados.localidade);
                         $('#bairro').val(dados.bairro);
