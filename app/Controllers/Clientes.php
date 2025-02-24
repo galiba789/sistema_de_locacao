@@ -39,15 +39,12 @@ class Clientes extends BaseController
         if (!session()->get('logged_in')) {
             return redirect()->to('/');
         }
-
+    
         $clientesModel = new ModelsClientes();
-
-        $tipo = $this->request->getPost('type');
-        // print_r($tipo);
-        // exit;
-
-
-        if ($tipo = 1){
+    
+        $tipo = $this->request->getPost('type'); 
+    
+        if ($tipo == 1) { 
             $data = [
                 'tipo' => $tipo,
                 'nome' => $this->request->getPost('nome'),
@@ -66,16 +63,9 @@ class Clientes extends BaseController
                 'estado' => $this->request->getPost('estado'),
                 'localidade' => $this->request->getPost('localidade'),
             ];
-            $id = $clientesModel->insert($data);
-            if (is_int($id)) {
-                return redirect()->to('/clientes')->with('success', 'Cliente cadastrada com sucesso!');
-            } else {
-                return redirect()->back()->withInput()->with('error', 'Erro ao cadastrar cliente.');
-            }
-
-        } elseif($tipo = 2) {
+        } elseif ($tipo == 2) { 
             $data = [
-                'tipo' => $this->request->getPost('tipo'),
+                'tipo' => $tipo,
                 'razao_social' => $this->request->getPost('razao_social'),
                 'cnpj' => $this->request->getPost('cnpj'),
                 'telefone_comercial' => $this->request->getPost('telefone_comercial'),
@@ -83,7 +73,7 @@ class Clientes extends BaseController
                 'obs' => $this->request->getPost('obs'),
                 // Contato da empresa
                 'email_contato' => $this->request->getPost('email_contato'),
-                'telefone_contato' => $this->request->getPost('telefone_contato'),
+                'telefone' => $this->request->getPost('telefone_contato'),
                 'cargo' => $this->request->getPost('cargo'),
                 // endereço
                 'cep' => $this->request->getPost('cep'),
@@ -94,18 +84,18 @@ class Clientes extends BaseController
                 'estado' => $this->request->getPost('estado'),
                 'localidade' => $this->request->getPost('localidade'),
             ];
-            $id = $clientesModel->insert($data);
-            if (is_int($id)) {
-                return redirect()->to('/clientes')->with('success', 'Cliente cadastrada com sucesso!');
-            } else {
-                return redirect()->back()->withInput()->with('error', 'Erro ao cadastrar cliente.');
-            }
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Tipo inválido de cliente.');
+        }
+    
+        $id = $clientesModel->insert($data);
+        if ($id) {
+            return redirect()->to('/clientes')->with('success', 'Cliente cadastrado com sucesso!');
         } else {
             return redirect()->back()->withInput()->with('error', 'Erro ao cadastrar cliente.');
         }
-
-
     }
+    
 
     public function editar($id){
         $clientesModel = new ModelsClientes();

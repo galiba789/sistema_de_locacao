@@ -19,11 +19,11 @@
                     <input type="text" id="palavra" class="form-control" placeholder="Digite sua busca">
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-primary w-100">Buscar</button>
+                    <button class="btn btn-primary w-100"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
                 <div class="col-md-2">
                 <a href="/clientes/cadastrar">
-                    <button class="btn btn-success w-100">Cadastrar Cliente</button>
+                    <button class="btn btn-success w-100"><i class="fa-solid fa-pen"></i></button>
                 </a>    
                 </div>
             </div>
@@ -53,6 +53,7 @@
                             <td><?=$cliente['razao_social']?></td>
                         <?php endif;?>
                         <td><?= $cliente['email']?></td>
+                        
                         <td><?=$cliente['telefone_contato']?></td>
                         <?php if ($cliente['tipo'] == 1):?>
                             <td><?=$cliente['cpf']?></td>

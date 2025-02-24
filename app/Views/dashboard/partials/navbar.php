@@ -23,7 +23,7 @@
 
         <li class="nav-item">
             <a class="nav-link text-danger" href="<?= base_url('login/logout') ?>" role="button">
-                Sair
+                <i class="fa-solid fa-right-from-bracket"></i>
             </a>
         </li>
     </ul>

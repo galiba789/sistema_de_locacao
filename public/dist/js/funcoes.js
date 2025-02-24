@@ -148,3 +148,28 @@ function clientesForm() {
     form.innerHTML = "";
   }
 }
+
+function selecionarCliente(id, nome) {
+   
+    var clienteIdInput = document.getElementById('cliente_id');
+    var clienteNomeInput = document.getElementById('cliente_nome');
+    
+    if (clienteIdInput && clienteNomeInput) {
+        clienteIdInput.value = id;
+        clienteNomeInput.value = nome;
+        
+        var modal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
+        modal.hide(); 
+    }
+}
+
+function filtrarClientes() {
+    var input = document.getElementById('buscarCliente').value.toLowerCase();
+    var rows = document.querySelectorAll('#listaClientes tr');
+
+    rows.forEach(function(row) {
+        var nome = row.cells[1].textContent.toLowerCase(); 
+        row.style.display = nome.includes(input) ? '' : 'none';
+    });
+}
+
