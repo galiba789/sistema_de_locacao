@@ -36,4 +36,8 @@ $routes->get('/produtos/excluir/(:num)', 'Produtos::excluir/$1');
 $routes->get('/locacoes', 'Locacoes::index');
 $routes->get('/locacoes/cadastrar', 'Locacoes::cadastrar');
 
+$routes->post('/locacoes/salvar', 'Locacoes::salvar');
+
+
+
 $routes->get('/home', 'Home::index');

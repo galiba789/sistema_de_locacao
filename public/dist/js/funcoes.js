@@ -173,3 +173,20 @@ function filtrarClientes() {
     });
 }
 
+function selecionarProduto(id, nome, quantidade, preco_diaria) {
+    if (linhaAtiva) {
+        // Atualiza os valores dos inputs na linha ativa
+        linhaAtiva.querySelector(".produto-id").value = id;
+        linhaAtiva.querySelector(".produto-nome").value = nome;
+        linhaAtiva.querySelector(".quantidade").value = quantidade;
+        linhaAtiva.querySelector(".preco-diaria").value = preco_diaria;
+
+        // Atualiza o total automaticamente
+        update_quantidade(linhaAtiva.querySelector(".quantidade"));
+
+        // Fecha a modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('ProdutosModal'));
+        modal.hide();
+    }
+}
+
