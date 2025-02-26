@@ -69,7 +69,7 @@
                     <select name="situacao" id="situacao" class="form-control">
                         <option value="">Selecionar</option>
                         <option value="1">Agendado</option>
-                        <option value="2">Em andamento</option>
+                        <option value="2">Pendente</option>
                         <option value="3">Atrasado</option>
                         <option value="4">Finalizado</option>
                         <option value="5">Cancelado</option>

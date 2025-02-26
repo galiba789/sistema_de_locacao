@@ -64,14 +64,40 @@
                         <th>Pagamento</th>
                         <th>Detalhe</th>
                         <th>Situação</th>
-                        <th>Boleto</th>
-                        <th>Nota Fiscal</th>
-                        <th>Pagamento</th>
+                        <th>Forma de Pagamento</th>
                     </tr>
                 </thead>
+                    
                 <tbody>
-                    <td></td>
-                    <!-- Outras linhas podem ser adicionadas aqui -->
+                    <?php foreach ($locacoes as $locacao):?>
+                        <tr>
+                            <td><?= $locacao['id']?></td>
+                            <td><?= $locacao['created_at']?></td>
+                            <td><?= $locacao['cliente_nome']?></td>
+                            <td><?= $locacao['data_entrega']?> <br><?= $locacao['data_devolucao']?></td>
+                            <td>R$ <?= $locacao['valor_total']?></td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                <span class="btn btn-primary">Mais</span>
+                            </td>
+                            <td>
+                                <?php if ($locacao['situacao'] == 1):?>
+                                    <span class="btn btn-warning">Agendado</span>
+                                <?php elseif($locacao['situacao'] == 2):?>
+                                    <span class="btn btn-warning">Pendente</span>    
+                                <?php elseif($locacao['situacao'] == 3):?>
+                                    <span class="btn btn-danger">Atrasado</span>
+                                <?php elseif($locacao['situacao'] == 4):?>
+                                    <span class="btn btn-success">Finalizada</span>
+                                <?php elseif($locacao['situacao'] == 5):?>
+                                    <span class="btn btn-danger">Cancelado</span>
+                                <?php endif;?>
+                            </td>
+                            <td><?=$locacao['forma_pagamento']?></td>
+                        </tr>
+                    <?php endforeach;?>    
                 </tbody>
             </table>
         </div>

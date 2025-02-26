@@ -33,6 +33,18 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?= base_url('/locacoes') ?>" class="nav-link">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                        <p>Locações</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= base_url('#') ?>" class="nav-link">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <p>Calendario</p>
+                    </a>
+                </li>
 
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
@@ -62,18 +74,6 @@
                             </a>
                         </li>
                     </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('/locacoes') ?>" class="nav-link">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                        <p>Locações</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('#') ?>" class="nav-link">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <p>Calendario</p>
-                    </a>
                 </li>
 
 
