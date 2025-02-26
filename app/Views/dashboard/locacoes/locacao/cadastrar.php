@@ -57,6 +57,12 @@
                 </div>
             </div>
 
+            <?php if (session()->getFlashdata('erro')): ?>
+                <div class="alert alert-danger">
+                    <?= session()->getFlashdata('erro') ?>
+                </div>
+            <?php endif; ?>
+            
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <label for="situacao">Situação</label>
@@ -69,11 +75,6 @@
                         <option value="5">Cancelado</option>
                     </select>
                 </div>
-                <?php if (session()->getFlashdata('erro')): ?>
-                    <div class="alert alert-danger">
-                        <?= session()->getFlashdata('erro') ?>
-                    </div>
-                <?php endif; ?>
                 <div class="col-md-3 mb-3">
                     <label for="data_entrega">Data de Entrega:</label>
                     <input type="date" id="data_entrega" name="data_entrega" class="form-control">
@@ -117,6 +118,10 @@
                     <input type="text" name="valor_total" id="valor_total" class="form-control">
                 </div>
 
+                <div class="col-md-12 mb-3">
+                    <label for="acessorios">Acessorios:</label>
+                    <textarea type="text" name="acessorios" id="acessorios" class="form-control"></textarea>
+                </div>
                 <div class="col-md-12 mb-3">
                     <label for="observacao">Observação:</label>
                     <textarea type="text" name="observacao" id="observacao" class="form-control"></textarea>

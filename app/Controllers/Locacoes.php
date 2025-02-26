@@ -34,24 +34,24 @@ class Locacoes extends BaseController
     {
         $locacoesModel = new LocacoesModel();
         $produtosLocacoesModel = new LocacoesProdutosModel();
-
+    
         $data_entrega = $this->request->getPost('data_entrega');
         $data_devolucao = $this->request->getPost('data_devolucao');
         $produtos = $this->request->getPost('produto_id');
-        // print_r($produtos);
-        // exit;
+    
         // Verifica a disponibilidade dos produtos
         $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao);
-
+    
         if ($verificacao !== true) {
             return redirect()->back()->with('erro', $verificacao);
         }
-
+    
+        // Inserir locação e obter o ID gerado
         $dadosLocacao = [
             'cliente_id'      => $this->request->getPost('cliente_id'),
             'situacao'        => $this->request->getPost('situacao'),
-            'data_entrega'    => $this->request->getPost('data_entrega'),
-            'data_devolucao'  => $this->request->getPost('data_devolucao'),
+            'data_entrega'    => $data_entrega,
+            'data_devolucao'  => $data_devolucao,
             'total_diarias'   => $this->request->getPost('total_diarias'),
             'condicao'        => $this->request->getPost('condicao'),
             'forma_pagamento' => $this->request->getPost('forma_pagamento'),
@@ -60,16 +60,16 @@ class Locacoes extends BaseController
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
         ];
-
-
+    
         $locacoesModel->insert($dadosLocacao);
-        $locacaoId = $locacoesModel->insertID();
-
+        $locacaoId = $locacoesModel->insertID(); // Obtendo o ID da locação recém-criada
+    
+        // Inserir os produtos da locação
         $produtoIds = $this->request->getPost('produto_id');
         $quantidades = $this->request->getPost('quantidade');
         $precosDiaria = $this->request->getPost('preco_diaria');
         $totaisUnitarios = $this->request->getPost('total_unitario');
-
+    
         foreach ($produtoIds as $index => $produtoId) {
             if (!empty($produtoId) && !empty($quantidades[$index])) {
                 $dadosProdutoLocacao = [
@@ -82,13 +82,16 @@ class Locacoes extends BaseController
                 $produtosLocacoesModel->insert($dadosProdutoLocacao);
             }
         }
-
-        if (empty($locacoesModel) && empty($produtosLocacoesModel)) {
+    
+        if (!$locacaoId) {
             return redirect()->back()->with('error', 'Erro ao salvar locação!');
         }
-
-        return redirect()->to('/locacoes')->with('success', 'Locação salva com sucesso!');
-    }
+    
+        // Redireciona para /locacoes e passa o ID da locação recém-criada
+        return redirect()->to('/locacoes')
+            ->with('success', 'Locação salva com sucesso!')
+            ->with('contrato_id', $locacaoId); // Aqui estava o erro: agora estamos passando $locacaoId
+    }    
 
     public function verificarDisponibilidade($produtos, $data_entrega, $data_devolucao)
     {
@@ -137,4 +140,34 @@ class Locacoes extends BaseController
         return true;
     }
     
+    public function gerarContrato($id){
+        $locacoesModel = new LocacoesModel();
+        $locacoesProdutoModel = new LocacoesProdutosModel();
+        $produtoModel = new ProdutosModel();
+        $clienteModel = new Clientes();
+        
+        $locacao = $locacoesModel->find($id);
+
+        $locacaoProdutos = $locacoesProdutoModel->getByLocacaoId($locacao['id']);
+
+        $cliente = $clienteModel->find($locacao['cliente_id']);
+
+        $produtoIds = array_column($locacaoProdutos, 'produto_id');
+
+        $produtos = !empty($produtoIds) ? $produtoModel->find($produtoIds) : [];
+
+        // print_r($produtoIds);
+        // print_r($produtos);
+        // print_r($cliente);
+        // exit;
+
+        $dados = [
+            'locacao' => $locacao,
+            'locacao_produto' => $locacaoProdutos,
+            'produtos' => $produtos,
+            'cliente' => $cliente,
+        ];
+
+        return view('dashboard/locacoes/locacao/contrato', $dados);
+    }
 }

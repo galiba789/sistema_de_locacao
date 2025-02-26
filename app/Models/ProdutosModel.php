@@ -20,4 +20,11 @@ class ProdutosModel extends Model
         return $db->query($query)->getResult('array');
     }  
 
+    public function getByLocacao($id)
+   {
+    $query = "SELECT * FROM produtos WHERE id = $id";
+    $db = db_connect();
+    return $db->query($query)->getResult('array');
+   }
+
 }

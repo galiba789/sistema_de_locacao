@@ -2,6 +2,14 @@
 <?= $this->section('content-wrapper'); ?>
 <div class="content-wrapper">
     <div class="container mt-4">
+        <?php if (session()->has('contrato_id')): ?>
+            <script>
+                window.onload = function() {
+                    let contratoUrl = "<?= base_url('/locacoes/contrato/') ?>" + "<?= session('contrato_id') ?>";
+                    window.open(contratoUrl, '_blank');
+                };
+            </script>
+        <?php endif; ?>
         <h1>Locações</h1>
         <div class="card p-3">
             <div class="row g-2 align-items-end">
