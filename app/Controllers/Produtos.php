@@ -17,7 +17,20 @@ class Produtos extends BaseController
 
         $produtosModel = new ProdutosModel();
 
-        $data=['produtos' => $produtosModel->getAtivos(),];
+        $pagina = $this->request->getVar('page') ?? 1;
+
+        // Define o número de itens por página
+        $itensPorPagina = 10;
+
+        // Busca os dados paginados
+        $produtos = $produtosModel->paginate($itensPorPagina);
+
+        // Gera os links de paginação automaticamente
+        $paginacao = $produtosModel->pager;
+
+        $data=[
+            'produtos' => $produtosModel->getAtivos(),
+            'paginacao' => $paginacao, ];
         return view('/dashboard/cadastros/produtos/index', $data);
     }
 

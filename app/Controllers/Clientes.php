@@ -16,12 +16,24 @@ class Clientes extends BaseController
         }
         
         $clientesModel = new ModelsClientes();
+
+        $pagina = $this->request->getVar('page') ?? 1;
+
+        // Define o número de itens por página
+        $itensPorPagina = 10;
+
+        // Busca os dados paginados
+        $clientes = $clientesModel->paginate($itensPorPagina);
+
+        // Gera os links de paginação automaticamente
+        $paginacao = $clientesModel->pager;
         
         // print_r($clientesModel->getAtivos());
         // exit;
 
         $dados = [
             'clientes' => $clientesModel->getAtivos(),
+            'paginacao' => $paginacao,
         ];
 
         return view('dashboard/cadastros/clientes/index', $dados);

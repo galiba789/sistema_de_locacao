@@ -40,7 +40,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= base_url('#') ?>" class="nav-link">
+                    <a href="<?= base_url('/calendario') ?>" class="nav-link">
                         <i class="fa-solid fa-calendar-days"></i>
                         <p>Calendario</p>
                     </a>

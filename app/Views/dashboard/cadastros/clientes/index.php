@@ -75,6 +75,11 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="d-flex justify-content-center">
+            <?= $paginacao->links('default', 'default_full') ?>
+        </div>
+
     </div>
 </div>
 

@@ -14,7 +14,23 @@ class Categorias extends BaseController
             return redirect()->to('/');
         }
         $categoriaModel = new CategoriaModel();
-        $data = ['categorias' => $categoriaModel->getAtivos()];
+
+        $pagina = $this->request->getVar('page') ?? 1;
+
+        // Define o número de itens por página
+        $itensPorPagina = 10;
+
+        // Busca os dados paginados
+        $categorias = $categoriaModel->paginate($itensPorPagina);
+
+        // Gera os links de paginação automaticamente
+        $paginacao = $categoriaModel->pager;
+        
+        
+        $data = [
+            'categorias' => $categoriaModel->getAtivos(),
+            'paginacao' => $paginacao,
+        ];
 
 
         return view('/dashboard/cadastros/categorias/index', $data);
