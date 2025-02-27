@@ -19,5 +19,18 @@ class LocacoesModel extends Model
         $db = db_connect();
         return $db->query($query)->getResult('array');
     }
+
+    public function getAtivosPorMes($mes, $ano)
+    {
+        $primeiroDia = "$ano-$mes-01";
+        $ultimoDia = date('Y-m-t', strtotime($primeiroDia));
+    
+        return $this->where('excluido', 0)
+                    ->groupStart()
+                        ->where('data_entrega <=', $ultimoDia)
+                        ->where('data_devolucao >=', $primeiroDia)
+                    ->groupEnd()
+                    ->findAll();
+    }    
 }
 
