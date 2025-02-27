@@ -37,7 +37,7 @@ $routes->get('/locacoes', 'Locacoes::index');
 $routes->get('/locacoes/cadastrar', 'Locacoes::cadastrar');
 $routes->post('/locacoes/salvar', 'Locacoes::salvar');
 $routes->get('/locacoes/contrato/(:num)', 'Locacoes::gerarContrato/$1');
-
-
-
+$routes->get('/locacoes/edita/(:num)', 'Locacoes::edita/$1');
+$routes->post('/locacoes/editar/(:num)', 'Locacoes::editar/$1');
+$routes->get('/locacoes/cancelar/(:num)', 'Locacoes::cancelarContrato/$1');
 $routes->get('/home', 'Home::index');

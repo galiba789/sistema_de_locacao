@@ -38,7 +38,7 @@
                 <?php foreach ($produtos as $produto): ?>
                     <tr>
                         <td style="text-align: center;"><?= $produto['numero_serie'] ?></td>
-                        <td><?= $produto['nome'] ?> <br> <?= $produto['acessorios'] ?></td>
+                        <td><?= $produto['nome'] ?> <br> <?= $locacao['acessorios'] ?></td>
                         <td style="text-align: center;"><?= $produto['quantidade'] ?></td>
                     </tr>
                 <?php endforeach; ?>
