@@ -21,6 +21,7 @@
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs4.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs4.min.js"></script>
 
+
 <!-- OPTIONAL SCRIPTS -->
 <script src="<?= PL_BASE_DIST ?>/js/Chart.min.js"></script>
 <!-- AdminLTE for demo purposes -->

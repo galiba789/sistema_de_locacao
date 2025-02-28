@@ -23,7 +23,6 @@
         margin-top: 5px;
     }
     .locacao {
-        background-color: #28a745;
         color: white;
         padding: 5px;
         border-radius: 3px;
@@ -71,7 +70,14 @@
                     if (isset($locacoesPorDia[$dia])) {
                         echo "<div class='locacoes'>";
                         foreach ($locacoesPorDia[$dia] as $locacao) {
-                            echo "<div class='locacao'>";
+                            if($locacao['situacao'] == 4){
+                                echo "<div class='locacao bg-success'>";
+                            } elseif ($locacao['situacao'] == 5){
+                                echo "<div class='locacao bg-danger'>";
+                            } else {
+                                echo "<div class='locacao bg-warning'>";
+                            }
+                            
                             echo "Locação COD: {$locacao['id']}<br>";
                             echo "</div>";
                         }

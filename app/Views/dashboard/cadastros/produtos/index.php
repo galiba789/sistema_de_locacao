@@ -19,7 +19,8 @@
                 </div>
             </div>
         </div>
-
+        <div id="product-list"></div>
+        <div id="pagination"></div>
         <div class="table-responsive mt-4">
             <table class="table table-bordered table-striped">
                 <thead class="table-dark">
@@ -52,11 +53,6 @@
                 </tbody>
             </table>
         </div>
-
-        <div class="d-flex justify-content-center">
-            <?= $paginacao->links('default', 'default_full') ?>
-        </div>
-
     </div>
 </div>
 <script>
@@ -116,6 +112,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Erro na busca:", error));
     }
 });
+
+
 </script>
 
 <?= $this->endSection();?> 

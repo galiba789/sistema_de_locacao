@@ -17,20 +17,10 @@ class Produtos extends BaseController
 
         $produtosModel = new ProdutosModel();
 
-        $pagina = $this->request->getVar('page') ?? 1;
-
-        // Define o número de itens por página
-        $itensPorPagina = 10;
-
-        // Busca os dados paginados
-        $produtos = $produtosModel->paginate($itensPorPagina);
-
-        // Gera os links de paginação automaticamente
-        $paginacao = $produtosModel->pager;
 
         $data=[
-            'produtos' => $produtosModel->getAtivos(),
-            'paginacao' => $paginacao, ];
+            'produtos' => $produtosModel->getAtivos(), 
+        ];
         return view('/dashboard/cadastros/produtos/index', $data);
     }
 
@@ -63,7 +53,6 @@ class Produtos extends BaseController
             'quantidade' => $this->request->getPost('quantidade'),
             'obs' => $this->request->getPost('obs'),
             'aditivo_contratual' => $this->request->getPost('aditivo_contratual'),
-            'acessorios' => $this->request->getPost('acessorios'),
         ];
 
         $id = $produtosModel->insert($data);
@@ -106,7 +95,6 @@ class Produtos extends BaseController
             'quantidade' => $this->request->getPost('quantidade'),
             'obs' => $this->request->getPost('obs'),
             'aditivo_contratual' => $this->request->getPost('aditivo_contratual'),
-            'acessorios' => $this->request->getPost('acessorios'),
         ];
         
         $id = $produtosModel->update($id, $data);
