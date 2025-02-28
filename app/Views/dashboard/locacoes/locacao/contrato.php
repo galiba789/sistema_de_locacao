@@ -35,13 +35,14 @@
                     <th style="width: 100px">quantidade</th>
                 </tr>
 
-                <?php foreach ($produtos as $produto): ?>
+                <?php foreach ($locacao_produtos as $locacao_produto):?>
+
                     <tr>
-                        <td style="text-align: center;"><?= $produto['numero_serie'] ?></td>
-                        <td><?= $produto['nome'] ?> <br> <?= $locacao['acessorios'] ?></td>
-                        <td style="text-align: center;"><?= $produto['quantidade'] ?></td>
+                        <td style="text-align: center;"><?= $locacao_produto['numero_serie'] ?></td>
+                        <td><?= $locacao_produto['nome'] ?> <br> <?= $locacao['acessorios'] ?></td>
+                        <td style="text-align: center;"><?= $locacao_produto['quantidade'] ?></td>
                     </tr>
-                <?php endforeach; ?>
+                <?php endforeach;?>
             </tbody>
         </table>
         <div style="display: block;margin: 20px 0;">

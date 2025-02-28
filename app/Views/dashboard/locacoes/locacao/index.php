@@ -3,13 +3,14 @@
 <div class="content-wrapper">
     <div class="container mt-4">
         <?php if (session()->has('contrato_id')): ?>
-            <script>
-                window.onload = function() {
-                    let contratoUrl = "<?= base_url('/locacoes/contrato/') ?>" + "<?= session('contrato_id') ?>";
-                    window.open(contratoUrl, '_blank');
-                };
-            </script>
+        <script>
+            window.onload = function() {
+                let contratoUrl = "<?= base_url('/locacoes/contrato/') ?>" + "<?= session('contrato_id') ?>"; 
+                window.open(contratoUrl, '_blank');
+            };
+        </script>
         <?php endif; ?>
+
         <h1>Locações</h1>
         <div class="card p-3">
             <div class="row g-2 align-items-end">
@@ -17,8 +18,10 @@
                     <label for="tipo" class="form-label">Tipo</label>
                     <select id="tipo" class="form-control">
                         <option value="">Selecione</option>
-                        <option value="1">Tipo 1</option>
-                        <option value="2">Tipo 2</option>
+                        <option value="1">Data</option>
+                        <option value="2">Nome</option>
+                        <option value="3">Razão Social</option>
+                        <option value="4">Código</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -29,24 +32,19 @@
                     <label for="situacao" class="form-label">Situação</label>
                     <select id="situacao" class="form-control">
                         <option value="">Selecione</option>
-                        <option value="ativo">Ativo</option>
-                        <option value="inativo">Inativo</option>
+                        <option value="1">Agendado</option>
+                        <option value="2">Pendente</option>
+                        <option value="3">Atrasado</option>
+                        <option value="4">Finalizada</option>
+                        <option value="5">Cancelado</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="tipo_venda" class="form-label">Tipo de Venda</label>
-                    <select id="tipo_venda" class="form-control">
-                        <option value="">Selecione</option>
-                        <option value="avulso">Avulso</option>
-                        <option value="pacote">Pacote</option>
-                    </select>
+                <div class="col-md-2">
+                    <button type="button" id="buscar-btn" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
                 </div>
-                <div class="col-md-1">
-                    <button class="btn btn-primary "><i class="fa-solid fa-magnifying-glass"></i></button>
-                </div>
-                <div class="col-md-1">
-                    <a href="/locacoes/cadastrar">
-                        <button class="btn btn-success "><i class="fa-solid fa-pen"></i></button>
+                <div class="col-md-2">
+                    <a href="<?= base_url('locacoes/cadastrar') ?>">
+                        <button type="button" class="btn btn-success"><i class="fa-solid fa-pen"></i> Nova Locação</button>
                     </a>
                 </div>
             </div>
@@ -59,7 +57,7 @@
                         <th>Cód.</th>
                         <th>Data</th>
                         <th>Cliente</th>
-                        <th>Périodo</th>
+                        <th>Período</th>
                         <th>Valor</th>
                         <th>Pagamento</th>
                         <th>Detalhe</th>
@@ -67,56 +65,180 @@
                         <th>Forma de Pagamento</th>
                     </tr>
                 </thead>
-
-                <tbody>
+                <tbody id="tabela-locacoes">
                     <?php foreach ($locacoes as $locacao): ?>
-                        <tr>
-                            <td><?= $locacao['id'] ?></td>
-                            <td><?= $locacao['created_at'] ?></td>
-                            <td><?= $locacao['cliente_nome'] ?></td>
-                            <td><?= $locacao['data_entrega'] ?> <br><?= $locacao['data_devolucao'] ?></td>
-                            <td>R$ <?= $locacao['valor_total'] ?></td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Mais
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') . $locacao['id'] ?>">Emitir Contrato</a></li>
-                                        <li><a class="dropdown-item" href="<?= base_url('/locacoes/edita/') . $locacao['id'] ?>">Editar Contrato</a></li>
-                                        <li><a class="dropdown-item" href="<?= base_url('/locacoes/cancelar/') . $locacao['id'] ?>">Cancelar Contrato</a></li>
-                                    </ul>
-                                </div>
-
-                            </td>
-                            <td>
-                                <?php if ($locacao['situacao'] == 1): ?>
-                                    <span class="btn btn-warning">Agendado</span>
-                                <?php elseif ($locacao['situacao'] == 2): ?>
-                                    <span class="btn btn-warning">Pendente</span>
-                                <?php elseif ($locacao['situacao'] == 3): ?>
-                                    <span class="btn btn-danger">Atrasado</span>
-                                <?php elseif ($locacao['situacao'] == 4): ?>
-                                    <span class="btn btn-success">Finalizada</span>
-                                <?php elseif ($locacao['situacao'] == 5): ?>
-                                    <span class="btn btn-danger">Cancelado</span>
-                                <?php endif; ?>
-                            </td>
-                            <td><?= $locacao['forma_pagamento'] ?></td>
-                        </tr>
+                    <tr>
+                        <td><?= $locacao['id'] ?></td>
+                        <td><?= $locacao['created_at'] ?></td>
+                        <td><?= $locacao['cliente_nome'] ?></td>
+                        <td><?= $locacao['data_entrega'] ?> <br><?= $locacao['data_devolucao'] ?></td>
+                        <td>R$ <?= $locacao['valor_total'] ?></td>
+                        <td></td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Mais
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') . $locacao['id'] ?>">Emitir Contrato</a></li>
+                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') . $locacao['id'] ?>">Editar Contrato</a></li>
+                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') . $locacao['id'] ?>">Cancelar Contrato</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td>
+                            <?php if ($locacao['situacao'] == 1): ?>
+                                <span class="btn btn-warning">Agendado</span>
+                            <?php elseif ($locacao['situacao'] == 2): ?>
+                                <span class="btn btn-warning">Pendente</span>
+                            <?php elseif ($locacao['situacao'] == 3): ?>
+                                <span class="btn btn-danger">Atrasado</span>
+                            <?php elseif ($locacao['situacao'] == 4): ?>
+                                <span class="btn btn-success">Finalizada</span>
+                            <?php elseif ($locacao['situacao'] == 5): ?>
+                                <span class="btn btn-danger">Cancelado</span>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= $locacao['forma_pagamento'] ?></td>
+                    </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
             <div class="d-flex justify-content-center">
                 <?= $paginacao->links('default', 'default_full') ?>
             </div>
         </div>
     </div>
-
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Elementos
+    const buscarBtn = document.getElementById("buscar-btn");
+    const palavraInput = document.getElementById("palavra");
+    const tipoSelect = document.getElementById("tipo");
+    const situacaoSelect = document.getElementById("situacao");
+    const tabelaBody = document.getElementById("tabela-locacoes");
 
+    // Função para atualizar a tabela com os resultados da busca
+    function buscarLocacoes() {
+  
+        tabelaBody.innerHTML = "<tr><td colspan='9' class='text-center'>Carregando... <i class='fas fa-spinner fa-spin'></i></td></tr>";
+        const baseUrl = "<?= base_url('locacoes/buscar') ?>";
+        let queryParams = [];
+
+        if (tipoSelect.value) {
+            queryParams.push(`tipo=${encodeURIComponent(tipoSelect.value)}`);
+        }
+
+        if (palavraInput.value.trim()) {
+            queryParams.push(`palavra=${encodeURIComponent(palavraInput.value.trim())}`);
+        }
+
+        if (situacaoSelect.value) {
+            queryParams.push(`situacao=${encodeURIComponent(situacaoSelect.value)}`);
+        }
+
+        const url = queryParams.length > 0 ? `${baseUrl}?${queryParams.join('&')}` : baseUrl;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Dados recebidos:", data); 
+                tabelaBody.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    tabelaBody.innerHTML = "<tr><td colspan='9' class='text-center'>Nenhuma locação encontrada</td></tr>";
+                    return;
+                }
+
+                let rows = data.map(locacao => {
+                    console.log(locacao);
+                    let badgeHtml = "";
+                    switch (parseInt(locacao.situacao)) {
+                        case 1:
+                            badgeHtml = '<span class="btn btn-warning">Agendado</span>';
+                            break;
+                        case 2:
+                            badgeHtml = '<span class="btn btn-warning">Pendente</span>';
+                            break;
+                        case 3:
+                            badgeHtml = '<span class="btn btn-danger">Atrasado</span>';
+                            break;
+                        case 4:
+                            badgeHtml = '<span class="btn btn-success">Finalizada</span>';
+                            break;
+                        case 5:
+                            badgeHtml = '<span class="btn btn-danger">Cancelado</span>';
+                            break;
+                        default:
+                            badgeHtml = '<span class="btn btn-secondary">Desconhecido</span>';
+                    }
+
+
+                    let dataEntrega = locacao.data_entrega ? new Date(locacao.data_entrega).toLocaleDateString('pt-BR') : '';
+                    let dataDevolucao = locacao.data_devolucao ? new Date(locacao.data_devolucao).toLocaleDateString('pt-BR') : '';
+                    let valorTotal = locacao.valor_total ? parseFloat(locacao.valor_total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00';
+
+                    return `
+                        <tr>
+                            <td>${locacao.id || ''}</td>
+                            <td>${locacao.created_at || ''}</td>
+                            <td>${locacao.cliente_nome || locacao.cliente_razao_social}</td>
+                            <td>${locacao.data_entrega }<br>${locacao.data_devolucao}</td>
+                            <td>${valorTotal}</td>
+                            <td></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        Mais
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') ?>${locacao.id}">Emitir Contrato</a></li>
+                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') ?>${locacao.id}">Editar Contrato</a></li>
+                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') ?>${locacao.id}">Cancelar Contrato</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td>${badgeHtml}</td>
+                            <td>${locacao.forma_pagamento || ''}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                tabelaBody.innerHTML = rows;
+
+                // Reativar os dropdowns após atualizar o conteúdo
+                var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+                dropdownElementList.map(function (dropdownToggleEl) {
+                    return new bootstrap.Dropdown(dropdownToggleEl);
+                });
+            })
+            .catch(error => {
+                console.error("Erro na busca:", error);
+                tabelaBody.innerHTML = `<tr><td colspan='9' class='text-center text-danger'>Erro ao buscar dados: ${error.message}</td></tr>`;
+            });
+    }
+
+    // Eventos
+    if (buscarBtn) {
+        buscarBtn.addEventListener("click", function() {
+            buscarLocacoes();
+        });
+    }
+
+    if (palavraInput) {
+        palavraInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                buscarLocacoes();
+            }
+        });
+    }
+});
+</script>
 <?= $this->endSection(); ?>

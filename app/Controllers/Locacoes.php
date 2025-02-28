@@ -180,18 +180,18 @@ class Locacoes extends BaseController
     {
         $locacoesModel = new LocacoesModel();
         $produtosLocacoesModel = new LocacoesProdutosModel();
-    
+
         $data_entrega = $this->request->getPost('data_entrega');
         $data_devolucao = $this->request->getPost('data_devolucao');
         $produtos = $this->request->getPost('produto_id');
-    
+
         // Verifica a disponibilidade dos produtos
         $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao);
-    
+
         if ($verificacao !== true) {
             return redirect()->back()->with('erro', $verificacao);
         }
-    
+
         // Atualizar a locação
         $dadosLocacao = [
             'cliente_id'      => $this->request->getPost('cliente_id'),
@@ -206,18 +206,18 @@ class Locacoes extends BaseController
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
         ];
-    
+
         $locacoesModel->update($id, $dadosLocacao);
-    
+
         // Atualizar produtos da locação
         $produtoIds = $this->request->getPost('produto_id');
         $quantidades = $this->request->getPost('quantidade');
         $precosDiaria = $this->request->getPost('preco_diaria');
         $totaisUnitarios = $this->request->getPost('total_unitario');
-    
+
         // Remover produtos antigos associados à locação
         $produtosLocacoesModel->where('locacao_id', $id)->delete();
-    
+
         // Adicionar os novos produtos corretamente
         foreach ($produtoIds as $index => $produtoId) {
             if (!empty($produtoId) && !empty($quantidades[$index])) {
@@ -231,10 +231,10 @@ class Locacoes extends BaseController
                 $produtosLocacoesModel->insert($dadosProdutoLocacao); // Correção aqui: usar insert() em vez de update()
             }
         }
-    
+
         return redirect()->to('/locacoes')
             ->with('success', 'Locação atualizada com sucesso!');
-    }    
+    }
 
 
     public function verificarDisponibilidade($produtos, $data_entrega, $data_devolucao)
@@ -288,46 +288,98 @@ class Locacoes extends BaseController
 
 
     public function gerarContrato($id)
+{
+    $locacoesModel = new LocacoesModel();
+    $locacoesProdutoModel = new LocacoesProdutosModel();
+    $produtoModel = new ProdutosModel();
+    $clienteModel = new Clientes();
+
+    $locacao = $locacoesModel->find($id);
+
+    $locacaoProdutos = $locacoesProdutoModel
+        ->join('produtos P', 'P.id = locacoes_produtos.produto_id')  
+        ->select('locacoes_produtos.*, P.nome, P.numero_serie')  
+        ->where('locacoes_produtos.locacao_id', $locacao['id'])  
+        ->findAll();  
+    $cliente = $clienteModel->find($locacao['cliente_id']);
+    // print_r($locacaoProdutos);
+    // exit;
+
+   
+    $dados = [
+        'locacao' => $locacao,
+        'locacao_produtos' => $locacaoProdutos,
+        'cliente' => $cliente,
+    ];
+
+    return view('dashboard/locacoes/locacao/contrato', $dados);
+}
+
+
+    public function cancelarContrato($id)
     {
-        $locacoesModel = new LocacoesModel();
-        $locacoesProdutoModel = new LocacoesProdutosModel();
-        $produtoModel = new ProdutosModel();
-        $clienteModel = new Clientes();
+        $locacaoModel = new LocacoesModel();
 
-        $locacao = $locacoesModel->find($id);
-
-        $locacaoProdutos = $locacoesProdutoModel->getByLocacaoId($locacao['id']);
-
-        $cliente = $clienteModel->find($locacao['cliente_id']);
-
-        $produtoIds = array_column($locacaoProdutos, 'produto_id');
-
-        $produtos = !empty($produtoIds) ? $produtoModel->find($produtoIds) : [];
-
-        // print_r($produtoIds);
-        // print_r($produtos);
-        // print_r($cliente);
-        // exit;
-
-        $dados = [
-            'locacao' => $locacao,
-            'locacao_produto' => $locacaoProdutos,
-            'produtos' => $produtos,
-            'cliente' => $cliente,
-        ];
-
-        return view('dashboard/locacoes/locacao/contrato', $dados);
-    }
-
-    public function cancelarContrato($id){
-        $locacaoModel= new LocacoesModel();
-        
         $dados = [
             'situacao' => 5,
         ];
         $locacaoModel->update($id, $dados);
 
         return redirect()->to('/locacoes')
-        ->with('success', 'Locação atualizada com sucesso!');
+            ->with('success', 'Locação atualizada com sucesso!');
+    }
+    public function buscar()
+    {
+        $tipo = $this->request->getGet('tipo');
+        $palavra = $this->request->getGet('palavra');
+        $situacao = $this->request->getGet('situacao');
+    
+        $locacoesModel = new LocacoesModel();
+        $builder = $locacoesModel->select('locacao.*, clientes.nome as cliente_nome');
+        $builder = $locacoesModel->select('locacao.*, clientes.razao_social as cliente_razao_social')
+            ->join('clientes', 'clientes.id = locacao.cliente_id');
+            if (!empty($situacao)) {
+                $builder->where('locacao.situacao', $situacao);
+            }
+            
+            
+            if (!empty($palavra)) {
+            switch ($tipo) {
+                case '1': // Data
+                    if (strtotime($palavra)) {
+                        $builder->where('DATE(locacao.created_at)', date('Y-m-d', strtotime($palavra)));
+                    }
+                    break;
+                    case '2': // Nome
+                        $builder->like('clientes.nome', $palavra);
+                    break;
+                    case '3': //razao Social
+                        $builder->like('clientes.razao_social', $palavra);
+                    break;
+                    case '4': // Código
+                        $builder->where('locacao.id', $palavra);
+                        break;
+                    }
+                }
+                
+                $locacoes = $builder->findAll();
+                
+                foreach ($locacoes as &$locacao) {
+                    if (isset($locacao['created_at'])) {
+                $locacao['created_at'] = date('d/m/Y', strtotime($locacao['created_at']));
+            }
+            if (isset($locacao['data_entrega'])) {
+                $locacao['data_entrega'] = date('d/m/Y', strtotime($locacao['data_entrega']));
+            }
+            if (isset($locacao['data_devolucao'])) {
+                $locacao['data_devolucao'] = date('d/m/Y', strtotime($locacao['data_devolucao']));
+            }
+            
+            if (isset($locacao['valor_total'])) {
+                $locacao['valor_total'] = number_format($locacao['valor_total'], 2, ',', '.');
+            }
+        }
+    
+        return $this->response->setJSON($locacoes);
     }
 }

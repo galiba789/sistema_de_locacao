@@ -18,6 +18,8 @@ $routes->post('/clientes/consulta', 'Clientes::consulta');
 $routes->get('/clientes/excluir/(:num)', 'Clientes::excluir/$1');
 $routes->get('/clientes/editar/(:num)', 'Clientes::editar/$1');
 $routes->post('/clientes/update/(:num)', 'Clientes::update/$1');
+$routes->get('/clientes/buscar', 'Clientes::buscar');
+
 
 $routes->get('/categorias', 'Categorias::index');
 $routes->get('/categorias/cadastrar', 'Categorias::cadastrar');
@@ -32,6 +34,8 @@ $routes->post('/produtos/salvar', 'Produtos::salvar');
 $routes->get('/produtos/edita/(:num)', 'Produtos::edita/$1');
 $routes->post('/produtos/editar/(:num)', 'Produtos::editar/$1');
 $routes->get('/produtos/excluir/(:num)', 'Produtos::excluir/$1');
+$routes->get('produtos/buscar', 'Produtos::buscar');
+
 
 $routes->get('/locacoes', 'Locacoes::index');
 $routes->get('/locacoes/cadastrar', 'Locacoes::cadastrar');
@@ -40,6 +44,7 @@ $routes->get('/locacoes/contrato/(:num)', 'Locacoes::gerarContrato/$1');
 $routes->get('/locacoes/edita/(:num)', 'Locacoes::edita/$1');
 $routes->post('/locacoes/editar/(:num)', 'Locacoes::editar/$1');
 $routes->get('/locacoes/cancelar/(:num)', 'Locacoes::cancelarContrato/$1');
+$routes->get('locacoes/buscar', 'Locacoes::buscar');
 
 $routes->get('/calendario', 'Calendario::index');
 $routes->get('/calendario/index/(:num)/(:num)', 'Calendario::index/$1/$2');

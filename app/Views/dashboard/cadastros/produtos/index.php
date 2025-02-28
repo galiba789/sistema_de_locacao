@@ -59,6 +59,63 @@
 
     </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchBtn = document.querySelector(".btn-primary");
+    const searchInput = document.getElementById("nome");
+    const tableBody = document.querySelector("tbody");
 
+    // Carrega todos os produtos ao abrir a página
+    fetchProdutos();
+
+    searchBtn.addEventListener("click", function () {
+        fetchProdutos();
+    });
+
+    searchInput.addEventListener("keyup", function (event) {
+        if (event.key === "Enter" || searchInput.value === "") {
+            fetchProdutos();
+        }
+    });
+
+    function fetchProdutos() {
+        const nome = searchInput.value.trim();
+
+        fetch(`/produtos/buscar?nome=${encodeURIComponent(nome)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Cria um novo conteúdo antes de limpar a tabela
+                let newContent = "";
+
+                if (data.length === 0) {
+                    newContent = "<tr><td colspan='5' class='text-center'>Nenhum produto encontrado</td></tr>";
+                } else {
+                    data.forEach(produto => {
+                        newContent += `
+                            <tr>
+                                <td>${produto.id}</td>
+                                <td>${produto.nome}</td>
+                                <td>${produto.quantidade}</td>
+                                <td>${produto.preco_diaria}</td>
+                                <td>
+                                    <a href="/produtos/edita/${produto.id}">
+                                        <button class="btn btn-warning btn-sm">Editar</button>
+                                    </a>
+                                    <a href="/produtos/excluir/${produto.id}">
+                                        <button class="btn btn-danger btn-sm">Excluir</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // Agora, substituímos o conteúdo de uma vez, evitando o piscar
+                tableBody.innerHTML = newContent;
+            })
+            .catch(error => console.error("Erro na busca:", error));
+    }
+});
+</script>
 
 <?= $this->endSection();?> 

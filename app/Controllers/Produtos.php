@@ -132,5 +132,22 @@ class Produtos extends BaseController
         $produtosModel->update($id, $dados);
         return redirect()->to('/produtos')->with('success', 'Cliente desativado com sucesso.');
     }
+
+    public function buscar()
+{
+    $nome = $this->request->getGet('nome');
+
+    $produtosModel = new ProdutosModel();
+
+    if (empty($nome)) {
+        $produtos = $produtosModel->findAll();
+    } else {
+        $produtos = $produtosModel->like('nome', $nome, 'both')->findAll();
+    }
+
+    return $this->response->setJSON($produtos);
+}
+
+
 }
 

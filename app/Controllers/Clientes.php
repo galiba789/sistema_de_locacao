@@ -203,4 +203,27 @@ class Clientes extends BaseController
         
         echo $Consulta->consulta($cep);
     }
+    public function buscar()
+    {
+        $tipo = $this->request->getGet('tipo');
+        $palavra = $this->request->getGet('palavra');
+    
+        $clientesModel = new ModelsClientes();
+    
+        if (empty($palavra)) {
+            // Se a palavra estiver vazia, retorna todos os clientes
+            $clientes = $clientesModel->findAll();
+        } else {
+            // Filtra pelos campos permitidos
+            if (in_array($tipo, ['nome', 'cpf', 'cnpj', 'id'])) {
+                $clientes = $clientesModel->like($tipo, $palavra)->findAll();
+            } else {
+                return $this->response->setJSON([]); // Retorna vazio se o tipo for inválido
+            }
+        }
+    
+        return $this->response->setJSON($clientes);
+    }
+    
+
 }
