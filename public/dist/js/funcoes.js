@@ -149,19 +149,7 @@ function clientesForm() {
   }
 }
 
-function selecionarCliente(id, nome) {
-   
-    var clienteIdInput = document.getElementById('cliente_id');
-    var clienteNomeInput = document.getElementById('cliente_nome');
-    
-    if (clienteIdInput && clienteNomeInput) {
-        clienteIdInput.value = id;
-        clienteNomeInput.value = nome;
-        
-        var modal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
-        modal.hide(); 
-    }
-}
+
 
 function filtrarClientes() {
     var input = document.getElementById('buscarCliente').value.toLowerCase();
@@ -173,19 +161,16 @@ function filtrarClientes() {
     });
 }
 
-function selecionarProduto(id, nome, quantidade, preco_diaria) {
-    if (linhaAtiva) {
-        // Atualiza os valores dos inputs na linha ativa
-        linhaAtiva.querySelector(".produto-id").value = id;
-        linhaAtiva.querySelector(".produto-nome").value = nome;
-        linhaAtiva.querySelector(".quantidade").value = quantidade;
-        linhaAtiva.querySelector(".preco-diaria").value = preco_diaria;
+function selecionarCliente(id, nome) {
 
-        // Atualiza o total automaticamente
-        update_quantidade(linhaAtiva.querySelector(".quantidade"));
+    var clienteIdInput = document.getElementById('cliente_id');
+    var clienteNomeInput = document.getElementById('cliente_nome');
 
-        // Fecha a modal
-        var modal = bootstrap.Modal.getInstance(document.getElementById('ProdutosModal'));
+    if (clienteIdInput && clienteNomeInput) {
+        clienteIdInput.value = id;
+        clienteNomeInput.value = nome;
+
+        var modal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
         modal.hide();
     }
 }

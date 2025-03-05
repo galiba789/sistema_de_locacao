@@ -62,7 +62,7 @@
                     <?= session()->getFlashdata('erro') ?>
                 </div>
             <?php endif; ?>
-            
+
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <label for="situacao">Situação</label>
@@ -77,11 +77,11 @@
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="data_entrega">Data de Entrega:</label>
-                    <input type="date" id="data_entrega" name="data_entrega" class="form-control">
+                    <input type="datetime-local" id="data_entrega" name="data_entrega" class="form-control">
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="data_devolucao">Data de Devolução:</label>
-                    <input type="date" id="data_devolucao" name="data_devolucao" class="form-control">
+                    <input type="datetime-local" id="data_devolucao" name="data_devolucao" class="form-control">
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="total_diarias">Total de Diarias:</label>
@@ -163,7 +163,7 @@
                                     <td><?= $cliente['tipo'] == 1 ? $cliente['nome'] : $cliente['razao_social'] ?></td>
                                     <td><?= $cliente['tipo'] == 1 ? $cliente['cpf'] : $cliente['cnpj'] ?></td>
                                     <td>
-                                        <button class="btn btn-success btn-sm" onclick="selecionarCliente('<?= $cliente['id'] ?>', '<?= $cliente['tipo'] == 1 ? $cliente['nome'] : $cliente['razao_social'] ?>')">
+                                        <button class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="selecionarCliente('<?= $cliente['id'] ?>', '<?= $cliente['tipo'] == 1 ? $cliente['nome'] : $cliente['razao_social'] ?>')">
                                             Adicionar
                                         </button>
                                     </td>
@@ -178,17 +178,16 @@
 </div>
 
 <div class="modal fade" id="ProdutosModal" tabindex="-1" aria-labelledby="ProdutosModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Aumenta o tamanho da modal -->
+    <div class="modal-dialog modal-lg"> 
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ProdutosModalLabel">Selecionar Produto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Barra de busca -->
+               
                 <input type="text" id="buscarProdutos" class="form-control mb-3" placeholder="Buscar cliente..." onkeyup="filtrarProdutos()">
-
-                <!-- Tabela de clientes -->
+                
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead class="table-dark">
@@ -208,7 +207,7 @@
                                     <td><?= $produto['quantidade'] ?></td>
                                     <td><?= $produto['preco_diaria'] ?></td>
                                     <td>
-                                        <button class="btn btn-success btn-sm" onclick="selecionarProduto('<?= $produto['id'] ?>', '<?= $produto['nome'] ?>', '<?= $produto['quantidade'] ?>', '<?= $produto['preco_diaria'] ?>')">
+                                        <button class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="selecionarProduto('<?= $produto['id'] ?>', '<?= $produto['nome'] ?>', '<?= $produto['quantidade'] ?>', '<?= $produto['preco_diaria'] ?>')">
                                             Adicionar
                                         </button>
                                     </td>
@@ -223,7 +222,7 @@
 </div>
 
 <script>
-    let linhaAtiva = null; // Armazena a linha que abriu a modal
+    let linhaAtiva = null;
 
     document.querySelectorAll('.btn-selecionar-produto').forEach(function(button) {
         button.addEventListener('click', function() {
@@ -253,25 +252,36 @@
 
     function addProduto() {
         var container = document.getElementById('produtos-container');
-        var firstRow = container.querySelector('.produto-item');
-        var newRow = firstRow.cloneNode(true);
+        var lastRow = container.querySelector('.produto-item:last-child');
 
-        // Limpa os valores dos inputs na nova linha
+        if (!lastRow) {
+            alert('Selecione um produto antes de adicionar outro.');
+            return;
+        }
+
+        var produtoNome = lastRow.querySelector('.produto-nome').value.trim();
+        var produtoId = lastRow.querySelector('.produto-id').value.trim();
+        var quantidade = lastRow.querySelector('.quantidade').value.trim();
+        var precoDiaria = lastRow.querySelector('.preco-diaria').value.trim();
+
+
+        if (!produtoNome || !produtoId || !isValidNumber(quantidade) || !isValidNumber(precoDiaria)) {
+            alert('Preencha todos os campos antes de adicionar outro produto.');
+            return;
+        }
+
+
+        var newRow = lastRow.cloneNode(true);
+
         newRow.querySelector('.produto-nome').value = '';
         newRow.querySelector('.produto-id').value = '';
         newRow.querySelector('.quantidade').value = '';
         newRow.querySelector('.preco-diaria').value = '';
         newRow.querySelector('.total-unitario').value = '';
-
-        // Adiciona a nova linha no container
         container.appendChild(newRow);
 
-        // Define a linha recém-criada como a linha ativa
         linhaAtiva = newRow;
     }
-
-
-
 
     function removeProduto(button) {
         var row = button.closest('.produto-item');
@@ -282,7 +292,10 @@
         } else {
             alert('É necessário pelo menos um produto na lista.');
         }
+
+        calcularTotais();
     }
+
 
     document.addEventListener("DOMContentLoaded", function() {
         function calcularTotais() {
@@ -304,12 +317,44 @@
             document.getElementById("valor_total").value = valorTotal.toFixed(2);
         }
 
-        document.getElementById("total_diarias").addEventListener("input", calcularTotais);
-        document.getElementById("desconto").addEventListener("input", calcularTotais);
-
-        document.querySelectorAll(".quantidade, .preco-diaria").forEach(input => {
-            input.addEventListener("input", calcularTotais);
+        document.addEventListener("input", function(event) {
+            if (event.target.matches(".quantidade, .preco-diaria, #total_diarias, #desconto")) {
+                calcularTotais();
+            }
         });
+
+        calcularTotais();
     });
+
+
+
+    function selecionarProduto(id, nome, quantidade, preco_diaria) {
+        if (linhaAtiva) {
+
+            linhaAtiva.querySelector(".produto-id").value = id;
+            linhaAtiva.querySelector(".produto-nome").value = nome;
+            linhaAtiva.querySelector(".quantidade").value = quantidade;
+            linhaAtiva.querySelector(".preco-diaria").value = preco_diaria;
+
+            update_quantidade(linhaAtiva.querySelector(".quantidade"));
+
+            var modal = bootstrap.Modal.getInstance(document.getElementById('ProdutosModal'));
+            modal.hide();
+        }
+    }
+
+    function selecionarCliente(id, nome) {
+
+        var clienteIdInput = document.getElementById('cliente_id');
+        var clienteNomeInput = document.getElementById('cliente_nome');
+
+        if (clienteIdInput && clienteNomeInput) {
+            clienteIdInput.value = id;
+            clienteNomeInput.value = nome;
+
+            var modal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
+            modal.hide();
+        }
+    }
 </script>
 <?= $this->endSection() ?>
