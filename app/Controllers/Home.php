@@ -19,14 +19,15 @@ class Home extends BaseController
         $clientesModel = new Clientes();
 
         $locacoes = $locacoesModel
-        ->select('locacao.*, P.nome, P.numero_serie') 
-        ->join('locacoes_produtos LP', 'locacao.id = LP.locacao_id') 
-        ->join('produtos P', 'LP.produto_id = P.id')  
+        ->select('locacao.*, C.nome, C.razao_social, C.tipo') 
+        ->join('clientes C', 'locacao.cliente_id = C.id')
         ->where('MONTH(locacao.created_at)', date('m'))  
         ->where('YEAR(locacao.created_at)', date('Y'))  
         ->orderBy('locacao.created_at', 'DESC')  
         ->findAll();  
-    
+        
+        // print_r($locacoes);
+        // exit;
 
         $dados = [
             'locacoes' => $locacoes,

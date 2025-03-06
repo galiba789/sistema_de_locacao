@@ -5,18 +5,14 @@
     <div class="container mt-4">
         <h1>dashboard</h1>
         <div class="row">
-            <div class="col-md-12 mt-3">
-                <canvas id="faturamentoChart"></canvas>
-            </div>
-
             <div class="col-md-6 mt-3">
-                <table class="table table-bordered">
-                    <thead>
+                <h3>Ultímas locações</h3>
+                <table class="table">
+                    <thead class="thead-dark">
                         <tr>
-                            <th>#</th>
+                            <th>Código</th>
                             <th>Cliente</th>
                             <th>Data da Locação</th>
-                            <th>Produto(s)</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -25,14 +21,67 @@
                             <?php foreach ($locacoes as $locacao): ?>
                                 <tr>
                                     <td><?= $locacao['id'] ?></td>
-                                    <td><?= $locacao['cliente_id'] ?></td>
-                                    <td><?= date('d/m/Y', strtotime($locacao['created_at'])) ?></td>
-                                    <td>                                        
-                                        <?= $locacao['nome'] ?> (<?= $locacao['numero_serie'] ?>)
+                                    <td><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></td>
+                                    <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
+                                    <td>
+                                        <?php if ($locacao['situacao'] == 1): ?>
+                                            <span class="btn btn-warning">Agendado</span>
+                                        <?php elseif ($locacao['situacao'] == 2): ?>
+                                            <span class="btn btn-warning">Pendente</span>
+                                        <?php elseif ($locacao['situacao'] == 3): ?>
+                                            <span class="btn btn-danger">Atrasado</span>
+                                        <?php elseif ($locacao['situacao'] == 4): ?>
+                                            <span class="btn btn-success">Finalizada</span>
+                                        <?php elseif ($locacao['situacao'] == 5): ?>
+                                            <span class="btn btn-danger">Cancelado</span>
+                                        <?php endif; ?>
                                     </td>
-                                    <td><?= $locacao['status'] ?></td> 
                                 </tr>
                             <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5">Nenhuma locação encontrada para este mês.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-6 mt-3">
+                <h3>Locações Agendadas</h3>
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Código</th>
+                            <th>Cliente</th>
+                            <th>Data da Locação</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($locacoes)): ?>
+                            <?php foreach ($locacoes as $locacao): 
+                                if($locacao['situacao'] ):?>
+                                <tr>
+                                    <td><?= $locacao['id'] ?></td>
+                                    <td><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></td>
+                                    <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
+                                    <td>
+                                        <?php if ($locacao['situacao'] == 1): ?>
+                                            <span class="btn btn-warning">Agendado</span>
+                                        <?php elseif ($locacao['situacao'] == 2): ?>
+                                            <span class="btn btn-warning">Pendente</span>
+                                        <?php elseif ($locacao['situacao'] == 3): ?>
+                                            <span class="btn btn-danger">Atrasado</span>
+                                        <?php elseif ($locacao['situacao'] == 4): ?>
+                                            <span class="btn btn-success">Finalizada</span>
+                                        <?php elseif ($locacao['situacao'] == 5): ?>
+                                            <span class="btn btn-danger">Cancelado</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endif; 
+                        endforeach; ?>
                         <?php else: ?>
                             <tr>
                                 <td colspan="5">Nenhuma locação encontrada para este mês.</td>
@@ -46,33 +95,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx = document.getElementById('faturamentoChart').getContext('2d');
-    var faturamentoChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-            datasets: [{
-                    label: 'Faturamento Total',
-                    data: [1000, 1200, 1500, 1700, 1600, 1800, 1900, 2100, 2200, 2300, 2400, 2500], // Dados de faturamento total
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    fill: false
-                },
-                {
-                    label: 'Faturamento Recebido',
-                    data: [800, 1000, 1300, 1500, 1400, 1600, 1700, 1900, 2000, 2100, 2200, 2300], // Dados de faturamento recebido
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    fill: false
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+
 </script>
 
 

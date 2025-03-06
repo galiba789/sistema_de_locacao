@@ -316,7 +316,6 @@ class Locacoes extends BaseController
             ->select('locacoes_produtos.*, P.nome, P.numero_serie')
             ->where('locacoes_produtos.locacao_id', $locacao['id'])
             ->findAll();
-        $cliente = $clienteModel->find($locacao['cliente_id']);
         // print_r($locacaoProdutos);
         // exit;
 
@@ -324,7 +323,7 @@ class Locacoes extends BaseController
         $dados = [
             'locacao' => $locacao,
             'locacao_produtos' => $locacaoProdutos,
-            'cliente' => $cliente,
+        
         ];
 
         return view('dashboard/locacoes/locacao/contrato', $dados);
