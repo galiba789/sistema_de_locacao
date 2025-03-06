@@ -55,7 +55,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Cód.</th>
-                        <th>Data</th>
+                        <th>Data de Criação</th>
                         <th>Cliente</th>
                         <th>Período</th>
                         <th>Valor</th>
@@ -105,21 +105,19 @@
                 </tbody>
             </table>
             <div class="d-flex justify-content-center">
-                <?= $paginacao->links('default', 'default_full') ?>
+                <?php echo $paginacao->links('default', 'custom_pager')?>
             </div>
         </div>
     </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Elementos
     const buscarBtn = document.getElementById("buscar-btn");
     const palavraInput = document.getElementById("palavra");
     const tipoSelect = document.getElementById("tipo");
     const situacaoSelect = document.getElementById("situacao");
     const tabelaBody = document.getElementById("tabela-locacoes");
 
-    // Função para atualizar a tabela com os resultados da busca
     function buscarLocacoes() {
   
         tabelaBody.innerHTML = "<tr><td colspan='9' class='text-center'>Carregando... <i class='fas fa-spinner fa-spin'></i></td></tr>";

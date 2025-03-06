@@ -15,23 +15,23 @@ class Locacoes extends BaseController
     {
         $locacoesModel = new LocacoesModel();
         $clientesModel = new Clientes();
-
+    
+        // Pega a página atual ou define 1 se não houver
         $pagina = $this->request->getVar('page') ?? 1;
-
+    
         // Define o número de itens por página
         $itensPorPagina = 10;
-
-        // Busca os dados paginados
+    
+        // Busca os dados paginados (mantém a variável locacoes paginada)
         $locacoes = $locacoesModel->paginate($itensPorPagina);
-
+    
         // Gera os links de paginação automaticamente
         $paginacao = $locacoesModel->pager;
-
-        $locacoes = $locacoesModel->getAtivos();
-
+    
+        // Processa os dados de locação com os nomes dos clientes
         foreach ($locacoes as &$locacao) {
             $cliente = $clientesModel->find($locacao['cliente_id']);
-
+    
             if ($cliente) {
                 if ($cliente['tipo'] == 1) {
                     $locacao['cliente_nome'] = $cliente['nome'];
@@ -44,15 +44,17 @@ class Locacoes extends BaseController
                 $locacao['cliente_nome'] = 'Desconhecido';
             }
         }
-
+    
+        // Prepara os dados para a view
         $data = [
             'locacoes' => $locacoes,
             'paginacao' => $paginacao,
         ];
-
+    
+        // Retorna a view com os dados
         return view('dashboard/locacoes/locacao/index', $data);
     }
-
+    
     public function cadastrar()
     {
         $clienteModels = new Clientes();
@@ -359,7 +361,7 @@ class Locacoes extends BaseController
             switch ($tipo) {
                 case '1': // Data
                     if (strtotime($palavra)) {
-                        $builder->where('DATE(locacao.created_at)', date('Y-m-d', strtotime($palavra)));
+                        $builder->where('DATE(locacao.created_at)', date('Y-m-d H-i-s', strtotime($palavra)));
                     }
                     break;
                 case '2': // Nome
@@ -378,20 +380,20 @@ class Locacoes extends BaseController
 
         foreach ($locacoes as &$locacao) {
             if (isset($locacao['created_at'])) {
-                $locacao['created_at'] = date('d/m/Y', strtotime($locacao['created_at']));
+                $locacao['created_at'] = date('d/m/Y H:i:s', strtotime($locacao['created_at']));
             }
             if (isset($locacao['data_entrega'])) {
-                $locacao['data_entrega'] = date('d/m/Y', strtotime($locacao['data_entrega']));
+                $locacao['data_entrega'] = date('d/m/Y H:i:s', strtotime($locacao['data_entrega']));
             }
             if (isset($locacao['data_devolucao'])) {
-                $locacao['data_devolucao'] = date('d/m/Y', strtotime($locacao['data_devolucao']));
+                $locacao['data_devolucao'] = date('d/m/Y H:i:s', strtotime($locacao['data_devolucao']));
             }
 
             if (isset($locacao['valor_total'])) {
                 $locacao['valor_total'] = number_format($locacao['valor_total'], 2, ',', '.');
             }
         }
-
+        
         return $this->response->setJSON($locacoes);
     }
 }

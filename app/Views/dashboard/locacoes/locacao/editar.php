@@ -224,57 +224,78 @@
 </div>
 
 <script>
-    let linhaAtiva = null; // Armazena a linha que abriu a modal
-    document.getElementById("produtos-container").addEventListener("input", function(e) {
-        if (e.target.matches(".quantidade, .preco-diaria, .total-unitario")) {
-            calcularTotais();
-        }
-    });
+    let linhaAtiva = null;
 
-    document.querySelectorAll('.btn-selecionar-produto').forEach(function(button) {
-        button.addEventListener('click', function() {
-            linhaAtiva = button.closest('.produto-item');
+    // Define a função calcularTotais de forma global para que todas as funções possam usá-la
+    window.calcularTotais = function() {
+        let totalDiarias = parseFloat(document.getElementById("total_diarias").value) || 0;
+        let subtotal = 0;
+        
+        // Percorre todas as linhas de produtos e calcula o total unitário de cada
+        document.querySelectorAll(".produto-item").forEach(row => {
+            let quantidade = parseFloat(row.querySelector(".quantidade").value) || 0;
+            let precoDiaria = parseFloat(row.querySelector(".preco-diaria").value) || 0;
+            let totalUnitario = quantidade * precoDiaria;
+            row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
+            subtotal += totalUnitario;
+        });
+        
+        // Multiplica o subtotal pelo total de diárias
+        subtotal *= totalDiarias;
+        document.getElementById("subtotal").value = subtotal.toFixed(2);
+        
+        // Aplica o desconto e calcula o valor total
+        let desconto = parseFloat(document.getElementById("desconto").value) || 0;
+        let valorTotal = subtotal - desconto;
+        document.getElementById("valor_total").value = valorTotal.toFixed(2);
+    };
+
+    // Aguarda o carregamento do DOM para adicionar os event listeners
+    document.addEventListener("DOMContentLoaded", function () {
+        // Atualiza os totais sempre que os inputs relevantes forem alterados
+        document.addEventListener("input", function(event) {
+            if (event.target.matches(".quantidade, .preco-diaria, #total_diarias, #desconto")) {
+                window.calcularTotais();
+            }
+        });
+
+        // Inicializa os totais na carga da página
+        window.calcularTotais();
+
+        // Vincula os botões para seleção de produto
+        document.querySelectorAll('.btn-selecionar-produto').forEach(function(button) {
+            button.addEventListener('click', function() {
+                linhaAtiva = button.closest('.produto-item');
+            });
         });
     });
 
-    function selecionarProduto(id, nome, quantidade, preco_diaria) {
-        if (linhaAtiva) {
-            // Atualiza os inputs da linha ativa
-            linhaAtiva.querySelector('.produto-id').value = id;
-            linhaAtiva.querySelector('.produto-nome').value = nome;
-            linhaAtiva.querySelector('.quantidade').value = quantidade;
-            linhaAtiva.querySelector('.preco-diaria').value = preco_diaria;
-            update_quantidade(linhaAtiva.querySelector('.quantidade'));
-        } else {
-            alert("Nenhuma linha ativa selecionada.");
-        }
-
-        var modal = new bootstrap.Modal(document.getElementById('ProdutosModal'));
-        modal.hide();
-    }
-
+    // Função para atualizar o total de um produto individual e os totais gerais
     function update_quantidade(element) {
-        const row = element.closest('.produto-item');
-        const quantidade = row.querySelector('.quantidade').value.trim();
-        const valor_unitario = row.querySelector('.preco-diaria').value.trim();
-        const totalField = row.querySelector('.total-unitario');
+        var row = element.closest('.produto-item');
+        var quantidade = row.querySelector('.quantidade').value.trim();
+        var valor_unitario = row.querySelector('.preco-diaria').value.trim();
+        var totalField = row.querySelector('.total-unitario');
 
         if (!isValidNumber(quantidade) || !isValidNumber(valor_unitario)) {
             totalField.value = '';
             return;
         }
 
-        const total = parseFloat(quantidade) * parseFloat(valor_unitario);
+        var total = parseFloat(quantidade) * parseFloat(valor_unitario);
         totalField.value = total.toFixed(2);
+        window.calcularTotais();
     }
 
+    // Função de validação para números
     function isValidNumber(value) {
         return /^[0-9]+(\.[0-9]+)?$/.test(value) && parseFloat(value) >= 0;
     }
 
+    // Função para adicionar um novo produto à lista
     function addProduto() {
         var container = document.getElementById('produtos-container');
-        var lastRow = container.querySelector('.produto-item:last-child'); 
+        var lastRow = container.querySelector('.produto-item:last-child');
 
         if (!lastRow) {
             alert('Selecione um produto antes de adicionar outro.');
@@ -286,30 +307,26 @@
         var quantidade = lastRow.querySelector('.quantidade').value.trim();
         var precoDiaria = lastRow.querySelector('.preco-diaria').value.trim();
 
-    
         if (!produtoNome || !produtoId || !isValidNumber(quantidade) || !isValidNumber(precoDiaria)) {
             alert('Preencha todos os campos antes de adicionar outro produto.');
             return;
         }
 
- 
         var newRow = lastRow.cloneNode(true);
 
-    
+        // Limpa os valores dos inputs na nova linha
         newRow.querySelector('.produto-nome').value = '';
         newRow.querySelector('.produto-id').value = '';
         newRow.querySelector('.quantidade').value = '';
         newRow.querySelector('.preco-diaria').value = '';
         newRow.querySelector('.total-unitario').value = '';
-
         container.appendChild(newRow);
 
         linhaAtiva = newRow;
-
-
-        calcularTotais();
+        window.calcularTotais();
     }
 
+    // Função para remover um produto da lista
     function removeProduto(button) {
         var row = button.closest('.produto-item');
         var container = document.getElementById('produtos-container');
@@ -319,39 +336,37 @@
         } else {
             alert('É necessário pelo menos um produto na lista.');
         }
-
-   
-        calcularTotais();
+        window.calcularTotais();
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        function calcularTotais() {
-            let totalDiarias = parseFloat(document.getElementById("total_diarias").value) || 0;
-            let subtotal = 0;
+    // Função para selecionar um produto e preencher os campos na linha ativa
+    function selecionarProduto(id, nome, quantidade, preco_diaria) {
+        if (linhaAtiva) {
+            linhaAtiva.querySelector(".produto-id").value = id;
+            linhaAtiva.querySelector(".produto-nome").value = nome;
+            linhaAtiva.querySelector(".quantidade").value = quantidade;
+            linhaAtiva.querySelector(".preco-diaria").value = preco_diaria;
 
-            document.querySelectorAll(".total-unitario").forEach(input => {
-                let valor = parseFloat(input.value) || 0;
-                subtotal += valor;
-            });
+            update_quantidade(linhaAtiva.querySelector(".quantidade"));
 
-            subtotal *= totalDiarias;
-
-            document.getElementById("subtotal").value = subtotal.toFixed(2);
-
-            let desconto = parseFloat(document.getElementById("desconto").value) || 0;
-            let valorTotal = subtotal - desconto;
-
-            document.getElementById("valor_total").value = valorTotal.toFixed(2);
+            var modal = bootstrap.Modal.getInstance(document.getElementById('ProdutosModal'));
+            modal.hide();
         }
+    }
 
-        document.addEventListener("input", function(event) {
-            if (event.target.matches(".quantidade, .preco-diaria, #total_diarias, #desconto")) {
-                calcularTotais();
-            }
-        });
+    // Função para selecionar um cliente e preencher os campos correspondentes
+    function selecionarCliente(id, nome) {
+        var clienteIdInput = document.getElementById('cliente_id');
+        var clienteNomeInput = document.getElementById('cliente_nome');
 
-        calcularTotais();
-    });
+        if (clienteIdInput && clienteNomeInput) {
+            clienteIdInput.value = id;
+            clienteNomeInput.value = nome;
+
+            var modal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
+            modal.hide();
+        }
+    }
 </script>
 
 <?= $this->endSection() ?>

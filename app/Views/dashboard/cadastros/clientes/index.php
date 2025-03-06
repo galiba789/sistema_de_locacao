@@ -77,7 +77,7 @@
         </div>
 
         <div class="d-flex justify-content-center">
-            <?= $paginacao->links('default', 'default_full') ?>
+            <?php echo $paginacao->links('default', 'custom_pager')?>
         </div>
 
     </div>
@@ -90,60 +90,89 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchType = document.getElementById("tipo");
     const tableBody = document.querySelector("tbody");
 
-    // Carrega todos os clientes ao abrir a página
-    fetchClientes();
+    function buscarClientes() {
+        tableBody.innerHTML = "<tr><td colspan='6' class='text-center'>Carregando... <i class='fas fa-spinner fa-spin'></i></td></tr>";
+        
+        const baseUrl = "/clientes/buscar";
+        let queryParams = [];
 
-    searchBtn.addEventListener("click", function () {
-        fetchClientes();
-    });
-
-    searchInput.addEventListener("keyup", function (event) {
-        if (event.key === "Enter" || searchInput.value === "") {
-            fetchClientes();
+        if (searchType.value) {
+            queryParams.push(`tipo=${encodeURIComponent(searchType.value)}`);
         }
-    });
 
-    function fetchClientes() {
-        const palavra = searchInput.value.trim();
-        const tipo = searchType.value;
+        if (searchInput.value.trim()) {
+            queryParams.push(`palavra=${encodeURIComponent(searchInput.value.trim())}`);
+        }
 
-        fetch(`/clientes/buscar?tipo=${tipo}&palavra=${palavra}`)
-            .then(response => response.json())
+        const url = queryParams.length > 0 ? `${baseUrl}?${queryParams.join('&')}` : baseUrl;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                tableBody.innerHTML = ""; // Limpa a tabela antes de adicionar os novos resultados
-                
-                if (data.length === 0) {
+                tableBody.innerHTML = "";
+
+                if (!data || data.length === 0) {
                     tableBody.innerHTML = "<tr><td colspan='6' class='text-center'>Nenhum cliente encontrado</td></tr>";
                     return;
                 }
 
-                data.forEach(cliente => {
+                let rows = data.map(cliente => {
                     let nomeOuRazao = cliente.tipo == 1 ? cliente.nome : cliente.razao_social;
                     let cpfOuCnpj = cliente.tipo == 1 ? cliente.cpf : cliente.cnpj;
 
-                    let row = `
+                    return `
                         <tr>
                             <td>${cliente.id}</td>
                             <td>${nomeOuRazao}</td>
-                            <td>${cliente.email}</td>
-                            <td>${cliente.telefone_contato}</td>
-                            <td>${cpfOuCnpj}</td>
+                            <td>${cliente.email || ''}</td>
+                            <td>${cliente.telefone_contato || ''}</td>
+                            <td>${cpfOuCnpj || ''}</td>
                             <td>
-                                <a href="/clientes/editar/${cliente.id}">
-                                    <button class="btn btn-warning btn-sm">Editar</button>
-                                </a>
-                                <a href="/clientes/excluir/${cliente.id}">
-                                    <button class="btn btn-danger btn-sm">Excluir</button>
-                                </a>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                        Ações
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="/clientes/editar/${cliente.id}">Editar</a></li>
+                                        <li><a class="dropdown-item text-danger" href="/clientes/excluir/${cliente.id}">Excluir</a></li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     `;
-                    tableBody.innerHTML += row;
-                });
+                }).join('');
+
+                tableBody.innerHTML = rows;
             })
-            .catch(error => console.error("Erro na busca:", error));
+            .catch(error => {
+                console.error("Erro na busca:", error);
+                tableBody.innerHTML = `<tr><td colspan='6' class='text-center text-danger'>Erro ao buscar dados: ${error.message}</td></tr>`;
+            });
+    }
+
+    // Carregar clientes ao iniciar
+    // buscarClientes();
+
+    // Eventos
+    if (searchBtn) {
+        searchBtn.addEventListener("click", buscarClientes);
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                buscarClientes();
+            }
+        });
     }
 });
+
 </script>
 
 

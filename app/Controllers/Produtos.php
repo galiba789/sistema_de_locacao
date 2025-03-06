@@ -14,15 +14,29 @@ class Produtos extends BaseController
         if (!session()->get('logged_in')) {
             return redirect()->to('/');
         }
-
+    
         $produtosModel = new ProdutosModel();
-
-
-        $data=[
-            'produtos' => $produtosModel->getAtivos(), 
+        
+        // Pega a página atual ou define 1 se não houver
+        $pagina = $this->request->getVar('page') ?? 1;
+        
+        // Define o número de itens por página
+        $itensPorPagina = 10;
+    
+        // Busca os dados paginados (mantém a variável produtos paginada)
+        $produtos = $produtosModel->paginate($itensPorPagina);
+    
+        // Gera os links de paginação automaticamente
+        $paginacao = $produtosModel->pager;
+    
+        $data = [
+            'produtos' => $produtos, 
+            'paginacao' => $paginacao,
         ];
+    
         return view('/dashboard/cadastros/produtos/index', $data);
     }
+    
 
     public function cadastrar(){
         if (!session()->get('logged_in')) {

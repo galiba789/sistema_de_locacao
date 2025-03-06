@@ -41,7 +41,7 @@
         </div>
 
         <div class="d-flex justify-content-center">
-            <?= $paginacao->links('default', 'default_full') ?>
+            <?php echo $paginacao->links('default', 'custom_pager')?>
         </div>
 
     </div>

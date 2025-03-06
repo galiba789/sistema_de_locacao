@@ -28,7 +28,7 @@ class Categorias extends BaseController
         
         
         $data = [
-            'categorias' => $categoriaModel->getAtivos(),
+            'categorias' => $categorias,
             'paginacao' => $paginacao,
         ];
 

@@ -17,22 +17,20 @@ class Clientes extends BaseController
         
         $clientesModel = new ModelsClientes();
 
-        $pagina = $this->request->getVar('page') ?? 1;
-
-        // Define o número de itens por página
-        $itensPorPagina = 10;
-
-        // Busca os dados paginados
-        $clientes = $clientesModel->paginate($itensPorPagina);
-
-        // Gera os links de paginação automaticamente
-        $paginacao = $clientesModel->pager;
-        
-        // print_r($clientesModel->getAtivos());
-        // exit;
+         // Pega a página atual ou define 1 se não houver
+         $pagina = $this->request->getVar('page') ?? 1;
+    
+         // Define o número de itens por página
+         $itensPorPagina = 10;
+     
+         // Busca os dados paginados (mantém a variável locacoes paginada)
+         $clientes = $clientesModel->paginate($itensPorPagina);
+     
+         // Gera os links de paginação automaticamente
+         $paginacao = $clientesModel->pager;
 
         $dados = [
-            'clientes' => $clientesModel->getAtivos(),
+            'clientes' => $clientes,
             'paginacao' => $paginacao,
         ];
 
@@ -206,21 +204,28 @@ class Clientes extends BaseController
     public function buscar()
     {
         $tipo = $this->request->getGet('tipo');
-        $palavra = $this->request->getGet('palavra');
+        $palavra = trim($this->request->getGet('palavra'));
     
         $clientesModel = new ModelsClientes();
     
+        // Se a palavra estiver vazia, retorna apenas os primeiros 50 registros para evitar sobrecarga
         if (empty($palavra)) {
-            // Se a palavra estiver vazia, retorna todos os clientes
-            $clientes = $clientesModel->findAll();
-        } else {
-            // Filtra pelos campos permitidos
-            if (in_array($tipo, ['nome', 'cpf', 'cnpj', 'id'])) {
-                $clientes = $clientesModel->like($tipo, $palavra)->findAll();
-            } else {
-                return $this->response->setJSON([]); // Retorna vazio se o tipo for inválido
-            }
+            $clientes = $clientesModel->orderBy('id', 'DESC')->limit(50)->findAll();
+            return $this->response->setJSON($clientes);
         }
+    
+        // Filtra pelos campos permitidos
+        $camposPermitidos = ['nome', 'cpf', 'cnpj', 'id'];
+        if (!in_array($tipo, $camposPermitidos)) {
+            return $this->response->setJSON([]); // Retorna vazio se o tipo for inválido
+        }
+    
+        // Busca com filtro
+        $clientes = $clientesModel
+            ->select('id, nome, razao_social, cpf, cnpj, email, telefone_contato, tipo')
+            ->like($tipo, $palavra)
+            ->orderBy('id', 'DESC')
+            ->findAll();
     
         return $this->response->setJSON($clientes);
     }
