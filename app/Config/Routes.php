@@ -45,6 +45,8 @@ $routes->get('/locacoes/edita/(:num)', 'Locacoes::edita/$1');
 $routes->post('/locacoes/editar/(:num)', 'Locacoes::editar/$1');
 $routes->get('/locacoes/cancelar/(:num)', 'Locacoes::cancelarContrato/$1');
 $routes->get('locacoes/buscar', 'Locacoes::buscar');
+$routes->post('/locacoes/consulta', 'Locacoes::consulta');
+$routes->post('/locacoes/salvarClientes', 'Locacoes::salvarClientes');
 
 $routes->get('/calendario', 'Calendario::index');
 $routes->get('/calendario/index/(:num)/(:num)', 'Calendario::index/$1/$2');

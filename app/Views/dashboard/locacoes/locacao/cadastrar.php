@@ -143,7 +143,14 @@
             </div>
             <div class="modal-body">
                 <!-- Barra de busca -->
-                <input type="text" id="buscarCliente" class="form-control mb-3" placeholder="Buscar cliente..." onkeyup="filtrarClientes()">
+                <div class="row g-2 mb-3 align-items-center">
+                    <div class="col-md-10">
+                        <input type="text" id="buscarCliente" class="form-control" placeholder="Buscar cliente..." onkeyup="filtrarClientes()">
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#cadastroClienteModal"><i class="fa-solid fa-pen"></i></button>
+                    </div>
+                </div>
 
                 <!-- Tabela de clientes -->
                 <div class="table-responsive">
@@ -185,9 +192,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 <input type="text" id="buscarProdutos" class="form-control mb-3" placeholder="Buscar cliente..." onkeyup="filtrarProdutos()">
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead class="table-dark">
@@ -221,6 +226,35 @@
     </div>
 </div>
 
+<div class="modal fade" id="cadastroClienteModal" tabindex="-1" aria-labelledby="cadastroClienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Centralizada e com largura maior -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cadastroClienteModalLabel">Cadastro de Clientes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;"> <!-- Limite de altura e scroll -->
+                <form action="<?=base_url('locacoes/salvarClientes')?>" method="POST">
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Tipo de Cliente</label>
+                        <select id="type" name="type" class="form-control" onchange="clientesForm()" required>
+                            <option value="">Selecione...</option>
+                            <option value="1">Pessoa Física</option>
+                            <option value="2">Pessoa Jurídica</option>
+                        </select>
+                    </div>
+                    <div id="selectForm"></div>
+
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     let linhaAtiva = null;
 
@@ -228,7 +262,7 @@
     window.calcularTotais = function() {
         let totalDiarias = parseFloat(document.getElementById("total_diarias").value) || 0;
         let subtotal = 0;
-        
+
         // Percorre todas as linhas de produtos e calcula o total unitário de cada
         document.querySelectorAll(".produto-item").forEach(row => {
             let quantidade = parseFloat(row.querySelector(".quantidade").value) || 0;
@@ -237,11 +271,11 @@
             row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
             subtotal += totalUnitario;
         });
-        
+
         // Multiplica o subtotal pelo total de diárias
         subtotal *= totalDiarias;
         document.getElementById("subtotal").value = subtotal.toFixed(2);
-        
+
         // Aplica o desconto e calcula o valor total
         let desconto = parseFloat(document.getElementById("desconto").value) || 0;
         let valorTotal = subtotal - desconto;
@@ -249,7 +283,7 @@
     };
 
     // Aguarda o carregamento do DOM para adicionar os event listeners
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         // Atualiza os totais sempre que os inputs relevantes forem alterados
         document.addEventListener("input", function(event) {
             if (event.target.matches(".quantidade, .preco-diaria, #total_diarias, #desconto")) {
@@ -365,6 +399,30 @@
             modal.hide();
         }
     }
+
+    function buscarEndereco(cep) {
+                // var cep = $('#cep').val();
+                if (cep == '') {
+                    alert('Informe o CEP antes de continuar');
+                    $('#cep').focus();
+                    return false;
+                }
+                $('#btn_consulta').html('Aguarde...');
+                $.post('consulta', {
+                        cep: cep
+                    },
+                    function(dados) {
+                        console.log(dados);
+
+                        $('#endereco').val(dados.logradouro);
+                        $('#estado').val(dados.uf);
+                        $('#logradouro').val(dados.logradouro);
+                        $('#localidade').val(dados.localidade);
+                        $('#bairro').val(dados.bairro);
+                        
+                    }, 'json');
+
+            };
 </script>
 
 <?= $this->endSection() ?>

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\Clientes;
+use App\Models\ConsultasCep;
 use App\Models\LocacoesModel;
 use App\Models\LocacoesProdutosModel;
 use App\Models\ProdutosModel;
@@ -395,5 +396,67 @@ class Locacoes extends BaseController
         }
         
         return $this->response->setJSON($locacoes);
+    }
+    public function consulta()
+	{
+        $cep = $this->request->getPost('cep');
+        
+        $Consulta = new ConsultasCep();
+
+        echo $Consulta->consulta($cep);
+    }
+
+    public function salvarClientes(){
+        $clientesModel = new Clientes();
+    
+        $tipo = $this->request->getPost('type'); 
+    
+        if ($tipo == 1) { 
+            $data = [
+                'tipo' => $tipo,
+                'nome' => $this->request->getPost('nome'),
+                'cpf' => $this->request->getPost('cpf'),
+                'rg' => $this->request->getPost('rg'),
+                'email' => $this->request->getPost('email'),
+                'telefone' => $this->request->getPost('telefone'),
+                'nascimento' => $this->request->getPost('nascimento'),
+                'obs' => $this->request->getPost('obs'),
+                // endereço
+                'cep' => $this->request->getPost('cep'),
+                'logradouro' => $this->request->getPost('logradouro'),
+                'numero' => $this->request->getPost('numero'),
+                'complemento' => $this->request->getPost('complemento'),
+                'bairro' => $this->request->getPost('bairro'),
+                'estado' => $this->request->getPost('estado'),
+                'localidade' => $this->request->getPost('localidade'),
+            ];
+        } elseif ($tipo == 2) { 
+            $data = [
+                'tipo' => $tipo,
+                'razao_social' => $this->request->getPost('razao_social'),
+                'cnpj' => $this->request->getPost('cnpj'),
+                'telefone_comercial' => $this->request->getPost('telefone_comercial'),
+                'email' => $this->request->getPost('email'),
+                'obs' => $this->request->getPost('obs'),
+                // Contato da empresa
+                'email_contato' => $this->request->getPost('email_contato'),
+                'telefone' => $this->request->getPost('telefone_contato'),
+                'cargo' => $this->request->getPost('cargo'),
+                // endereço
+                'cep' => $this->request->getPost('cep'),
+                'logradouro' => $this->request->getPost('logradouro'),
+                'numero' => $this->request->getPost('numero'),
+                'complemento' => $this->request->getPost('complemento'),
+                'bairro' => $this->request->getPost('bairro'),
+                'estado' => $this->request->getPost('estado'),
+                'localidade' => $this->request->getPost('localidade'),
+            ];
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Tipo inválido de cliente.');
+        }
+    
+        $clientesModel->insert($data);
+
+        return redirect()->to('/locacoes/cadastrar');
     }
 }
