@@ -15,11 +15,12 @@ class Auth extends BaseController
 
     public function login()
     {
+        // Resumindo pega os posts de password e emal, faz a verificação se está vazio e dps da um getUserbyEmail(que já é auto-explicativo)
+        // dps pego a senha correta do usuario, armazeno na variavel para poder fazer a verificação.
         
         $usersModel = new Users();
         $password = $this->request->getPost('password');
         $email = $this->request->getPost('email');
-       
         if (empty($email)) {
             return redirect()->back()->with('error', 'Por favor digite um email');
         }
@@ -27,7 +28,7 @@ class Auth extends BaseController
         if (empty($password)) {
             return redirect()->back()->with('error', 'Por favor digite uma senha');
         }
-
+        
         $user = $usersModel->getUserByEmail($email);
         $corretPassword = $usersModel->decrypt($user['password'], 1);
 
@@ -40,7 +41,9 @@ class Auth extends BaseController
             ]);
             return redirect()->to('/home');
 
-        } 
+        } else {
+            return redirect()->back()->with('error', 'Usuario ou senha incorretos'); 
+        }
     }
 
     public function logout()

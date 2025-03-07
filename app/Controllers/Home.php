@@ -17,7 +17,7 @@ class Home extends BaseController
         $locacoesModel = new LocacoesModel();
         $locacoesProdutos = new LocacoesProdutosModel();
         $clientesModel = new Clientes();
-
+        // Dá um join na tabela de clientes, para poder pegar o nome, razao social e o tipo do usuario alem dos dados da locacao.
         $locacoes = $locacoesModel
         ->select('locacao.*, C.nome, C.razao_social, C.tipo') 
         ->join('clientes C', 'locacao.cliente_id = C.id')

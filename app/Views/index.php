@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Playcom</title>
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="<?= PL_BASE_DIST ?>/css/all.min.css">
     <!-- icheck bootstrap -->
@@ -34,7 +34,7 @@
                         <input type="text" name="email" id="email" name="email" placeholder="Email" class="form-control" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
-                                <span class="fas fa-user"></span>
+                                <i class="fa-solid fa-user"></i>
                             </div>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                         <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                         <div class="input-group-append">
                             <div class="input-group-text" onclick="showPass()">
-                                <span class="fas fa-eye"></span>
+                                <span class="fa-regular fa-eye"></span>
                             </div>
                         </div>
                     </div>

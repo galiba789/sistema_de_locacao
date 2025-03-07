@@ -66,6 +66,7 @@ class Produtos extends BaseController
             'valor_minimo' => $this->request->getPost('valor_minimo'),
             'quantidade' => $this->request->getPost('quantidade'),
             'obs' => $this->request->getPost('obs'),
+            'acessorios' => $this->request->getPost('acessorios'),
             'aditivo_contratual' => $this->request->getPost('aditivo_contratual'),
         ];
 
@@ -108,6 +109,7 @@ class Produtos extends BaseController
             'valor_minimo' => $this->request->getPost('valor_minimo'),
             'quantidade' => $this->request->getPost('quantidade'),
             'obs' => $this->request->getPost('obs'),
+            'acessorios' => $this->request->getPost('acessorios'),
             'aditivo_contratual' => $this->request->getPost('aditivo_contratual'),
         ];
         

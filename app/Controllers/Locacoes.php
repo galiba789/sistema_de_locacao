@@ -310,7 +310,7 @@ class Locacoes extends BaseController
         $clienteModel = new Clientes();
 
         $locacao = $locacoesModel->find($id);
-
+        // Simples da join, pega as infos que precisa e retorna pra view
         $locacaoProdutos = $locacoesProdutoModel
             ->join('produtos P', 'P.id = locacoes_produtos.produto_id')
             ->select('locacoes_produtos.*, P.nome, P.numero_serie')

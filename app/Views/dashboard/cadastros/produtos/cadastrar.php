@@ -44,6 +44,10 @@
                         <textarea name="obs" id="obs" class="form-control"></textarea>
                     </div>
                     <div class="col-md-12 mb-3">
+                        <label for="acessorios">Acessorios:</label>
+                        <textarea name="acessorios" id="acessorios" class="form-control"></textarea>
+                    </div>
+                    <div class="col-md-12 mb-3">
                         <label for="aditivo_contratual">Aditivo contratual:</label>
                         <textarea name="aditivo_contratual" id="aditivo_contratual" class="form-control"></textarea>
                     </div>
