@@ -29,7 +29,7 @@
             <div class="card-body">
                 <p class="login-box-msg">Faça o login para entrar no painel</p>
 
-                <form action="<?= base_url('login/') ?>" method="post">
+                <form action="<?= base_url('login') ?>" method="post">
                     <div class="input-group mb-3 content_normal_user">
                         <input type="text" name="email" id="email" name="email" placeholder="Email" class="form-control" required>
                         <div class="input-group-append">

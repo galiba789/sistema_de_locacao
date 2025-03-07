@@ -30,7 +30,9 @@ class Auth extends BaseController
         }
         
         $user = $usersModel->getUserByEmail($email);
-        $corretPassword = $usersModel->decrypt($user['password'], 1);
+        if(!empty($user)){
+            $corretPassword = $usersModel->decrypt($user['password'], 1);
+        }
 
         if($user && $password === $corretPassword ){
             session()->set([
