@@ -9,6 +9,7 @@ use App\Models\LocacoesModel;
 use App\Models\LocacoesProdutosModel;
 use App\Models\ProdutosModel;
 use CodeIgniter\HTTP\ResponseInterface;
+date_default_timezone_set('America/Sao_Paulo');
 
 class Locacoes extends BaseController
 {
@@ -16,7 +17,8 @@ class Locacoes extends BaseController
     {
         $locacoesModel = new LocacoesModel();
         $clientesModel = new Clientes();
-    
+        
+        $locacoesModel->getAtivos();
         // Pega a página atual ou define 1 se não houver
         $pagina = $this->request->getVar('page') ?? 1;
     
@@ -24,7 +26,9 @@ class Locacoes extends BaseController
         $itensPorPagina = 10;
     
         // Busca os dados paginados (mantém a variável locacoes paginada)
-        $locacoes = $locacoesModel->paginate($itensPorPagina);
+        $locacoes = $locacoesModel
+            ->where('situacao !=', 5) 
+            ->paginate($itensPorPagina);
     
         // Gera os links de paginação automaticamente
         $paginacao = $locacoesModel->pager;
@@ -98,6 +102,7 @@ class Locacoes extends BaseController
             'desconto'        => $this->request->getPost('desconto'),
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
+            'created_at' => date('Y-m-d H:i:s'),
         ];
 
         $locacoesModel->insert($dadosLocacao);
@@ -220,6 +225,7 @@ class Locacoes extends BaseController
         'desconto'        => $this->request->getPost('desconto'),
         'valor_total'     => $this->request->getPost('valor_total'),
         'observacao'      => $this->request->getPost('observacao'),
+        'created_at' => date('Y-m-d H:i:s'),
     ];
 
     $locacoesModel->update($id, $dadosLocacao);
@@ -316,6 +322,7 @@ class Locacoes extends BaseController
             ->select('locacoes_produtos.*, P.nome, P.numero_serie')
             ->where('locacoes_produtos.locacao_id', $locacao['id'])
             ->findAll();
+        $cliente = $clienteModel->find($locacao['cliente_id']);
         // print_r($locacaoProdutos);
         // exit;
 
@@ -323,6 +330,7 @@ class Locacoes extends BaseController
         $dados = [
             'locacao' => $locacao,
             'locacao_produtos' => $locacaoProdutos,
+            'cliente' => $cliente,
         
         ];
 

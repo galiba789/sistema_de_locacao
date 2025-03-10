@@ -15,7 +15,7 @@ class LocacoesModel extends Model
     protected $allowedFields    = ['id', 'descricao', 'cliente_id', 'valor_total', 'situacao', 'status', 'data_entrega', 'data_devolucao', 'total_diarias', 'desconto', 'forma_pagamento', 'observacao', 'created_at', 'updated_at'];
 
     public function getAtivos() {
-        $query = "SELECT * FROM locacao WHERE excluido = 0 ORDER BY id DESC";
+        $query = "SELECT * FROM locacao WHERE situacao != 5 ORDER BY id DESC";
         $db = db_connect();
         return $db->query($query)->getResult('array');
     }
@@ -25,7 +25,7 @@ class LocacoesModel extends Model
         $primeiroDia = "$ano-$mes-01";
         $ultimoDia = date('Y-m-t', strtotime($primeiroDia));
     
-        return $this->where('excluido', 0)
+        return $this->where('situacao !=', 5)
                     ->groupStart()
                         ->where('data_entrega <=', $ultimoDia)
                         ->where('data_devolucao >=', $primeiroDia)

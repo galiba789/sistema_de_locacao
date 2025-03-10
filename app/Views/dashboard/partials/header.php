@@ -10,13 +10,13 @@
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
     
-    <link rel="stylesheet" href='<?= PL_BASE_DIST ?>/css/adminlte.css'>
+    <!-- <link rel="stylesheet" href='<?= PL_BASE_DIST ?>/css/adminlte.css'> -->
 </head>
 <style>
     .pagination{
         justify-content: right;
         padding: 2%;
-    }
+    } */
 
     .pagination .nav .nav-item .nav-link.active{
         background-color: #63A9FF !important;

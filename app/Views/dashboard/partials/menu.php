@@ -1,86 +1,49 @@
-<style>
-    .main-sidebar {
-        bottom: 0 !important;
-        float: none;
-        left: 0 !important;
-        position: fixed;
-        top: 0;
-    }
-</style>
-
-<!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4" style="position:fixed;">
-    <!-- Brand Logo -->
-    <a href="<?= base_url() ?>" class="brand-link d-flex justify-content-center align-items-center">
-        <span class="brand-text font-weight-light">Painel</span>
-
-    </a>
-    <span class="brand-link d-flex justify-content-center align-items-center">Bem vindo, <?= session()->get('name'); ?></span>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-
-
-        <!-- Sidebar Menu -->
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="<?= base_url('/home') ?>">
+            <img src="<?=PL_BASE_DIST ."/images/image.png"?>" style="height: 50px;" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a href="<?= base_url('/home') ?>" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/painel/dashboard') !== false) ? 'active' : ''; ?>">
-                        <i class="nav-icon fas fa-poll"></i>
-                        <p>
-                            Dashboard
-                        </p>
+                    <a class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/home') !== false) ? 'active' : ''; ?>" href="<?= base_url('/home') ?>">
+                        <i class="fas fa-poll"></i> Dashboard
+                    </a>
+                </li>
+           
+                <li class="nav-item">
+                    <a class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/locacoes') !== false) ? 'active' : ''; ?>" href="<?= base_url('/locacoes') ?>">
+                        <i class="fa-solid fa-clipboard-list"></i> Locações
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= base_url('/locacoes') ?>" class="nav-link">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                        <p>Locações</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('/calendario') ?>" class="nav-link">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <p>Calendario</p>
+                    <a class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/calendario') !== false) ? 'active' : ''; ?>" href="<?= base_url('/calendario') ?>">
+                        <i class="fa-solid fa-calendar-days"></i> Calendário
                     </a>
                 </li>
 
-                <li class="nav-item has-treeview">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-folder"></i>
-                        <p>
-                            Cadastros
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
+                <!-- Dropdown Cadastros -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="cadastrosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-folder"></i> Cadastros
                     </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= base_url('/clientes') ?>" class="nav-link">
-                                <i class="fa-solid fa-user"></i>
-                                <p>Clientes</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url('/categorias') ?>" class="nav-link">
-                                <i class="fa-solid fa-shop"></i>
-                                <p>Categorias</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url('/produtos') ?>" class="nav-link">
-                                <i class="fa-solid fa-cart-shopping"></i>
-                                <p>Produtos</p>
-                            </a>
-                        </li>
+                    <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <li><a class="dropdown-item" href="<?= base_url('/clientes') ?>"><i class="fa-solid fa-user"></i> Clientes</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('/categorias') ?>"><i class="fa-solid fa-shop"></i> Categorias</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('/produtos') ?>"><i class="fa-solid fa-cart-shopping"></i> Produtos</a></li>
                     </ul>
                 </li>
-
-
-
             </ul>
-        </nav>
-        <!-- /.sidebar-menu -->
+        </div>
+
+        <!-- Botão de Logout no canto direito -->
+        <a href="<?= base_url('login/logout') ?>" class="btn btn-danger">
+            <i class="fa-solid fa-sign-out-alt"></i> Logout
+        </a>
     </div>
-    <!-- /.sidebar -->
-</aside>
+</nav>

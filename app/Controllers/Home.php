@@ -10,31 +10,46 @@ class Home extends BaseController
 {
     public function index()
     {
-    
         if (!session()->get('logged_in')) {
             return redirect()->to('/');
         }
+
         $locacoesModel = new LocacoesModel();
-        $locacoesProdutos = new LocacoesProdutosModel();
         $clientesModel = new Clientes();
-        // Dá um join na tabela de clientes, para poder pegar o nome, razao social e o tipo do usuario alem dos dados da locacao.
+
+        $dias = isset($_GET['dias']) ? (int) $_GET['dias'] : 30; // Default 30 dias
+
         $locacoes = $locacoesModel
-        ->select('locacao.*, C.nome, C.razao_social, C.tipo') 
-        ->join('clientes C', 'locacao.cliente_id = C.id')
-        ->where('MONTH(locacao.created_at)', date('m'))  
-        ->where('YEAR(locacao.created_at)', date('Y'))  
-        ->orderBy('locacao.created_at', 'DESC')  
-        ->findAll();  
-        
-        // print_r($locacoes);
-        // exit;
+            ->select('locacao.*, C.nome, C.razao_social, C.tipo') 
+            ->join('clientes C', 'locacao.cliente_id = C.id')
+            ->where('locacao.situacao !=', 5)
+            ->where('locacao.created_at >=', date('Y-m-d H:i:s', strtotime("-$dias days")))
+            ->orderBy('locacao.created_at', 'DESC')
+            ->findAll();
+    
+
+        // Obtendo o faturamento mensal de locações finalizadas (situação = 4)
+        $faturamento = $locacoesModel
+            ->select("DATE_FORMAT(created_at, '%M') as mes, SUM(valor_total) as total")
+            ->where('situacao', 4)
+            ->groupBy('mes')
+            ->orderBy('MIN(created_at)', 'ASC')
+            ->findAll();
+
+        // Preparando os dados para o gráfico
+        $meses = [];
+        $valores = [];
+        foreach ($faturamento as $linha) {
+            $meses[] = $linha['mes'];
+            $valores[] = $linha['total'];
+        }
 
         $dados = [
             'locacoes' => $locacoes,
+            'meses' => json_encode($meses), 
+            'valores' => json_encode($valores),
         ];
 
         return view('dashboard/home/index', $dados);
     }
-
-
 }

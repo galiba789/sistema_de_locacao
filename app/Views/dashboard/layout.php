@@ -6,7 +6,7 @@
 
     <div class="wrapper">
         <!-- Navbar -->
-        <?= $this->include('dashboard/partials/navbar') ?>
+        <?php //echo $this->include('dashboard/partials/navbar') ?>
         <!-- /.navbar -->
 
         <?= $this->include('dashboard/partials/menu') ?>
