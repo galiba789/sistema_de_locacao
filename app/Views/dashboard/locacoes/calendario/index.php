@@ -74,6 +74,8 @@
                                 echo "<div class='locacao bg-success'>";
                             } elseif ($locacao['situacao'] == 5){
                                 echo "<div class='locacao bg-danger'>";
+                            }elseif($locacao['situacao'] == 1){
+                                echo "<div class='locacao bg-info'>";
                             } else {
                                 echo "<div class='locacao bg-warning'>";
                             }

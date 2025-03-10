@@ -30,7 +30,7 @@
                                     <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
                                     <td>
                                         <?php if ($locacao['situacao'] == 1): ?>
-                                            <span class="btn btn-warning">Agendado</span>
+                                            <span class="btn btn-info">Agendado</span>
                                         <?php elseif ($locacao['situacao'] == 2): ?>
                                             <span class="btn btn-warning">Pendente</span>
                                         <?php elseif ($locacao['situacao'] == 3): ?>
@@ -73,7 +73,7 @@
                                         <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
                                         <td>
                                             <?php if ($locacao['situacao'] == 1): ?>
-                                                <span class="btn btn-warning">Agendado</span>
+                                                <span class="btn btn-info">Agendado</span>
                                             <?php elseif ($locacao['situacao'] == 2): ?>
                                                 <span class="btn btn-warning">Pendente</span>
                                             <?php elseif ($locacao['situacao'] == 3): ?>
@@ -116,7 +116,7 @@
                                         <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
                                         <td>
                                             <?php if ($locacao['situacao'] == 1): ?>
-                                                <span class="btn btn-warning">Agendado</span>
+                                                <span class="btn btn-info">Agendado</span>
                                             <?php elseif ($locacao['situacao'] == 2): ?>
                                                 <span class="btn btn-warning">Pendente</span>
                                             <?php elseif ($locacao['situacao'] == 3): ?>

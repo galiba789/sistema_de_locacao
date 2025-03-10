@@ -59,7 +59,6 @@
                         <th>Cliente</th>
                         <th>Período</th>
                         <th>Valor</th>
-                        <th>Pagamento</th>
                         <th>Detalhe</th>
                         <th>Situação</th>
                         <th>Forma de Pagamento</th>
@@ -73,7 +72,6 @@
                         <td><?= $locacao['cliente_nome'] ?></td>
                         <td><?= $locacao['data_entrega'] ?> <br><?= $locacao['data_devolucao'] ?></td>
                         <td>R$ <?= $locacao['valor_total'] ?></td>
-                        <td></td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -88,7 +86,7 @@
                         </td>
                         <td>
                             <?php if ($locacao['situacao'] == 1): ?>
-                                <span class="btn btn-warning">Agendado</span>
+                                <span class="btn btn-info">Agendado</span>
                             <?php elseif ($locacao['situacao'] == 2): ?>
                                 <span class="btn btn-warning">Pendente</span>
                             <?php elseif ($locacao['situacao'] == 3): ?>
