@@ -6,7 +6,7 @@
         <div class="card p-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-8">
-                    <label for="nome" class="form-label">Nome</label>
+                    <label for="nome" class="form-label search">Nome</label>
                     <input type="text" id="nome" class="form-control" placeholder="Digite sua busca">
                 </div>
                 <div class="col-md-2">

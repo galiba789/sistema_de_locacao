@@ -61,7 +61,7 @@ class Clientes extends BaseController
                 'cpf' => $this->request->getPost('cpf'),
                 'rg' => $this->request->getPost('rg'),
                 'email' => $this->request->getPost('email'),
-                'telefone' => $this->request->getPost('telefone'),
+                'telefone_contato' => $this->request->getPost('telefone_contato'),
                 'nascimento' => $this->request->getPost('nascimento'),
                 'obs' => $this->request->getPost('obs'),
                 // endereço
@@ -83,7 +83,7 @@ class Clientes extends BaseController
                 'obs' => $this->request->getPost('obs'),
                 // Contato da empresa
                 'email_contato' => $this->request->getPost('email_contato'),
-                'telefone' => $this->request->getPost('telefone_contato'),
+                'telefone_contato' => $this->request->getPost('telefone_contato'),
                 'cargo' => $this->request->getPost('cargo'),
                 // endereço
                 'cep' => $this->request->getPost('cep'),
@@ -127,7 +127,7 @@ class Clientes extends BaseController
                 'cpf' => $this->request->getPost('cpf'),
                 'rg' => $this->request->getPost('rg'),
                 'email' => $this->request->getPost('email'),
-                'telefone' => $this->request->getPost('telefone'),
+                'telefone_contato' => $this->request->getPost('telefone_contato'),
                 'nascimento' => $this->request->getPost('nascimento'),
                 'obs' => $this->request->getPost('obs'),
                 // endereço

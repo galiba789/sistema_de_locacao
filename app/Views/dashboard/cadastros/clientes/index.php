@@ -6,7 +6,7 @@
     <div class="card p-3">
             <div class="row g-2 align-items-end">
                 <div class="col-md-3">
-                    <label for="tipo" class="form-label">Tipo</label>
+                    <label for="tipo" class="form-label search">Tipo</label>
                     <select id="tipo" class="form-control">
                         <option value="nome">Nome</option>
                         <option value="cpf">CPF</option>
@@ -15,7 +15,7 @@
                     </select>
                 </div>
                 <div class="col-md-5">
-                    <label for="palavra" class="form-label">Palavra</label>
+                    <label for="palavra" class="form-label search">Palavra</label>
                     <input type="text" id="palavra" class="form-control" placeholder="Digite sua busca">
                 </div>
                 <div class="col-md-2">

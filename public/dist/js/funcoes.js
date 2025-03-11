@@ -19,7 +19,7 @@ function clientesForm() {
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>Email:</label>
-                    <input type="email" name="email" id="email" class="form-control" required>
+                    <input type="email" name="email" id="email" class="form-control">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>Telefone:</label>
@@ -27,7 +27,7 @@ function clientesForm() {
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>Data de Nascimento:</label>
-                    <input type="date" name="nascimento" id="nascimento" class="form-control" required>
+                    <input type="date" name="nascimento" id="nascimento" class="form-control" >
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>Observação:</label>
@@ -85,7 +85,7 @@ function clientesForm() {
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>Email:</label>
-                    <input type="email" name="email" id="email" class="form-control" required>
+                    <input type="email" name="email" id="email" class="form-control" >
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>Observação:</label>
