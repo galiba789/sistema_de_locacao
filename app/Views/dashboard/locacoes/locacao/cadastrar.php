@@ -20,6 +20,7 @@
             <!-- Container de Produtos -->
             <div id="produtos-container">
                 <div class="row align-items-end produto-item">
+                    <div class="status-disponibilidade alert-dismissible fade show"></div> <!-- Aqui exibimos a mensagem -->
                     <div class="col-md-3 mb-3 position-relative">
                         <label class="form-label">Produto:</label>
                         <div class="input-group">
@@ -56,13 +57,7 @@
                     </div>
                 </div>
             </div>
-
-            <?php if (session()->getFlashdata('erro')): ?>
-                <div class="alert alert-danger">
-                    <?= session()->getFlashdata('erro') ?>
-                </div>
-            <?php endif; ?>
-
+            <div id="status-produto"></div>
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <label for="situacao">Situação</label>
@@ -234,7 +229,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;"> <!-- Limite de altura e scroll -->
-                <form action="<?=base_url('locacoes/salvarClientes')?>" method="POST">
+                <form action="<?= base_url('locacoes/salvarClientes') ?>" method="POST">
                     <div class="mb-3">
                         <label for="type" class="form-label">Tipo de Cliente</label>
                         <select id="type" name="type" class="form-control" onchange="clientesForm()" required>
@@ -401,28 +396,82 @@
     }
 
     function buscarEndereco(cep) {
-                // var cep = $('#cep').val();
-                if (cep == '') {
-                    alert('Informe o CEP antes de continuar');
-                    $('#cep').focus();
-                    return false;
-                }
-                $('#btn_consulta').html('Aguarde...');
-                $.post('consulta', {
-                        cep: cep
-                    },
-                    function(dados) {
-                        console.log(dados);
+        // var cep = $('#cep').val();
+        if (cep == '') {
+            alert('Informe o CEP antes de continuar');
+            $('#cep').focus();
+            return false;
+        }
+        $('#btn_consulta').html('Aguarde...');
+        $.post('consulta', {
+                cep: cep
+            },
+            function(dados) {
+                console.log(dados);
 
-                        $('#endereco').val(dados.logradouro);
-                        $('#estado').val(dados.uf);
-                        $('#logradouro').val(dados.logradouro);
-                        $('#localidade').val(dados.localidade);
-                        $('#bairro').val(dados.bairro);
-                        
-                    }, 'json');
+                $('#endereco').val(dados.logradouro);
+                $('#estado').val(dados.uf);
+                $('#logradouro').val(dados.logradouro);
+                $('#localidade').val(dados.localidade);
+                $('#bairro').val(dados.bairro);
 
-            };
+            }, 'json');
+
+    };
+    document.addEventListener("DOMContentLoaded", function() {
+    function verificarDisponibilidade(produtoInput) {
+        const produtoId = produtoInput.closest('.produto-item').querySelector('.produto-id').value;
+        const dataEntrega = document.getElementById("data_entrega").value;
+        const dataDevolucao = document.getElementById("data_devolucao").value;
+        const statusDiv = produtoInput.closest('.produto-item').querySelector('.status-disponibilidade');
+
+        if (!produtoId || !dataEntrega || !dataDevolucao) {
+            statusDiv.innerHTML = "<span class='alert-warning'>Preencha todos os campos.</span>";
+            return;
+        }
+
+        fetch("<?= base_url('locacoes/verificarDisponibilidadeAjax') ?>", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                produto_id: produtoId,
+                data_entrega: dataEntrega,
+                data_devolucao: dataDevolucao
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                statusDiv.innerHTML = "<span class='alert-success'>" + data.message + "</span>";
+            } else {
+                statusDiv.innerHTML = "<span class='alert-danger'>" + data.message + "</span>";
+            }
+        })
+        .catch(error => {
+            console.error("Erro:", error);
+            statusDiv.innerHTML = "<span class='alert-danger'>Erro ao verificar disponibilidade.</span>";
+        });
+    }
+
+    // Monitorando a seleção do produto
+    document.querySelectorAll(".produto-id").forEach(input => {
+        input.addEventListener("change", function() {
+            verificarDisponibilidade(this);
+        });
+    });
+
+    // Monitorando alterações na data de entrega e devolução
+    document.getElementById("data_entrega").addEventListener("change", function() {
+        document.querySelectorAll(".produto-id").forEach(input => verificarDisponibilidade(input));
+    });
+
+    document.getElementById("data_devolucao").addEventListener("change", function() {
+        document.querySelectorAll(".produto-id").forEach(input => verificarDisponibilidade(input));
+    });
+});
+
 </script>
 
 <?= $this->endSection() ?>
