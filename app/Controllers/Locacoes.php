@@ -27,7 +27,8 @@ class Locacoes extends BaseController
     
         // Busca os dados paginados (mantém a variável locacoes paginada)
         $locacoes = $locacoesModel
-            ->where('situacao !=', 5) 
+            ->where('situacao !=', 5)
+            ->orderBy('locacao.created_at', 'DESC')
             ->paginate($itensPorPagina);
     
         // Gera os links de paginação automaticamente
@@ -102,7 +103,8 @@ class Locacoes extends BaseController
             'desconto'        => $this->request->getPost('desconto'),
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
-            'created_at' => date('Y-m-d H:i:s'),
+            'acessorios'      => $this->request->getPost('acessorios'),
+            'created_at' => date('Y/m/d H:i:s'),
         ];
 
         $locacoesModel->insert($dadosLocacao);
@@ -225,7 +227,8 @@ class Locacoes extends BaseController
         'desconto'        => $this->request->getPost('desconto'),
         'valor_total'     => $this->request->getPost('valor_total'),
         'observacao'      => $this->request->getPost('observacao'),
-        'created_at' => date('Y-m-d H:i:s'),
+        'acessorios'      => $this->request->getPost('acessorios'),
+        'created_at' => date('Y/m/d H:i:s'),
     ];
 
     $locacoesModel->update($id, $dadosLocacao);
@@ -319,7 +322,7 @@ class Locacoes extends BaseController
         // Simples da join, pega as infos que precisa e retorna pra view
         $locacaoProdutos = $locacoesProdutoModel
             ->join('produtos P', 'P.id = locacoes_produtos.produto_id')
-            ->select('locacoes_produtos.*, P.nome, P.numero_serie')
+            ->select('locacoes_produtos.*, P.nome, P.numero_serie, P.acessorios ')
             ->where('locacoes_produtos.locacao_id', $locacao['id'])
             ->findAll();
         $cliente = $clienteModel->find($locacao['cliente_id']);
@@ -350,60 +353,67 @@ class Locacoes extends BaseController
         return redirect()->to('/locacoes')
             ->with('success', 'Locação atualizada com sucesso!');
     }
+    
     public function buscar()
-    {
-        $tipo = $this->request->getGet('tipo');
-        $palavra = $this->request->getGet('palavra');
-        $situacao = $this->request->getGet('situacao');
+{
+    $tipo = $this->request->getGet('tipo');
+    $palavra = $this->request->getGet('palavra');
+    $situacao = $this->request->getGet('situacao');
 
-        $locacoesModel = new LocacoesModel();
-        $builder = $locacoesModel->select('locacao.*, clientes.nome as cliente_nome');
-        $builder = $locacoesModel->select('locacao.*, clientes.razao_social as cliente_razao_social')
-            ->join('clientes', 'clientes.id = locacao.cliente_id');
-        if (!empty($situacao)) {
-            $builder->where('locacao.situacao', $situacao);
-        }
+    $locacoesModel = new LocacoesModel();
+    $builder = $locacoesModel->select('locacao.*, clientes.nome as cliente_nome, clientes.razao_social as cliente_razao_social')
+        ->join('clientes', 'clientes.id = locacao.cliente_id');
 
-
-        if (!empty($palavra)) {
-            switch ($tipo) {
-                case '1': // Data
-                    if (strtotime($palavra)) {
-                        $builder->where('DATE(locacao.created_at)', date('Y-m-d H-i-s', strtotime($palavra)));
-                    }
-                    break;
-                case '2': // Nome
-                    $builder->like('clientes.nome', $palavra);
-                    break;
-                case '3': //razao Social
-                    $builder->like('clientes.razao_social', $palavra);
-                    break;
-                case '4': // Código
-                    $builder->where('locacao.id', $palavra);
-                    break;
-            }
-        }
-
-        $locacoes = $builder->findAll();
-
-        foreach ($locacoes as &$locacao) {
-            if (isset($locacao['created_at'])) {
-                $locacao['created_at'] = date('d/m/Y H:i:s', strtotime($locacao['created_at']));
-            }
-            if (isset($locacao['data_entrega'])) {
-                $locacao['data_entrega'] = date('d/m/Y H:i:s', strtotime($locacao['data_entrega']));
-            }
-            if (isset($locacao['data_devolucao'])) {
-                $locacao['data_devolucao'] = date('d/m/Y H:i:s', strtotime($locacao['data_devolucao']));
-            }
-
-            if (isset($locacao['valor_total'])) {
-                $locacao['valor_total'] = number_format($locacao['valor_total'], 2, ',', '.');
-            }
-        }
-        
-        return $this->response->setJSON($locacoes);
+    // Filtrar locações canceladas apenas se a opção foi selecionada
+    if (!empty($situacao)) {
+        $builder->where('locacao.situacao', $situacao);
+    } else {
+        $builder->where('locacao.situacao !=', 5); // Excluir canceladas por padrão
     }
+
+    // Filtros de busca por palavra-chave
+    if (!empty($palavra)) {
+        switch ($tipo) {
+            case '1': // Buscar por Data
+                if (strtotime($palavra)) {
+                    $builder->where('DATE(locacao.created_at)', date('Y-m-d', strtotime($palavra)));
+                }
+                break;
+            case '2': // Buscar por Nome do Cliente
+                $builder->like('clientes.nome', $palavra);
+                break;
+            case '3': // Buscar por Razão Social
+                $builder->like('clientes.razao_social', $palavra);
+                break;
+            case '4': // Buscar por Código da Locação
+                $builder->where('locacao.id', $palavra);
+                break;
+        }
+    }
+
+    // Ordenar em ordem crescente pela data de criação
+    $builder->orderBy('locacao.created_at', 'DESC');
+
+    $locacoes = $builder->findAll();
+
+    // Formatação de datas e valores
+    foreach ($locacoes as &$locacao) {
+        if (isset($locacao['created_at'])) {
+            $locacao['created_at'] = date('d/m/Y H:i:s', strtotime($locacao['created_at']));
+        }
+        if (isset($locacao['data_entrega'])) {
+            $locacao['data_entrega'] = date('d/m/Y H:i:s', strtotime($locacao['data_entrega']));
+        }
+        if (isset($locacao['data_devolucao'])) {
+            $locacao['data_devolucao'] = date('d/m/Y H:i:s', strtotime($locacao['data_devolucao']));
+        }
+        if (isset($locacao['valor_total'])) {
+            $locacao['valor_total'] = number_format($locacao['valor_total'], 2, ',', '.');
+        }
+    }
+
+    return $this->response->setJSON($locacoes);
+}
     public function consulta()
 	{
         $cep = $this->request->getPost('cep');

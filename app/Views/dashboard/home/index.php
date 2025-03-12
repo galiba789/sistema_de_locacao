@@ -5,7 +5,7 @@
     <div class="container mt-4">
         <h1>Dashboard</h1>
         
-        <div class="row d-flex gap-3">
+        <div class="row d-flex">
             <div class="col-md-6 mt-3 mb-4">
                 <h3>Faturamento</h3>
                 <canvas id="graficoFaturamento"></canvas>

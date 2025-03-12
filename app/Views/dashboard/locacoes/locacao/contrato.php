@@ -31,20 +31,25 @@
             <tbody>
                 <tr>
                     <th style="width:150px;">N° de Série</th>
-                    <th style="width: 600px;">equipamento</th>
-                    <th style="width: 100px">quantidade</th>
+                    <th style="width: 600px;">Equipamento</th>
+                    <th style="width: 100px">Quantidade</th>
                 </tr>
 
                 <?php foreach ($locacao_produtos as $locacao_produto):?>
 
                     <tr>
                         <td style="text-align: center;"><?= $locacao_produto['numero_serie'] ?></td>
-                        <td><?= $locacao_produto['nome'] ?> <br> <?= $locacao['acessorios'] ?></td>
+                        <td><?= $locacao_produto['nome'] ?> <br> <?=$locacao_produto['acessorios']?></td>
                         <td style="text-align: center;"><?= $locacao_produto['quantidade'] ?></td>
                     </tr>
                 <?php endforeach;?>
             </tbody>
         </table>
+        <div style="display: block;margin: 20px 0;">
+            <strong>Acessorios da locação:</strong>
+            <br>
+            <p><?=$locacao['acessorios']?></p>
+        </div>
         <div style="display: block;margin: 20px 0;">
             <strong>1. 2</strong> O locatário não poderá, sem prévia autorização do locador, sublocar, emprestar, ou ceder o bem objeto da locação.
         </div>

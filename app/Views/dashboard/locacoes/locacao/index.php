@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     let badgeHtml = "";
                     switch (parseInt(locacao.situacao)) {
                         case 1:
-                            badgeHtml = '<span class="btn btn-warning">Agendado</span>';
+                            badgeHtml = '<span class="btn btn-info">Agendado</span>';
                             break;
                         case 2:
                             badgeHtml = '<span class="btn btn-warning">Pendente</span>';
@@ -187,7 +187,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             <td>${locacao.cliente_nome || locacao.cliente_razao_social}</td>
                             <td>${locacao.data_entrega }<br>${locacao.data_devolucao}</td>
                             <td>${valorTotal}</td>
-                            <td></td>
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
