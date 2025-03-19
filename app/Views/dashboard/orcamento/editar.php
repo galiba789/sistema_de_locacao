@@ -3,13 +3,13 @@
 <div class="content-wrapper">
     <div class=" container mt-4">
         <h2>Cadastro de Locação</h2>
-        <form action="<?= base_url('locacoes/editar/') . $locacao['id'] ?>" method="post">
+        <form action="<?= base_url('orcamento/editar/') . $orcamento['id'] ?>" method="post">
             <div class="row">
                 <div class="col-md-12 mb-3 position-relative">
                     <label for="cliente_id" class="form-label">Cliente:</label>
                     <div class="input-group">
-                        <input type="text" id="cliente_nome" class="form-control" value="<?= $locacao['cliente_nome'] ?>" disabled readonly>
-                        <input type="hidden" name="cliente_id" id="cliente_id" value="<?= $locacao['cliente_id'] ?>">
+                        <input type="text" id="cliente_nome" class="form-control" value="<?= $orcamento['cliente_nome'] ?>" disabled readonly>
+                        <input type="hidden" name="cliente_id" id="cliente_id" value="<?= $orcamento['cliente_id'] ?>">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#clienteModal">
                             <i class="fas fa-search"></i>
                         </button>
@@ -19,7 +19,7 @@
 
             <!-- Container de Produtos -->
             <div id="produtos-container">
-                <?php foreach ($locacao['produtos'] as $produto): ?>
+                <?php foreach ($orcamento['produtos'] as $produto): ?>
                     <div class="row align-items-end produto-item">
                         <div class="status-disponibilidade alert-dismissible fade show"></div> <!-- Aqui exibimos a mensagem -->
                         <?php if (session()->getFlashdata('erro')): ?>
@@ -69,24 +69,24 @@
                 <div class="col-md-3 mb-3">
                     <label for="situacao">Situação</label>
                     <select name="situacao" id="situacao" class="form-control">
-                        <option value="1" <?= $locacao['situacao'] == 1 ? 'selected' : '' ?>>Agendado</option>
-                        <option value="2" <?= $locacao['situacao'] == 2 ? 'selected' : '' ?>>Pendente</option>
-                        <option value="3" <?= $locacao['situacao'] == 3 ? 'selected' : '' ?>>Atrasado</option>
-                        <option value="4" <?= $locacao['situacao'] == 4 ? 'selected' : '' ?>>Finalizado</option>
-                        <option value="5" <?= $locacao['situacao'] == 5 ? 'selected' : '' ?>>Cancelado</option>
+                        <option value="1" <?= $orcamento['situacao'] == 1 ? 'selected' : '' ?>>Agendado</option>
+                        <option value="2" <?= $orcamento['situacao'] == 2 ? 'selected' : '' ?>>Pendente</option>
+                        <option value="3" <?= $orcamento['situacao'] == 3 ? 'selected' : '' ?>>Atrasado</option>
+                        <option value="4" <?= $orcamento['situacao'] == 4 ? 'selected' : '' ?>>Finalizado</option>
+                        <option value="5" <?= $orcamento['situacao'] == 5 ? 'selected' : '' ?>>Cancelado</option>
                     </select>
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="data_entrega">Data de Entrega:</label>
-                    <input type="datetime-local" id="data_entrega" name="data_entrega" class="form-control" value="<?= $locacao['data_entrega'] ?>">
+                    <input type="datetime-local" id="data_entrega" name="data_entrega" class="form-control" value="<?= $orcamento['data_entrega'] ?>">
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="data_devolucao">Data de Devolução:</label>
-                    <input type="datetime-local" id="data_devolucao" name="data_devolucao" class="form-control" value="<?= $locacao['data_devolucao'] ?>">
+                    <input type="datetime-local" id="data_devolucao" name="data_devolucao" class="form-control" value="<?= $orcamento['data_devolucao'] ?>">
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="total_diarias">Total de Diarias:</label>
-                    <input type="text" id="total_diarias" name="total_diarias" class="form-control" value="<?= $locacao['total_diarias'] ?>">
+                    <input type="text" id="total_diarias" name="total_diarias" class="form-control" value="<?= $orcamento['total_diarias'] ?>">
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -99,10 +99,10 @@
                 <div class="col-md-6 mb-3">
                     <label for="forma_pagamento">Forma de pagamento:</label>
                     <select class="form-control" id="forma_pagamento" name="forma_pagamento">
-                        <option value="Pix" <?= $locacao['forma_pagamento'] == 'Pix' ? 'selected' : ' ' ?>>Pix</option>
-                        <option value="Dinheiro" <?= $locacao['forma_pagamento'] == 'Dinheiro' ? 'selected' : ' ' ?>>Dinheiro</option>
-                        <option value="Cartão" <?= $locacao['forma_pagamento'] == 'Cartão' ? 'selected' : ' ' ?>>Cartão</option>
-                        <option value="Boleto" <?= $locacao['forma_pagamento'] == 'Boleto' ? 'selected' : ' ' ?>>Boleto</option>
+                        <option value="Pix" <?= $orcamento['forma_pagamento'] == 'Pix' ? 'selected' : ' ' ?>>Pix</option>
+                        <option value="Dinheiro" <?= $orcamento['forma_pagamento'] == 'Dinheiro' ? 'selected' : ' ' ?>>Dinheiro</option>
+                        <option value="Cartão" <?= $orcamento['forma_pagamento'] == 'Cartão' ? 'selected' : ' ' ?>>Cartão</option>
+                        <option value="Boleto" <?= $orcamento['forma_pagamento'] == 'Boleto' ? 'selected' : ' ' ?>>Boleto</option>
                     </select>
                 </div>
 
@@ -112,20 +112,20 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="desconto">Desconto:</label>
-                    <input type="text" name="desconto" id="desconto" class="form-control" value="<?= $locacao['desconto'] ?>">
+                    <input type="text" name="desconto" id="desconto" class="form-control" value="<?= $orcamento['desconto'] ?>">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="valor_total">Valor Total (R$):</label>
-                    <input type="text" name="valor_total" id="valor_total" class="form-control" value="<?= $locacao['valor_total'] ?>">
+                    <input type="text" name="valor_total" id="valor_total" class="form-control" value="<?= $orcamento['valor_total'] ?>">
                 </div>
 
                 <div class="col-md-12 mb-3">
                     <label for="acessorios">Acessorios:</label>
-                    <textarea type="text" name="acessorios" id="acessorios" class="form-control"><?= $locacao['acessorios'] ?></textarea>
+                    <textarea type="text" name="acessorios" id="acessorios" class="form-control"><?= $orcamento['acessorios'] ?></textarea>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label for="observacao">Observação:</label>
-                    <textarea type="text" name="observacao" id="observacao" class="form-control"><?= $locacao['observacao'] ?></textarea>
+                    <textarea type="text" name="observacao" id="observacao" class="form-control"><?= $orcamento['observacao'] ?></textarea>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Salvar Locação</button>
@@ -392,7 +392,6 @@
     </div>
 </div>
 
-
 <script>
     let linhaAtiva = null;
 
@@ -559,8 +558,8 @@
             formContainer.find('[name="estado"]').val(dados.uf);
             formContainer.find('[name="localidade"]').val(dados.localidade);
         }, 'json');
-    }
-    
+    };
+
     document.addEventListener("DOMContentLoaded", function() {
         function verificarDisponibilidade(produtoInput) {
             const produtoId = produtoInput.closest('.produto-item').querySelector('.produto-id').value;

@@ -1,15 +1,15 @@
 <?= $this->extend('dashboard/layout'); ?>
 <?= $this->section('content-wrapper') ?>
 <div class="content-wrapper">
-    <div class=" container mt-4">
-        <h2>Cadastro de Locação</h2>
-        <form action="<?= base_url('locacoes/editar/') . $locacao['id'] ?>" method="post">
+    <div class="container mt-4">
+        <h2>Cadastro de Orçamento</h2>
+        <form action="<?= base_url('orcamento/salvar') ?>" method="post">
             <div class="row">
                 <div class="col-md-12 mb-3 position-relative">
                     <label for="cliente_id" class="form-label">Cliente:</label>
                     <div class="input-group">
-                        <input type="text" id="cliente_nome" class="form-control" value="<?= $locacao['cliente_nome'] ?>" disabled readonly>
-                        <input type="hidden" name="cliente_id" id="cliente_id" value="<?= $locacao['cliente_id'] ?>">
+                        <input type="text" id="cliente_nome" class="form-control" placeholder="Selecione um cliente" disabled readonly>
+                        <input type="hidden" name="cliente_id" id="cliente_id">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#clienteModal">
                             <i class="fas fa-search"></i>
                         </button>
@@ -19,90 +19,89 @@
 
             <!-- Container de Produtos -->
             <div id="produtos-container">
-                <?php foreach ($locacao['produtos'] as $produto): ?>
-                    <div class="row align-items-end produto-item">
-                        <div class="status-disponibilidade alert-dismissible fade show"></div> <!-- Aqui exibimos a mensagem -->
-                        <?php if (session()->getFlashdata('erro')): ?>
-                            <div class="alert alert-danger">
-                                <?= session()->getFlashdata('erro') ?>
-                            </div>
-                        <?php endif; ?>
-                        <div class="col-md-3 mb-3 position-relative">
-                            <label class="form-label">Produto:</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control produto-nome" value="<?= $produto['produto_nome'] ?>" disabled readonly>
-                                <input type="hidden" name="produto_id[]" class="produto-id" value="<?= $produto['produto_id'] ?>">
-                                <button type="button" class="btn btn-secondary btn-selecionar-produto" data-bs-toggle="modal" data-bs-target="#ProdutosModal">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
+                <div class="row align-items-end produto-item">
+                    <div class="status-disponibilidade alert-dismissible fade show"></div> <!-- Aqui exibimos a mensagem -->
+                    <?php if (session()->getFlashdata('erro')): ?>
+                        <div class="alert alert-danger">
+                            <?= session()->getFlashdata('erro') ?>
                         </div>
-
-                        <div class="col-md-2 mb-3">
-                            <label>Quantidade</label>
-                            <input type="number" name="quantidade[]" class="form-control quantidade" value="<?= $produto['quantidade'] ?>" min="0" oninput="update_quantidade(this)">
-                        </div>
-
-                        <div class="col-md-2 mb-3">
-                            <label>Preço Unitário</label>
-                            <input type="number" name="preco_diaria[]" class="form-control preco-diaria" value="<?= $produto['preco_diaria'] ?>" oninput="update_quantidade(this)" min="0" step="0.01">
-                        </div>
-
-                        <div class="col-md-2 mb-3">
-                            <label>Total</label>
-                            <input type="text" name="total_unitario[]" class="form-control total-unitario" value="<?= number_format($produto['quantidade'] * $produto['preco_diaria'], 2) ?>" readonly>
-                        </div>
-
-                        <div class="col-md-2 mb-3 d-flex gap-2">
-                            <button type="button" class="btn btn-success" onclick="addProduto()">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger" onclick="removeProduto(this)">
-                                <i class="fas fa-times"></i>
+                    <?php endif; ?>
+                    <div class="col-md-3 mb-3 position-relative">
+                        <label class="form-label">Produto:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control produto-nome" placeholder="Selecione um produto" disabled readonly>
+                            <input type="hidden" name="produto_id[]" class="produto-id">
+                            <button type="button" class="btn btn-secondary btn-selecionar-produto" data-bs-toggle="modal" data-bs-target="#ProdutosModal">
+                                <i class="fas fa-search"></i>
                             </button>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
 
+                    <div class="col-md-2 mb-3">
+                        <label>Quantidade</label>
+                        <input type="number" name="quantidade[]" class="form-control quantidade" oninput="update_quantidade(this)" min="0">
+                    </div>
+
+                    <div class="col-md-2 mb-3">
+                        <label>Preço Unitário</label>
+                        <input type="number" name="preco_diaria[]" class="form-control preco-diaria" oninput="update_quantidade(this)" min="0" step="0.01">
+                    </div>
+
+                    <div class="col-md-2 mb-3">
+                        <label>Total</label>
+                        <input type="text" name="total_unitario[]" class="form-control total-unitario" readonly>
+                    </div>
+
+                    <div class="col-md-2 mb-3 d-flex gap-2">
+                        <button type="button" class="btn btn-success" onclick="addProduto()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="removeProduto(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="status-produto"></div>
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <label for="situacao">Situação</label>
-                    <select name="situacao" id="situacao" class="form-control">
-                        <option value="1" <?= $locacao['situacao'] == 1 ? 'selected' : '' ?>>Agendado</option>
-                        <option value="2" <?= $locacao['situacao'] == 2 ? 'selected' : '' ?>>Pendente</option>
-                        <option value="3" <?= $locacao['situacao'] == 3 ? 'selected' : '' ?>>Atrasado</option>
-                        <option value="4" <?= $locacao['situacao'] == 4 ? 'selected' : '' ?>>Finalizado</option>
-                        <option value="5" <?= $locacao['situacao'] == 5 ? 'selected' : '' ?>>Cancelado</option>
+                    <select name="situacao" id="situacao" class="form-select">
+                        <option value="">Selecionar</option>
+                        <option value="1">Agendado</option>
+                        <option value="2">Pendente</option>
+                        <option value="3">Atrasado</option>
+                        <option value="4">Finalizado</option>
+                        <option value="5">Cancelado</option>
                     </select>
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="data_entrega">Data de Entrega:</label>
-                    <input type="datetime-local" id="data_entrega" name="data_entrega" class="form-control" value="<?= $locacao['data_entrega'] ?>">
+                    <input type="datetime-local" id="data_entrega" name="data_entrega" class="form-control">
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="data_devolucao">Data de Devolução:</label>
-                    <input type="datetime-local" id="data_devolucao" name="data_devolucao" class="form-control" value="<?= $locacao['data_devolucao'] ?>">
+                    <input type="datetime-local" id="data_devolucao" name="data_devolucao" class="form-control">
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="total_diarias">Total de Diarias:</label>
-                    <input type="text" id="total_diarias" name="total_diarias" class="form-control" value="<?= $locacao['total_diarias'] ?>">
+                    <input type="text" id="total_diarias" name="total_diarias" class="form-control">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="condicao">Condição de pagamento</label>
-                    <select name="condicao" id="condicao" class="form-control">
+                    <select name="condicao" id="condicao" class="form-select">
                         <option value="1">Á vista</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="forma_pagamento">Forma de pagamento:</label>
-                    <select class="form-control" id="forma_pagamento" name="forma_pagamento">
-                        <option value="Pix" <?= $locacao['forma_pagamento'] == 'Pix' ? 'selected' : ' ' ?>>Pix</option>
-                        <option value="Dinheiro" <?= $locacao['forma_pagamento'] == 'Dinheiro' ? 'selected' : ' ' ?>>Dinheiro</option>
-                        <option value="Cartão" <?= $locacao['forma_pagamento'] == 'Cartão' ? 'selected' : ' ' ?>>Cartão</option>
-                        <option value="Boleto" <?= $locacao['forma_pagamento'] == 'Boleto' ? 'selected' : ' ' ?>>Boleto</option>
+                    <select class="form-select" id="forma_pagamento" name="forma_pagamento">
+                        <option value="Pix">Pix</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão">Cartão</option>
+                        <option value="Boleto">Boleto</option>
                     </select>
                 </div>
 
@@ -112,20 +111,20 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="desconto">Desconto:</label>
-                    <input type="text" name="desconto" id="desconto" class="form-control" value="<?= $locacao['desconto'] ?>">
+                    <input type="text" name="desconto" id="desconto" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="valor_total">Valor Total (R$):</label>
-                    <input type="text" name="valor_total" id="valor_total" class="form-control" value="<?= $locacao['valor_total'] ?>">
+                    <input type="text" name="valor_total" id="valor_total" class="form-control">
                 </div>
 
                 <div class="col-md-12 mb-3">
                     <label for="acessorios">Acessorios:</label>
-                    <textarea type="text" name="acessorios" id="acessorios" class="form-control"><?= $locacao['acessorios'] ?></textarea>
+                    <textarea type="text" name="acessorios" id="acessorios" class="form-control"></textarea>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label for="observacao">Observação:</label>
-                    <textarea type="text" name="observacao" id="observacao" class="form-control"><?= $locacao['observacao'] ?></textarea>
+                    <textarea type="text" name="observacao" id="observacao" class="form-control"></textarea>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Salvar Locação</button>
@@ -185,19 +184,15 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="ProdutosModal" tabindex="-1" aria-labelledby="ProdutosModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Aumenta o tamanho da modal -->
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ProdutosModalLabel">Selecionar Produto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Barra de busca -->
                 <input type="text" id="buscarProdutos" class="form-control mb-3" placeholder="Buscar cliente..." onkeyup="filtrarProdutos()">
-
-                <!-- Tabela de clientes -->
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead class="table-dark">
@@ -230,7 +225,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="cadastroClienteModal" tabindex="-1" aria-labelledby="cadastroClienteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -559,8 +553,8 @@
             formContainer.find('[name="estado"]').val(dados.uf);
             formContainer.find('[name="localidade"]').val(dados.localidade);
         }, 'json');
-    }
-    
+    };
+
     document.addEventListener("DOMContentLoaded", function() {
         function verificarDisponibilidade(produtoInput) {
             const produtoId = produtoInput.closest('.produto-item').querySelector('.produto-id').value;

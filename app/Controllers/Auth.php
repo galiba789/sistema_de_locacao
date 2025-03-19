@@ -11,7 +11,7 @@ class Auth extends BaseController
     public function index()
     {
         if (session()->get('logged_in')) {
-            return redirect()->to('/home');
+            return redirect()->to('/calendario');
         }
         return view('index');
     }
@@ -44,7 +44,7 @@ class Auth extends BaseController
                 'logged_in' => true,
              
             ]);
-            return redirect()->to('/home');
+            return redirect()->to('/calendario');
 
         } else {
             return redirect()->back()->with('error', 'Usuario ou senha incorretos'); 

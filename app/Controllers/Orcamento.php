@@ -7,59 +7,59 @@ use App\Models\Clientes;
 use App\Models\ConsultasCep;
 use App\Models\LocacoesModel;
 use App\Models\LocacoesProdutosModel;
+use App\Models\OrcamentoModel;
 use App\Models\ProdutosModel;
+use App\Models\ProdutosOrcamentoModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 date_default_timezone_set('America/Sao_Paulo');
-
-class Locacoes extends BaseController
+class Orcamento extends BaseController
 {
     public function index()
     {
-        $locacoesModel = new LocacoesModel();
+        $orcamentoModel = new OrcamentoModel();
         $clientesModel = new Clientes();
 
-        $locacoesModel->getAtivos();
+        $orcamentoModel->getAtivos();
         // Pega a página atual ou define 1 se não houver
         $pagina = $this->request->getVar('page') ?? 1;
 
         // Define o número de itens por página
         $itensPorPagina = 10;
 
+        $clientes = $clientesModel->findAll();
         // Busca os dados paginados (mantém a variável locacoes paginada)
-        $locacoes = $locacoesModel
+        $orcamentos = $orcamentoModel
             ->where('situacao !=', 5)
-            ->orderBy('locacao.created_at', 'DESC')
+            ->orderBy('orcamento.created_at', 'DESC')
             ->paginate($itensPorPagina);
 
         // Gera os links de paginação automaticamente
-        $paginacao = $locacoesModel->pager;
-
-        // Processa os dados de locação com os nomes dos clientes
-        foreach ($locacoes as &$locacao) {
-            $cliente = $clientesModel->find($locacao['cliente_id']);
-
-            if ($cliente) {
-                if ($cliente['tipo'] == 1) {
-                    $locacao['cliente_nome'] = $cliente['nome'];
-                } else if ($cliente['tipo'] == 2) {
-                    $locacao['cliente_nome'] = $cliente['razao_social'];
-                } else {
-                    $locacao['cliente_nome'] = 'Tipo de cliente desconhecido';
-                }
-            } else {
-                $locacao['cliente_nome'] = 'Desconhecido';
+        $paginacao = $orcamentoModel->pager;
+        $clientesMap = [];
+        foreach ($clientes as $cliente) {
+            $clientesMap[$cliente['id']] = $cliente;
+        }
+        
+        // Processa os dados de locação associando os nomes dos clientes
+        foreach ($orcamentos as &$orcamento) {
+            if (isset($clientesMap[$orcamento['cliente_id']])) {
+                $cliente = $clientesMap[$orcamento['cliente_id']];
+                $orcamento['tipo'] = $cliente['tipo']; // Garantimos que sempre terá um valor
+                $orcamento['cliente_nome'] = $cliente['tipo'] == 1 ? $cliente['nome'] : $cliente['razao_social'];
             }
         }
+        // print_r($orcamentos);
+        // exit;
 
         // Prepara os dados para a view
         $data = [
-            'locacoes' => $locacoes,
+            'orcamentos' => $orcamentos,
             'paginacao' => $paginacao,
         ];
 
         // Retorna a view com os dados
-        return view('dashboard/locacoes/locacao/index', $data);
+        return view('dashboard/orcamento/index', $data);
     }
 
     public function cadastrar()
@@ -72,28 +72,27 @@ class Locacoes extends BaseController
             'produtos' => $produtosModels->getAtivos(),
         ];
 
-        return view('dashboard/locacoes/locacao/cadastrar', $data);
+        return view('dashboard/orcamento/cadastrar', $data);
     }
-
     public function salvar()
     {
-        $locacoesModel = new LocacoesModel();
-        $produtosLocacoesModel = new LocacoesProdutosModel();
+        $orcamentoModel = new OrcamentoModel();
+        $orcamentoProdutosModel = new ProdutosOrcamentoModel();
 
         $data_entrega = $this->request->getPost('data_entrega');
         $data_devolucao = $this->request->getPost('data_devolucao');
         $produtos = $this->request->getPost('produto_id');
         $quantidade_solicitada = $this->request->getPost('quantidade');
-        // Verifica a disponibilidade dos produtos
-        $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao, $locacao_id = null,$quantidade_solicitada);
-        // print_r($verificacao);
-        // exit;
+
+        // Verifica a disponibilidade dos produtos antes de salvar o orçamento
+        $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao, null, $quantidade_solicitada);
+
         if ($verificacao !== true) {
             return redirect()->back()->with('erro', $verificacao);
         }
 
-        // Inserir locação e obter o ID gerado
-        $dadosLocacao = [
+        // Inserir orçamento
+        $dadosOrcamento = [
             'cliente_id'      => $this->request->getPost('cliente_id'),
             'situacao'        => $this->request->getPost('situacao'),
             'data_entrega'    => $data_entrega,
@@ -106,105 +105,101 @@ class Locacoes extends BaseController
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
             'acessorios'      => $this->request->getPost('acessorios'),
-            'created_at' => date('Y/m/d H:i:s'),
+            'created_at'      => date('Y/m/d H:i:s'),
         ];
 
-        $locacoesModel->insert($dadosLocacao);
-        $locacaoId = $locacoesModel->insertID(); // Obtendo o ID da locação recém-criada
+        if (!$orcamentoModel->insert($dadosOrcamento)) {
+            return redirect()->back()->with('error', 'Erro ao salvar o orçamento!');
+        }
 
-        // Inserir os produtos da locação
+        $orcamento_id = $orcamentoModel->insertID(); // Obtém o ID do orçamento recém-criado
+
+        // Inserir os produtos no orçamento
         $produtoIds = $this->request->getPost('produto_id');
         $quantidades = $this->request->getPost('quantidade');
-        $precosDiaria = $this->request->getPost('preco_diaria');
         $totaisUnitarios = $this->request->getPost('total_unitario');
 
         foreach ($produtoIds as $index => $produtoId) {
             if (!empty($produtoId) && !empty($quantidades[$index])) {
-                $dadosProdutoLocacao = [
-                    'locacao_id'    => $locacaoId,
-                    'produto_id'    => $produtoId,
-                    'quantidade'    => $quantidades[$index],
-                    'preco_diaria'  => $precosDiaria[$index],
+                $dadosProdutoOrcamento = [
+                    'orcamento_id'   => $orcamento_id,
+                    'produto_id'     => $produtoId,
+                    'quantidade'     => $quantidades[$index],
                     'total_unitario' => $totaisUnitarios[$index]
                 ];
-                $produtosLocacoesModel->insert($dadosProdutoLocacao);
+                $orcamentoProdutosModel->insert($dadosProdutoOrcamento);
             }
         }
 
-        if (!$locacaoId) {
-            return redirect()->back()->with('error', 'Erro ao salvar locação!');
-        }
-
-        // Redireciona para /locacoes e passa o ID da locação recém-criada
-        return redirect()->to('/locacoes')
-            ->with('success', 'Locação salva com sucesso!')
-            ->with('contrato_id', $locacaoId);
+        // Redireciona para a página de orçamentos
+        return redirect()->to('/orcamento')
+            ->with('success', 'Orçamento salvo com sucesso!')
+            ->with('orcamento_id', $orcamento_id);
     }
+
+
     public function edita($id)
     {
         $produtosModel = new ProdutosModel();
-        $locacoesModel = new LocacoesModel();
-        $produtosLocacoesModel = new LocacoesProdutosModel();
+        $orcamentoModel = new OrcamentoModel();
+        $produtosOrcamentoModels = new ProdutosOrcamentoModel();
         $clientesModel = new Clientes();
 
         // Obtém os dados da locação
-        $locacao = $locacoesModel->find($id);
-        if (!$locacao) {
-            return redirect()->to('/locacoes')->with('error', 'Locação não encontrada.');
+        $orcamento = $orcamentoModel->find($id);
+        if (!$orcamento) {
+            return redirect()->to('/orcamento')->with('error', 'Locação não encontrada.');
         }
-        $locacao = $locacoesModel
-            ->select('locacao.*, clientes.nome AS cliente_nome, clientes.razao_social, clientes.tipo AS cliente_tipo')
-            ->join('clientes', 'clientes.id = locacao.cliente_id', 'left')
-            ->where('locacao.id', $id)
+        $orcamento = $orcamentoModel
+            ->select('orcamento.*, clientes.nome AS cliente_nome, clientes.razao_social, clientes.tipo AS cliente_tipo')
+            ->join('clientes', 'clientes.id = orcamento.cliente_id', 'left')
+            ->where('orcamento.id', $id)
             ->first();
 
         // Define corretamente o nome do cliente considerando o tipo
-        if ($locacao) {
-            $locacao['cliente_nome'] = $locacao['cliente_tipo'] == 1 ? $locacao['cliente_nome'] : $locacao['razao_social'];
+        if ($orcamento) {
+            $orcamento['cliente_nome'] = $orcamento['cliente_tipo'] == 1 ? $orcamento['cliente_nome'] : $orcamento['razao_social'];
         }
 
 
         // Buscar produtos da locação com JOIN para obter os detalhes de cada produto
-        $produtosLocacao = $produtosLocacoesModel
-            ->select('locacoes_produtos.*, produtos.nome AS produto_nome, produtos.preco_diaria')
-            ->join('produtos', 'produtos.id = locacoes_produtos.produto_id', 'left')
-            ->where('locacoes_produtos.locacao_id', $id)
+        $produtos_orcamentos = $produtosOrcamentoModels
+            ->select('orcamento_produtos.*, produtos.nome AS produto_nome, produtos.preco_diaria')
+            ->join('produtos', 'produtos.id = orcamento_produtos.produto_id', 'left')
+            ->where('orcamento_produtos.orcamento_id', $id)
             ->findAll();
 
         // Se um produto foi removido, definir nome como "Produto removido"
-        foreach ($produtosLocacao as &$produtoLocacao) {
-            if (!$produtoLocacao['produto_nome']) {
-                $produtoLocacao['produto_nome'] = 'Produto removido';
+        foreach ($produtos_orcamentos as &$produto_orcamento) {
+            if (!$produto_orcamento['produto_nome']) {
+                $produto_orcamento['produto_nome'] = 'Produto removido';
             }
         }
 
-        $locacao['produtos'] = $produtosLocacao;
-
-
-        // print_r($locacao);
-        // exit;
+        $orcamento['produtos'] = $produtos_orcamentos;
         $produtos = $produtosModel->getAtivos();
 
 
-
+        // print_r($orcamento);
+        // exit;
         $data = [
-            'locacao' => $locacao,
+            'orcamento' => $orcamento,
             'clientes' => $clientesModel->getAtivos(),
             'produtos' => $produtos
         ];
 
-        return view('/dashboard/locacoes/locacao/editar', $data);
+        return view('/dashboard/orcamento/editar', $data);
     }
 
     public function editar($id)
     {
-        $locacoesModel = new LocacoesModel();
-        $produtosLocacoesModel = new LocacoesProdutosModel();
+        $orcamentoModel = new OrcamentoModel();
+        $produtosOrcamentoModels = new ProdutosOrcamentoModel();
 
         $data_entrega = $this->request->getPost('data_entrega');
         $data_devolucao = $this->request->getPost('data_devolucao');
         $produtos = $this->request->getPost('produto_id') ?? [];
-        $quantidade_solicitada = $this ->request->getPost('quantidade');
+        $quantidade_solicitada = $this->request->getPost('quantidade');
 
         if (!is_array($produtos) || empty($produtos)) {
             return redirect()->back()->with('erro', 'Nenhum produto selecionado.');
@@ -218,7 +213,7 @@ class Locacoes extends BaseController
         }
 
         // Atualizar a locação
-        $dadosLocacao = [
+        $dadosOrcamento = [
             'cliente_id'      => $this->request->getPost('cliente_id'),
             'situacao'        => $this->request->getPost('situacao'),
             'data_entrega'    => $data_entrega,
@@ -234,7 +229,7 @@ class Locacoes extends BaseController
             'created_at' => date('Y/m/d H:i:s'),
         ];
 
-        $locacoesModel->update($id, $dadosLocacao);
+        $orcamentoModel->update($id, $dadosOrcamento);
 
         // Atualizar produtos da locação
         $produtoIds = $this->request->getPost('produto_id') ?? [];
@@ -244,24 +239,24 @@ class Locacoes extends BaseController
 
         if ($id) {
             // Remover produtos antigos associados à locação
-            $produtosLocacoesModel->where('locacao_id', $id)->delete();
+            $produtosOrcamentoModels->where('orcamento_id', $id)->delete();
         }
 
         // Adicionar os novos produtos corretamente
         foreach ($produtoIds as $index => $produtoId) {
             if (!empty($produtoId) && !empty($quantidades[$index])) {
                 $dadosProdutoLocacao = [
-                    'locacao_id'     => $id,
+                    'orcamento_id'     => $id,
                     'produto_id'     => $produtoId,
                     'quantidade'     => $quantidades[$index],
                     'preco_diaria'   => $precosDiaria[$index],
                     'total_unitario' => $totaisUnitarios[$index]
                 ];
-                $produtosLocacoesModel->insert($dadosProdutoLocacao);
+                $produtosOrcamentoModels->insert($dadosProdutoLocacao);
             }
         }
 
-        return redirect()->to('/locacoes')
+        return redirect()->to('/orcamento')
             ->with('success', 'Locação atualizada com sucesso!');
     }
 
@@ -271,33 +266,33 @@ class Locacoes extends BaseController
         $locacoesProdutoModel = new LocacoesProdutosModel();
         $data_entrega   = date('Y-m-d H:i:s', strtotime($data_entrega));
         $data_devolucao = date('Y-m-d H:i:s', strtotime($data_devolucao));
-    
+
         foreach ($produtos as $index => $produto_id) {
             $produto_info = $produtosModels->where('id', $produto_id)->get()->getRow();
-    
+
             if ($produto_info) {
                 $nome_produto      = $produto_info->nome;
                 $quantidade_estoque = $produto_info->quantidade;
-    
+
                 $query = $locacoesProdutoModel
                     ->selectSum('locacoes_produtos.quantidade', 'quantidade_alocada')
                     ->join('locacao', 'locacao.id = locacoes_produtos.locacao_id')
                     ->where('locacoes_produtos.produto_id', $produto_id)
                     ->where('locacao.data_entrega <=', $data_devolucao)
                     ->where('locacao.data_devolucao >=', $data_entrega)
-                    ->groupBy('locacoes_produtos.produto_id'); 
-    
+                    ->groupBy('locacoes_produtos.produto_id');
+
                 if ($locacao_id) {
                     $query->where('locacao.id !=', $locacao_id);
                 }
-    
+
                 $result = $query->get()->getRow();
                 $quantidade_alocada = $result ? (int)$result->quantidade_alocada : 0;
                 $quantidade_requerida = $quantidade_solicitada[$index] ?? 1;
                 // print_r($quantidade_requerida);
                 // exit;
                 $quantidade_disponivel = $quantidade_estoque - $quantidade_alocada;
-    
+
                 if ($quantidade_requerida > $quantidade_disponivel) {
                     return "O produto '{$nome_produto}' não está disponível na quantidade solicitada para as datas informadas. Disponível: {$quantidade_disponivel}.";
                 }
@@ -306,47 +301,18 @@ class Locacoes extends BaseController
             }
         }
         return true;
-    }    
-    public function gerarContrato($id)
-    {
-        $locacoesModel = new LocacoesModel();
-        $locacoesProdutoModel = new LocacoesProdutosModel();
-        $produtoModel = new ProdutosModel();
-        $clienteModel = new Clientes();
-
-        $locacao = $locacoesModel->find($id);
-        // Simples da join, pega as infos que precisa e retorna pra view
-        $locacaoProdutos = $locacoesProdutoModel
-            ->join('produtos P', 'P.id = locacoes_produtos.produto_id')
-            ->select('locacoes_produtos.*, P.nome, P.numero_serie, P.acessorios ')
-            ->where('locacoes_produtos.locacao_id', $locacao['id'])
-            ->findAll();
-        $cliente = $clienteModel->find($locacao['cliente_id']);
-        // print_r($locacaoProdutos);
-        // exit;
-
-
-        $dados = [
-            'locacao' => $locacao,
-            'locacao_produtos' => $locacaoProdutos,
-            'cliente' => $cliente,
-
-        ];
-
-        return view('dashboard/locacoes/locacao/contrato', $dados);
     }
 
-
-    public function cancelarContrato($id)
+    public function cancelarOrcamento($id)
     {
-        $locacaoModel = new LocacoesModel();
+        $orcamentoModel = new OrcamentoModel();
 
         $dados = [
             'situacao' => 5,
         ];
-        $locacaoModel->update($id, $dados);
+        $orcamentoModel->update($id, $dados);
 
-        return redirect()->to('/locacoes')
+        return redirect()->to('/orcamento')
             ->with('success', 'Locação atualizada com sucesso!');
     }
 
@@ -356,15 +322,15 @@ class Locacoes extends BaseController
         $palavra = $this->request->getGet('palavra');
         $situacao = $this->request->getGet('situacao');
 
-        $locacoesModel = new LocacoesModel();
-        $builder = $locacoesModel->select('locacao.*, clientes.nome as cliente_nome, clientes.razao_social as cliente_razao_social')
-            ->join('clientes', 'clientes.id = locacao.cliente_id');
+        $orcamentoModel = new OrcamentoModel();
+        $builder = $orcamentoModel->select('orcamento.*, clientes.nome as cliente_nome, clientes.razao_social as cliente_razao_social')
+            ->join('clientes', 'clientes.id = orcamento.cliente_id');
 
         // Filtrar locações canceladas apenas se a opção foi selecionada
         if (!empty($situacao)) {
-            $builder->where('locacao.situacao', $situacao);
+            $builder->where('orcamento.situacao', $situacao);
         } else {
-            $builder->where('locacao.situacao !=', 5); // Excluir canceladas por padrão
+            $builder->where('orcamento.situacao !=', 5); // Excluir canceladas por padrão
         }
 
         // Filtros de busca por palavra-chave
@@ -372,7 +338,7 @@ class Locacoes extends BaseController
             switch ($tipo) {
                 case '1': // Buscar por Data
                     if (strtotime($palavra)) {
-                        $builder->where('DATE(locacao.created_at)', date('Y-m-d', strtotime($palavra)));
+                        $builder->where('DATE(orcamento.created_at)', date('Y-m-d', strtotime($palavra)));
                     }
                     break;
                 case '2': // Buscar por Nome do Cliente
@@ -382,33 +348,33 @@ class Locacoes extends BaseController
                     $builder->like('clientes.razao_social', $palavra);
                     break;
                 case '4': // Buscar por Código da Locação
-                    $builder->where('locacao.id', $palavra);
+                    $builder->where('orcamento.id', $palavra);
                     break;
             }
         }
 
         // Ordenar em ordem crescente pela data de criação
-        $builder->orderBy('locacao.created_at', 'DESC');
+        $builder->orderBy('orcamento.created_at', 'DESC');
 
-        $locacoes = $builder->findAll();
+        $orcamentos = $builder->findAll();
 
         // Formatação de datas e valores
-        foreach ($locacoes as &$locacao) {
-            if (isset($locacao['created_at'])) {
-                $locacao['created_at'] = date('d/m/Y H:i:s', strtotime($locacao['created_at']));
+        foreach ($orcamentos as &$orcamento) {
+            if (isset($orcamento['created_at'])) {
+                $orcamento['created_at'] = date('d/m/Y H:i:s', strtotime($orcamento['created_at']));
             }
-            if (isset($locacao['data_entrega'])) {
-                $locacao['data_entrega'] = date('d/m/Y H:i:s', strtotime($locacao['data_entrega']));
+            if (isset($orcamento['data_entrega'])) {
+                $orcamento['data_entrega'] = date('d/m/Y H:i:s', strtotime($orcamento['data_entrega']));
             }
-            if (isset($locacao['data_devolucao'])) {
-                $locacao['data_devolucao'] = date('d/m/Y H:i:s', strtotime($locacao['data_devolucao']));
+            if (isset($orcamento['data_devolucao'])) {
+                $orcamento['data_devolucao'] = date('d/m/Y H:i:s', strtotime($orcamento['data_devolucao']));
             }
-            if (isset($locacao['valor_total'])) {
-                $locacao['valor_total'] = number_format($locacao['valor_total'], 2, ',', '.');
+            if (isset($orcamento['valor_total'])) {
+                $orcamento['valor_total'] = number_format($orcamento['valor_total'], 2, ',', '.');
             }
         }
 
-        return $this->response->setJSON($locacoes);
+        return $this->response->setJSON($orcamentos);
     }
     public function consulta()
     {
@@ -488,18 +454,104 @@ class Locacoes extends BaseController
             ]);
         }
         // Chama a função para verificar a disponibilidade
-        $disponivel = $this->verificarDisponibilidade([$produto_id], $data_entrega, $data_devolucao, $locacao_id = null ,$quantidade_solicitada);
+        $disponivel = $this->verificarDisponibilidade([$produto_id], $data_entrega, $data_devolucao, $orcamento_id = null, $quantidade_solicitada);
 
         if ($disponivel === true) {
             return $this->response->setJSON([
                 'status' => 'success',
                 'message' => 'Produto disponível.'
             ]);
-        }else {
+        } else {
             return $this->response->setJSON([
                 'status' => 'error',
                 'message' => $disponivel
             ]);
         }
+    }
+
+    public function fazerContrato($id)
+    {
+        $orcamentoModel = new OrcamentoModel();
+        $orcamentoProdutosModel = new ProdutosOrcamentoModel();
+        $locacaoModel = new LocacoesModel();
+        $produtoLocacaoModel = new LocacoesProdutosModel();
+
+        // 1. Buscar orçamento
+        $orcamento = $orcamentoModel->find($id);
+        if (!$orcamento) {
+            return false; // Orçamento não encontrado
+        }
+
+        // 2. Buscar produtos do orçamento
+        $orcamentoProdutos = $orcamentoProdutosModel->where('orcamento_id', $id)->findAll();
+
+        // 3. Criar nova locação
+        $novaLocacao = [
+            'cliente_id'    => $orcamento['cliente_id'],
+            'descricao'     => $orcamento['descricao'],
+            'situacao'      => $orcamento['situacao'],
+            'total_diarias' => $orcamento['total_diarias'],
+            'desconto'      => $orcamento['desconto'],
+            'observação'    => $orcamento['observacao'],
+            'acessorios'    => $orcamento['acessorios'],
+            'valor_total'   => $orcamento['valor_total'],
+            'data_entrega'  => $orcamento['data_entrega'],
+            'data_devolucao' => $orcamento['data_devolucao'],
+            'forma_pagamento' => $orcamento['forma_pagamento'],
+            'condicao'      => $orcamento['condicao'],
+            'status'        => 1
+        ];
+
+        $locacaoId = $locacaoModel->insert($novaLocacao, true); // true retorna o ID inserido
+
+        if (!$locacaoId) {
+            return redirect()->back()
+                ->with('Error', 'Erro');
+        }
+
+        // 4. Adicionar os produtos do orçamento à locação
+        foreach ($orcamentoProdutos as $produto) {
+            $produtoLocacaoModel->insert([
+                'locacao_id'    => $locacaoId,
+                'produto_id'    => $produto['produto_id'],
+                'quantidade'    => $produto['quantidade'],
+            ]);
+        }
+
+        // 5. Atualizar status do orçamento
+        $orcamentoModel->update($id, ['situacao' => 4]);
+
+
+        return redirect()->to('/locacoes')
+            ->with('success', 'Locação atualizada com sucesso!');
+    }
+
+
+    public function gerarContrato($id)
+    {
+        $orcamentoModel = new OrcamentoModel();
+        $produtoOrcamentoModel = new ProdutosOrcamentoModel();
+        $clienteModel = new clientes();
+
+        $orcamento = $orcamentoModel->find($id);
+        if (!$orcamento) {
+            return redirect()->back()->with('error', 'Orçamento não encontrado.');
+        }
+
+        $orcamentoProdutos = $produtoOrcamentoModel
+            ->join('produtos P', 'P.id = orcamento_produtos.produto_id')
+            ->select('orcamento_produtos.*, P.nome, P.numero_serie, P.acessorios ')
+            ->where('orcamento_produtos.orcamento_id', $orcamento['id'])
+            ->findAll();
+
+        $cliente = $clienteModel->find($orcamento['cliente_id']);
+
+        $dados = [
+            'orcamento' => $orcamento,
+            'orcamento_produtos' => $orcamentoProdutos,
+            'cliente' => $cliente,
+        ];
+
+        return view('dashboard/orcamento/contrato', $dados);
     }
 }

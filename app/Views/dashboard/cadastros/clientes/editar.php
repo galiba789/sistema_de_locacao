@@ -105,7 +105,7 @@
                     
                     <div class="col-md-4 mb-3">
                         <label>Telefone de Contato:</label>
-                        <input type="text" name="telefone_contato" id="telefone_contato" class="form-control" required value="<?=$cliente['telefone_contato']?>">
+                        <input type="text" name="telefone_contato_cnpj" id="telefone_contato_cnpj" class="form-control" required value="<?=$cliente['telefone_contato']?>">
                     </div>
                     
                     <div class="col-md-4 mb-3">

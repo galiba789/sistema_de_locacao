@@ -1,6 +1,7 @@
 <?= $this->extend('dashboard/layout'); ?>
 <?= $this->section('content-wrapper'); ?>
 
+
 <div class="content-wrapper">
     <div class="container mt-4">
         <h1>Dashboard</h1>
@@ -12,7 +13,7 @@
             </div>
             <div class="col-md-6 mt-3 mb-4">
                 <h3>Ultímas locações</h3>
-                <table class="table">
+                <table class="table ultimas_loc">
                     <thead class="thead-dark">
                         <tr>
                             <th>Código</th>
@@ -26,7 +27,7 @@
                             <?php foreach ($locacoes as $locacao): ?>
                                 <tr>
                                     <td><?= $locacao['id'] ?></td>
-                                    <td><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></td>
+                                    <td><a href="clientes/historico/<?=$locacao['cliente_id']?>"><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></a></td>
                                     <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
                                     <td>
                                         <?php if ($locacao['situacao'] == 1): ?>
@@ -54,7 +55,7 @@
 
             <div class="col-md-6 mt-3 mb-4">
                 <h3>Locações Agendadas</h3>
-                <table class="table">
+                <table class="table agendadas">
                     <thead class="thead-dark">
                         <tr>
                             <th>Código</th>
@@ -69,7 +70,7 @@
                                 if ($locacao['situacao'] == 1): ?>
                                     <tr>
                                         <td><?= $locacao['id'] ?></td>
-                                        <td><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></td>
+                                        <td><a href="clientes/historico/<?=$locacao['cliente_id']?>"><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></a></td>
                                         <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
                                         <td>
                                             <?php if ($locacao['situacao'] == 1): ?>
@@ -97,7 +98,7 @@
             </div>
             <div class="col-md-6 mt-3 mb-4">
                 <h3>Locações Finalizadas</h3>
-                <table class="table">
+                <table class="table finalizadas">
                     <thead class="thead-dark">
                         <tr>
                             <th>Código</th>
@@ -112,7 +113,7 @@
                                 if ($locacao['situacao'] == 4): ?>
                                     <tr>
                                         <td><?= $locacao['id'] ?></td>
-                                        <td><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></td>
+                                        <td><a href="clientes/historico/<?=$locacao['cliente_id']?>"><?= $locacao['tipo'] == 1 ? $locacao['nome'] : $locacao['razao_social']; ?></a></td>
                                         <td><?= date('d/m/Y H:i:s', strtotime($locacao['created_at'])) ?></td>
                                         <td>
                                             <?php if ($locacao['situacao'] == 1): ?>
@@ -143,36 +144,38 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const ctx = document.getElementById('graficoFaturamento').getContext('2d');
+document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('graficoFaturamento').getContext('2d');
 
-        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        const valores = <?= $valores ?>;
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: meses,
-                datasets: [{
-                    label: 'Faturamento (R$)',
-                    data: valores,
-                    backgroundColor: 'rgba(60, 235, 25, 0.6)',
-                    borderColor: 'rgb(0, 0, 0)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+    const meses = <?= $meses ?>;
+    const valores = <?= $valores ?>;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Faturamento (R$)',
+                data: valores,
+                backgroundColor: 'rgba(60, 235, 25, 0.6)',
+                borderColor: 'rgb(0, 0, 0)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
+        }
     });
+});
 </script>
+
 
 
 <?= $this->endSection(); ?>

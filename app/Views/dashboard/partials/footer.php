@@ -3,7 +3,7 @@
   <div class="text-center p-3 bg-primary dark-footer">
     <strong>Todos os direitos reservados a &copy; <a href="https://ecommercenet.com.br" style="color: #ffffff !important;" target="__blank">Ecommercenet</a></strong>
     <br>
-    <small>Versão: 1.3</small>
+    <small>Versão: 2.0</small>
   </div>
   <!-- Copyright -->
 </footer>

@@ -20,33 +20,35 @@ class Home extends BaseController
         $dias = isset($_GET['dias']) ? (int) $_GET['dias'] : 30; // Default 30 dias
 
         $locacoes = $locacoesModel
-            ->select('locacao.*, C.nome, C.razao_social, C.tipo') 
+            ->select('locacao.*, C.nome, C.razao_social, C.tipo')
             ->join('clientes C', 'locacao.cliente_id = C.id')
             ->where('locacao.situacao !=', 5)
             ->where('locacao.created_at >=', date('Y-m-d H:i:s', strtotime("-$dias days")))
-            ->orderBy('locacao.created_at', 'DESC')
+            ->orderBy('locacao.id', 'DESC') // ALTERADO PARA ORDENAR PELO ID CRESCENTE
             ->findAll();
-    
 
-        // Obtendo o faturamento mensal de locações finalizadas (situação = 4)
-        $faturamento = $locacoesModel
-            ->select("DATE_FORMAT(created_at, '%M') as mes, SUM(valor_total) as total")
+
+            $faturamento = $locacoesModel
+            ->select("DATE_FORMAT(created_at, '%m') as mes, 
+                      DATE_FORMAT(created_at, '%M') as nome_mes, 
+                      SUM(valor_total) as total")
             ->where('situacao', 4)
-            ->groupBy('mes')
-            ->orderBy('MIN(created_at)', 'ASC')
-            ->findAll();
-
+            ->groupBy('mes') 
+            ->groupBy('nome_mes') 
+            ->orderBy('mes', 'ASC')
+            ->findAll();        
+        
         // Preparando os dados para o gráfico
         $meses = [];
         $valores = [];
         foreach ($faturamento as $linha) {
-            $meses[] = $linha['mes'];
-            $valores[] = $linha['total'];
+            $meses[] = $linha['nome_mes']; // Nome do mês por extenso
+            $valores[] = (float) $linha['total']; // Garantindo que os valores sejam float
         }
 
         $dados = [
             'locacoes' => $locacoes,
-            'meses' => json_encode($meses), 
+            'meses' => json_encode($meses),
             'valores' => json_encode($valores),
         ];
 

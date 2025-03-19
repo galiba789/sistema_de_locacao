@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\Clientes as ModelsClientes;
 use App\Models\ConsultasCep;
+use App\Models\LocacoesModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Clientes extends BaseController
@@ -24,7 +25,9 @@ class Clientes extends BaseController
          $itensPorPagina = 10;
      
          // Busca os dados paginados (mantém a variável locacoes paginada)
-         $clientes = $clientesModel->paginate($itensPorPagina);
+         $clientes = $clientesModel
+            ->orderBy('clientes.created_at', 'DESC')
+            ->paginate($itensPorPagina);
      
          // Gera os links de paginação automaticamente
          $paginacao = $clientesModel->pager;
@@ -83,7 +86,7 @@ class Clientes extends BaseController
                 'obs' => $this->request->getPost('obs'),
                 // Contato da empresa
                 'email_contato' => $this->request->getPost('email_contato'),
-                'telefone_contato' => $this->request->getPost('telefone_contato'),
+                'telefone_contato' => $this->request->getPost('telefone_contato_cnpj'),
                 'cargo' => $this->request->getPost('cargo'),
                 // endereço
                 'cep' => $this->request->getPost('cep'),
@@ -156,7 +159,7 @@ class Clientes extends BaseController
                 'obs' => $this->request->getPost('obs'),
                 // Contato da empresa
                 'email_contato' => $this->request->getPost('email_contato'),
-                'telefone_contato' => $this->request->getPost('telefone_contato'),
+                'telefone_contato' => $this->request->getPost('telefone_contato_cnpj'),
                 'cargo' => $this->request->getPost('cargo'),
                 // endereço
                 'cep' => $this->request->getPost('cep'),
@@ -186,11 +189,7 @@ class Clientes extends BaseController
         $clientesModel = new ModelsClientes();
         $clientesModel->find($id);
 
-        $dados = [
-            'status' => 0,
-        ];
-
-        $clientesModel->update($id, $dados);
+        $clientesModel->delete($id);
         return redirect()->to('/clientes')->with('success', 'Cliente desativado com sucesso.');
     }
     public function consulta()
@@ -230,5 +229,20 @@ class Clientes extends BaseController
         return $this->response->setJSON($clientes);
     }
     
+    public function historico($id){
+        $clientesModel = new ModelsClientes();
+        $locacaoModel = new LocacoesModel();
+
+        $cliente = $clientesModel->find($id);
+        $locacao = $locacaoModel->where('cliente_id =', $id)
+                ->find();
+        
+        $dados = [
+            'cliente' => $cliente,
+            'locacoes' => $locacao,
+        ];
+
+        return view('dashboard/cadastros/clientes/cliente', $dados);
+    }
 
 }

@@ -20,6 +20,7 @@ $routes->get('/clientes/excluir/(:num)', 'Clientes::excluir/$1');
 $routes->get('/clientes/editar/(:num)', 'Clientes::editar/$1');
 $routes->post('/clientes/update/(:num)', 'Clientes::update/$1');
 $routes->get('/clientes/buscar', 'Clientes::buscar');
+$routes->get('/clientes/historico/(:num)', 'Clientes::historico/$1');
 
 
 
@@ -48,12 +49,34 @@ $routes->post('/locacoes/editar/(:num)', 'Locacoes::editar/$1');
 $routes->get('/locacoes/cancelar/(:num)', 'Locacoes::cancelarContrato/$1');
 $routes->get('locacoes/buscar', 'Locacoes::buscar');
 $routes->post('/locacoes/consulta', 'Locacoes::consulta');
+$routes->post('/locacoes/edita/consulta', 'Locacoes::consulta');
 $routes->post('/locacoes/salvarClientes', 'Locacoes::salvarClientes');
 $routes->post('/locacoes/verificarDisponibilidadeAjax', 'Locacoes::verificarDisponibilidadeAjax');
 
 $routes->get('/calendario', 'Calendario::index');
 $routes->get('/calendario/index/(:num)/(:num)', 'Calendario::index/$1/$2');
 
+$routes->get('/orcamento', 'Orcamento::index');
+$routes->get('/orcamento/cadastrar', 'Orcamento::cadastrar');
+$routes->post('/orcamento/salvar', 'Orcamento::salvar');
+$routes->get('/orcamento/contrato/(:num)', 'Orcamento::gerarContrato/$1');
+$routes->get('/orcamento/edita/(:num)', 'Orcamento::edita/$1');
+$routes->post('/orcamento/editar/(:num)', 'Orcamento::editar/$1');
+$routes->get('/orcamento/cancelar/(:num)', 'Orcamento::cancelarOrcamento/$1');
+$routes->get('orcamento/buscar', 'Orcamento::buscar');
+$routes->post('/orcamento/consulta', 'Orcamento::consulta');
+$routes->post('/orcamento/edita/consulta', 'Orcamento::consulta');
+$routes->post('/orcamento/salvarClientes', 'Orcamento::salvarClientes');
+$routes->post('/orcamento/verificarDisponibilidadeAjax', 'Orcamento::verificarDisponibilidadeAjax');
+$routes->get('/orcamento/fazerContrato/(:num)', 'Orcamento::fazerContrato/$1');
 
+
+
+$routes->get('/usuarios', 'Users::index');
+$routes->get('/usuarios/cadastrar', 'Users::cadastrar');
+$routes->post('/usuarios/salvar', 'Users::salvar');
+$routes->get('/usuarios/edita/(:num)', 'Users::edita/$1');
+$routes->post('/usuarios/editar/(:num)', 'Users::editar/$1');
+$routes->get('/usuarios/excluir/(:num)', 'Users::excluir/$1');
 
 $routes->get('/home', 'Home::index');

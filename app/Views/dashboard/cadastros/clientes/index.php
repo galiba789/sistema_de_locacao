@@ -47,10 +47,10 @@
                     <tr>
                         <td><?=$cliente['id']?></td>
                         <?php if ($cliente['tipo'] == 1):?>
-                            <td><?=$cliente['nome']?></td>
+                            <td><a href="clientes/historico/<?=$cliente['id']?>"><?=$cliente['nome']?></a></td>
                         <?php endif;?>
                         <?php if ($cliente['tipo'] == 2):?>
-                            <td><?=$cliente['razao_social']?></td>
+                            <td><a href="clientes/historico/<?=$cliente['id']?>"><?=$cliente['razao_social']?></a></td>
                         <?php endif;?>
                         <td><?= $cliente['email']?></td>
                         
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     return `
                         <tr>
                             <td>${cliente.id}</td>
-                            <td>${nomeOuRazao}</td>
+                            <td><a href="clientes/historico/${cliente.id}">${nomeOuRazao}</a></td>
                             <td>${cliente.email || ''}</td>
                             <td>${cliente.telefone_contato || ''}</td>
                             <td>${cpfOuCnpj || ''}</td>

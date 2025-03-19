@@ -11,7 +11,12 @@
     .dark-mode .navbar .nav-link {
         color: #ffffff !important;
     }
-
+    .dark-mode p{
+        color: #ffffff !important;
+    }
+    .dark-mode h5{
+        color: #ffffff !important;
+    }
     .nav-link {
         color: #ffffff !important;
     }
@@ -68,6 +73,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('/orcamento') ?>">
+                        <i class="fa fa-clipboard"></i> Orçamento
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('/calendario') ?>">
                         <i class="fa-solid fa-calendar-days"></i> Calendário
                     </a>
@@ -82,6 +92,7 @@
                         <li><a class="dropdown-item" href="<?= base_url('/clientes') ?>"><i class="fa-solid fa-user"></i> Clientes</a></li>
                         <li><a class="dropdown-item" href="<?= base_url('/categorias') ?>"><i class="fa-solid fa-shop"></i> Categorias</a></li>
                         <li><a class="dropdown-item" href="<?= base_url('/produtos') ?>"><i class="fa-solid fa-cart-shopping"></i> Produtos</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('/usuarios') ?>"><i class="fa-solid fa-user-plus"></i> Usuarios</a></li>
                     </ul>
                 </li>
             </ul>

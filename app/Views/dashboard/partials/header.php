@@ -9,7 +9,9 @@
     <!-- IonIcons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
-    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
     <link rel="stylesheet" href='<?= PL_BASE_DIST ?>/css/bootstrap.min.css'>
 </head>
 <style>

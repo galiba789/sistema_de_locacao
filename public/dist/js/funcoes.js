@@ -1,156 +1,53 @@
 function clientesForm() {
-  var value = document.getElementById("type").value;
-  var form = document.getElementById("selectForm");
+    var tipo = document.getElementById("type").value;
+    var formFisica = document.getElementById("formFisica");
+    var formJuridica = document.getElementById("formJuridica");
 
-  if (value == "1") {
-    form.innerHTML = `
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label>Nome:</label>
-                    <input type="text" name="nome" id="nome" class="form-control" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>CPF:</label>
-                    <input type="text" name="cpf" id="cpf" class="form-control" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>RG:</label>
-                    <input type="text" name="rg" id="rg" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Email:</label>
-                    <input type="email" name="email" id="email" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Telefone:</label>
-                    <input type="text" name="telefone_contato" id="telefone_contato" class="form-control" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Data de Nascimento:</label>
-                    <input type="date" name="nascimento" id="nascimento" class="form-control" >
-                </div>
-                <div class="col-md-12 mb-3">
-                    <label>Observação:</label>
-                    <input type="text" name="obs" id="obs" class="form-control">
-                </div>
+    if (tipo == "1") { // Pessoa Física
+        formFisica.style.display = "block";
+        formJuridica.style.display = "none";
 
-                <h3 class="col-md-12 mb-3">Endereço:</h3>
+        // Habilita os campos do formulário de Pessoa Física
+        enableFields(formFisica);
+        // Desabilita os campos do formulário de Pessoa Jurídica
+        disableFields(formJuridica);
+    } else if (tipo == "2") { // Pessoa Jurídica
+        formFisica.style.display = "none";
+        formJuridica.style.display = "block";
 
-               <div class="col-md-4 mb-3">
-                    <label>CEP:</label>
-                    <input type="text" name="cep" class="form-control" id="cep" onblur="buscarEndereco(this.value)" required>
-                    <small><a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">Não Sabe o CEP ? Clique aqui</a></small>
-                </div>
+        // Habilita os campos do formulário de Pessoa Jurídica
+        enableFields(formJuridica);
+        // Desabilita os campos do formulário de Pessoa Física
+        disableFields(formFisica);
+    } else {
+        formFisica.style.display = "none";
+        formJuridica.style.display = "none";
 
-                <div class="col-md-8 mb-3">
-                    <label>Logradouro:</label>
-                    <input type="text" name="logradouro" id="logradouro" class="form-control" >
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Número:</label>
-                    <input type="text" name="numero" id="numero" class="form-control" required>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Complemento:</label>
-                    <input type="text" name="complemento" id="complemento" class="form-control">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Bairro:</label>
-                    <input type="text" name="bairro" id="bairro" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Estado:</label>
-                    <input type="text" name="estado" id="estado" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Cidade:</label>
-                    <input type="text" name="localidade" id="localidade" class="form-control">
-                </div>
-            </div>
-        `;
-  } else if (value == "2") {
-    form.innerHTML = `
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label>Razão Social:</label>
-                    <input type="text" name="razao_social" id="razao_social" class="form-control" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>CNPJ:</label>
-                    <input type="text" name="cnpj" id="cnpj" class="form-control" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Telefone Comercial:</label>
-                    <input type="text" name="telefone_comercial" id="telefone_comercial" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Email:</label>
-                    <input type="email" name="email" id="email" class="form-control" >
-                </div>
-                <div class="col-md-12 mb-3">
-                    <label>Observação:</label>
-                    <input type="text" name="obs" id="obs" class="form-control">
-                </div>
-                
-                <h3 class="col-md-12 mb-3">Contato da empresa:</h3>
-
-                <div class="col-md-4 mb-3">
-                    <label>Email de Contato:</label>
-                    <input type="email" name="email_contato" id="email_contato" class="form-control">
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <label>Telefone de Contato:</label>
-                    <input type="text" name="telefone_contato" id="telefone_contato" class="form-control" required>
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <label>Cargo:</label>
-                    <input type="text" name="cargo" id="cargo" class="form-control">
-                </div>
-
-                <h3 class="col-md-12 mb-3">Endereço:</h3>
-
-               <div class="col-md-4 mb-3">
-                    <label>CEP:</label>
-                    <input type="text" name="cep" class="form-control" id="cep" onblur="buscarEndereco(this.value)" required>
-                    <small><a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">Não Sabe o CEP ? Clique aqui</a></small>
-                </div>
-
-                <div class="col-md-8 mb-3">
-                    <label>Logradouro:</label>
-                    <input type="text" name="logradouro" id="logradouro" class="form-control">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Número:</label>
-                    <input type="text" name="numero" id="numero" class="form-control">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Complemento:</label>
-                    <input type="text" name="complemento" id="complemento" class="form-control">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Bairro:</label>
-                    <input type="text" name="bairro" id="bairro" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Estado:</label>
-                    <input type="text" name="estado" id="estado" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Cidade:</label>
-                    <input type="text" name="localidade" id="localidade" class="form-control">
-                </div>
-
-            </div>
-        `;
-  } else {
-    form.innerHTML = "";
-  }
+        // Desabilita todos os campos
+        disableFields(formFisica);
+        disableFields(formJuridica);
+    }
 }
 
+// Função para desabilitar todos os campos dentro de um formulário
+function disableFields(form) {
+    var inputs = form.getElementsByTagName("input");
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].setAttribute("disabled", "disabled");
+        inputs[i].removeAttribute("required");
+    }
+}
 
-
+// Função para habilitar todos os campos dentro de um formulário
+function enableFields(form) {
+    var inputs = form.getElementsByTagName("input");
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].removeAttribute("disabled");
+        if (inputs[i].hasAttribute("data-required")) {
+            inputs[i].setAttribute("required", "required");
+        }
+    }
+}
 function filtrarClientes() {
     var input = document.getElementById('buscarCliente').value.toLowerCase();
     var rows = document.querySelectorAll('#listaClientes tr');

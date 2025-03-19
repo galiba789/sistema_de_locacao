@@ -21,6 +21,11 @@
             <div id="produtos-container">
                 <div class="row align-items-end produto-item">
                     <div class="status-disponibilidade alert-dismissible fade show"></div> <!-- Aqui exibimos a mensagem -->
+                    <?php if (session()->getFlashdata('erro')): ?>
+                        <div class="alert alert-danger">
+                            <?= session()->getFlashdata('erro') ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="col-md-3 mb-3 position-relative">
                         <label class="form-label">Produto:</label>
                         <div class="input-group">
@@ -222,14 +227,14 @@
 </div>
 
 <div class="modal fade" id="cadastroClienteModal" tabindex="-1" aria-labelledby="cadastroClienteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Centralizada e com largura maior -->
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="cadastroClienteModalLabel">Cadastro de Clientes</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;"> <!-- Limite de altura e scroll -->
-                <form action="<?= base_url('locacoes/salvarClientes') ?>" method="POST">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="formCadastroCliente" action="<?= base_url('locacoes/salvarClientes') ?>" method="POST">
                     <div class="mb-3">
                         <label for="type" class="form-label">Tipo de Cliente</label>
                         <select id="type" name="type" class="form-control" onchange="clientesForm()" required>
@@ -238,11 +243,143 @@
                             <option value="2">Pessoa Jurídica</option>
                         </select>
                     </div>
-                    <div id="selectForm"></div>
 
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    <!-- Formulário de Pessoa Física -->
+                    <div id="formFisica" class="cliente-form" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Nome:</label>
+                                <input type="text" name="nome" id="nome_fisica" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>CPF:</label>
+                                <input type="text" name="cpf" id="cpf" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>RG:</label>
+                                <input type="text" name="rg" id="rg" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Email:</label>
+                                <input type="email" name="email" id="email_fisica" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Telefone:</label>
+                                <input type="text" name="telefone_contato" id="telefone_contato_fisica" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Data de Nascimento:</label>
+                                <input type="date" name="nascimento" id="nascimento" class="form-control">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label>Observação:</label>
+                                <input type="text" name="obs" id="obs_fisica" class="form-control">
+                            </div>
+                            <h3 class="col-md-12 mb-3">Endereço:</h3>
+                            <div class="col-md-4 mb-3">
+                                <label>CEP:</label>
+                                <input type="text" name="cep" id="cep" class="form-control" onblur="buscarEndereco(this.value, this)" required>
+                                <small><a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">Não Sabe o CEP ? Clique aqui</a></small>
+                            </div>
+
+                            <div class="col-md-8 mb-3">
+                                <label>Logradouro:</label>
+                                <input type="text" name="logradouro" id="logradouro" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Número:</label>
+                                <input type="text" name="numero" id="numero" class="form-control" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Complemento:</label>
+                                <input type="text" name="complemento" id="complemento" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Bairro:</label>
+                                <input type="text" name="bairro" id="bairro" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Estado:</label>
+                                <input type="text" name="estado" id="estado" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Cidade:</label>
+                                <input type="text" name="localidade" id="localidade" class="form-control">
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Formulário de Pessoa Jurídica -->
+                    <div id="formJuridica" class="cliente-form" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Razão Social:</label>
+                                <input type="text" name="razao_social" id="razao_social" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>CNPJ:</label>
+                                <input type="text" name="cnpj" id="cnpj" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Telefone Comercial:</label>
+                                <input type="text" name="telefone_comercial" id="telefone_comercial" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Email:</label>
+                                <input type="email" name="email" id="email_juridica" class="form-control">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label>Observação:</label>
+                                <input type="text" name="obs" id="obs_juridica" class="form-control">
+                            </div>
+                            <h3 class="col-md-12 mb-3">Contato da empresa:</h3>
+                            <div class="col-md-4 mb-3">
+                                <label>Email de Contato:</label>
+                                <input type="email" name="email_contato" id="email_contato" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Telefone de Contato:</label>
+                                <input type="text" name="telefone_contato_cnpj" id="telefone_contato_cnpj" class="form-control" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Cargo:</label>
+                                <input type="text" name="cargo" id="cargo" class="form-control">
+                            </div>
+                            <h3 class="col-md-12 mb-3">Endereço:</h3>
+                            <div class="col-md-4 mb-3">
+                                <label>CEP:</label>
+                                <input type="text" name="cep" id="cep" class="form-control" onblur="buscarEndereco(this.value, this)" required>
+                                <small><a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">Não Sabe o CEP ? Clique aqui</a></small>
+                            </div>
+
+                            <div class="col-md-8 mb-3">
+                                <label>Logradouro:</label>
+                                <input type="text" name="logradouro" id="logradouro" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Número:</label>
+                                <input type="text" name="numero" id="numero" class="form-control" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Complemento:</label>
+                                <input type="text" name="complemento" id="complemento" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Bairro:</label>
+                                <input type="text" name="bairro" id="bairro" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Estado:</label>
+                                <input type="text" name="estado" id="estado" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Cidade:</label>
+                                <input type="text" name="localidade" id="localidade" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Salvar</button>
                 </form>
             </div>
         </div>
@@ -250,7 +387,14 @@
 </div>
 
 
+
+
 <script>
+    function clientesForm() {
+        var tipo = document.getElementById("type").value;
+        document.getElementById("formFisica").style.display = tipo == "1" ? "block" : "none";
+        document.getElementById("formJuridica").style.display = tipo == "2" ? "block" : "none";
+    }
     let linhaAtiva = null;
 
     // Define a função calcularTotais de forma global para que todas as funções possam usá-la
@@ -395,83 +539,119 @@
         }
     }
 
-    function buscarEndereco(cep) {
-        // var cep = $('#cep').val();
-        if (cep == '') {
+    function buscarEndereco(cep, element) {
+        if (cep === '') {
             alert('Informe o CEP antes de continuar');
-            $('#cep').focus();
-            return false;
-        }
-        $('#btn_consulta').html('Aguarde...');
-        $.post('consulta', {
-                cep: cep
-            },
-            function(dados) {
-                console.log(dados);
-
-                $('#endereco').val(dados.logradouro);
-                $('#estado').val(dados.uf);
-                $('#logradouro').val(dados.logradouro);
-                $('#localidade').val(dados.localidade);
-                $('#bairro').val(dados.bairro);
-
-            }, 'json');
-
-    };
-    document.addEventListener("DOMContentLoaded", function() {
-    function verificarDisponibilidade(produtoInput) {
-        const produtoId = produtoInput.closest('.produto-item').querySelector('.produto-id').value;
-        const dataEntrega = document.getElementById("data_entrega").value;
-        const dataDevolucao = document.getElementById("data_devolucao").value;
-        const statusDiv = produtoInput.closest('.produto-item').querySelector('.status-disponibilidade');
-
-        if (!produtoId || !dataEntrega || !dataDevolucao) {
-            statusDiv.innerHTML = "<span class='alert-warning'>Preencha todos os campos.</span>";
+            element.focus();
             return;
         }
 
-        fetch("<?= base_url('locacoes/verificarDisponibilidadeAjax') ?>", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams({
-                produto_id: produtoId,
-                data_entrega: dataEntrega,
-                data_devolucao: dataDevolucao
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                statusDiv.innerHTML = "<span class='alert-success'>" + data.message + "</span>";
-            } else {
-                statusDiv.innerHTML = "<span class='alert-danger'>" + data.message + "</span>";
-            }
-        })
-        .catch(error => {
-            console.error("Erro:", error);
-            statusDiv.innerHTML = "<span class='alert-danger'>Erro ao verificar disponibilidade.</span>";
-        });
+        $.post('consulta', {
+            cep: cep
+        }, function(dados) {
+            console.log(dados);
+
+            // Encontrar o formulário mais próximo do campo de CEP acionado
+            let formContainer = $(element).closest('.cliente-form');
+
+            // Preencher os campos dentro do formulário correspondente
+            formContainer.find('[name="logradouro"]').val(dados.logradouro);
+            formContainer.find('[name="bairro"]').val(dados.bairro);
+            formContainer.find('[name="estado"]').val(dados.uf);
+            formContainer.find('[name="localidade"]').val(dados.localidade);
+        }, 'json');
     }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        function verificarDisponibilidade(produtoInput) {
+            const produtoId = produtoInput.closest('.produto-item').querySelector('.produto-id').value;
+            const dataEntrega = document.getElementById("data_entrega").value;
+            const dataDevolucao = document.getElementById("data_devolucao").value;
+            const statusDiv = produtoInput.closest('.produto-item').querySelector('.status-disponibilidade');
 
-    // Monitorando a seleção do produto
-    document.querySelectorAll(".produto-id").forEach(input => {
-        input.addEventListener("change", function() {
-            verificarDisponibilidade(this);
+            if (!produtoId || !dataEntrega || !dataDevolucao) {
+                statusDiv.innerHTML = "<span class='alert-warning'>Preencha todos os campos.</span>";
+                return;
+            }
+
+            fetch("/locacoes/verificarDisponibilidadeAjax", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        produto_id: produtoId,
+                        data_entrega: dataEntrega,
+                        data_devolucao: dataDevolucao
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        statusDiv.innerHTML = "<span class='alert-success'>" + data.message + "</span>";
+                    } else {
+                        statusDiv.innerHTML = "<span class='alert-danger'>" + data.message + "</span>";
+                    }
+                })
+                .catch(error => {
+                    console.error("Erro:", error);
+                    statusDiv.innerHTML = "<span class='alert-danger'>Erro ao verificar disponibilidade.</span>";
+                });
+        }
+
+        // Monitorando a seleção do produto
+        document.querySelectorAll(".produto-id").forEach(input => {
+            input.addEventListener("change", function() {
+                verificarDisponibilidade(this);
+            });
+        });
+
+        // Monitorando alterações na data de entrega e devolução
+        document.getElementById("data_entrega").addEventListener("change", function() {
+            document.querySelectorAll(".produto-id").forEach(input => verificarDisponibilidade(input));
+        });
+
+        document.getElementById("data_devolucao").addEventListener("change", function() {
+            document.querySelectorAll(".produto-id").forEach(input => verificarDisponibilidade(input));
         });
     });
 
-    // Monitorando alterações na data de entrega e devolução
-    document.getElementById("data_entrega").addEventListener("change", function() {
-        document.querySelectorAll(".produto-id").forEach(input => verificarDisponibilidade(input));
-    });
 
-    document.getElementById("data_devolucao").addEventListener("change", function() {
-        document.querySelectorAll(".produto-id").forEach(input => verificarDisponibilidade(input));
-    });
-});
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("formCadastroCliente").addEventListener("submit", function(event) {
+            event.preventDefault(); // Evita o refresh da página
 
+            let formData = new FormData(this);
+
+            // Aqui, você pode garantir que ambos os campos de telefone sejam tratados
+            let telefoneFisica = document.getElementById("telefone_contato_fisica").value;
+            let telefoneJuridica = document.getElementById("telefone_contato_cnpj").value;
+
+            if (telefoneFisica) {
+                formData.append("telefone_contato", telefoneFisica);
+            } else if (telefoneJuridica) {
+                formData.append("telefone_contato", telefoneJuridica);
+            }
+
+            fetch("<?= base_url('locacoes/salvarClientes') ?>", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        // Atualizar os inputs de cliente com os dados cadastrados
+                        document.getElementById("cliente_id").value = data.cliente.id;
+                        document.getElementById("cliente_nome").value = data.cliente.tipo == 1 ? data.cliente.nome : data.cliente.razao_social;
+
+                        document.querySelector("#cadastroClienteModal .btn-close").click();
+                    } else {
+                        alert("Erro ao cadastrar cliente: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Erro na requisição:", error));
+        });
+    });
 </script>
 
 <?= $this->endSection() ?>

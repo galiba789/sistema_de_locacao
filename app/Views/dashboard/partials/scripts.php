@@ -1,7 +1,7 @@
 <!-- Scripts -->
 
 <script src="<?=PL_BASE_DIST . '/js/all.min.js'?>"></script>
-<script src="<?=PL_BASE_DIST . '/js/funcoes.js'?>"></script>
+<script src="<?=PL_BASE_DIST . '/js/funcoes.js?v=1.2'?>"></script>
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -20,7 +20,11 @@
 
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs4.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs4.min.js"></script>
+<script src="https://unpkg.com/imask"></script>
 
+<!-- DataTables JS -->
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
 <!-- OPTIONAL SCRIPTS -->
 <script src="<?= PL_BASE_DIST ?>/js/Chart.min.js"></script>
@@ -29,9 +33,47 @@
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="<?= PL_BASE_DIST ?>/js/dashboard3.js"></script>
 
+<script src="<?=PL_BASE_DIST?>/js/jquery.mask.js"></script>
+<script src="<?=PL_BASE_DIST?>/js/jquery.mask.min.js"></script>
+
+
 
 
 <script>
+  $("#telefone_contato").bind('input propertychange', function() {
+    var texto = $(this).val();
+    
+    texto = texto.replace(/[^\d]/g, '');
+    
+    if (texto.length > 0) {
+      texto = "(" + texto;
+    
+      if (texto.length > 3) {
+        texto = [texto.slice(0, 3), ")", texto.slice(3)].join('');
+      }
+      if (texto.length >= 9 && texto.length <= 12) {
+        texto = [texto.slice(0, 8), "-", texto.slice(8)].join('');
+      } else if (texto.length > 12)
+      texto = [texto.slice(0, 9), "-", texto.slice(9)].join('');
+      
+      if (texto.length > 14)
+      texto = texto.substr(0, 14);
+  }
+  $(this).val(texto);
+});
+$(document).ready(function(){
+    $('#cpf').mask('000.000.000-00');
+    $('#cep').mask('00000-000');
+    $('#data').mask('00/00/0000');
+    $('#desconto').mask('000.000.000.000.000,00', {reverse: true});
+    $('#valor_total').mask('000.000.000.000.000,00', {reverse: true});
+    $('#valor_total').mask('000.000.000.000.000,00', {reverse: true});
+    $('#subtotal').mask('000.000.000.000.000,00', {reverse: true});
+    $('#cnpj').mask('00.000.000/0000-00');
+    $('#telefone_contato_cnpj').mask('(00)00000-0000');
+    $('#telefone_contato_fisica').mask('(00)00000-0000');
+  });
+
   $('#summernote').summernote({
     placeholder: '',
     tabsize: 2,
@@ -46,4 +88,35 @@
       ['view', ['fullscreen', 'codeview', 'help']]
     ]
   });
+
+  $(document).ready(function() {
+        $('.ultimas_loc').DataTable({
+            "pageLength": 5, // Número de registros por página
+            "order": [[0, "desc"]],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/Portuguese-Brasil.json"
+            }
+        });
+        $('.agendadas').DataTable({
+            "pageLength": 5, // Número de registros por página
+            "order": [[0, "desc"]],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/Portuguese-Brasil.json"
+            }
+        });
+        $('.finalizadas').DataTable({
+            "pageLength": 5, // Número de registros por página
+            "order": [[0, "desc"]],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/Portuguese-Brasil.json"
+            }
+        });
+        $('.ultimas_loc_cliente').DataTable({
+            "pageLength": 10, // Número de registros por página
+            "order": [[0, "desc"]],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/Portuguese-Brasil.json"
+            }
+        });
+    });
 </script>
