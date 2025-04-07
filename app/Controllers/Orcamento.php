@@ -17,6 +17,10 @@ class Orcamento extends BaseController
 {
     public function index()
     {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+        
         $orcamentoModel = new OrcamentoModel();
         $clientesModel = new Clientes();
 

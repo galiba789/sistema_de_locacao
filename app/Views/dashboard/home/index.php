@@ -37,9 +37,9 @@
                                         <?php elseif ($locacao['situacao'] == 3): ?>
                                             <span class="btn btn-danger">Atrasado</span>
                                         <?php elseif ($locacao['situacao'] == 4): ?>
-                                            <span class="btn btn-success">Finalizada</span>
+                                            <span class="btn btn-danger">Finalizada</span>
                                         <?php elseif ($locacao['situacao'] == 5): ?>
-                                            <span class="btn btn-danger">Cancelado</span>
+                                            <span class="btn btn-warning">Cancelado</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -80,9 +80,9 @@
                                             <?php elseif ($locacao['situacao'] == 3): ?>
                                                 <span class="btn btn-danger">Atrasado</span>
                                             <?php elseif ($locacao['situacao'] == 4): ?>
-                                                <span class="btn btn-success">Finalizada</span>
+                                                <span class="btn btn-danger">Finalizada</span>
                                             <?php elseif ($locacao['situacao'] == 5): ?>
-                                                <span class="btn btn-danger">Cancelado</span>
+                                                <span class="btn btn-warning">Cancelado</span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -123,9 +123,9 @@
                                             <?php elseif ($locacao['situacao'] == 3): ?>
                                                 <span class="btn btn-danger">Atrasado</span>
                                             <?php elseif ($locacao['situacao'] == 4): ?>
-                                                <span class="btn btn-success">Finalizada</span>
+                                                <span class="btn btn-danger">Finalizada</span>
                                             <?php elseif ($locacao['situacao'] == 5): ?>
-                                                <span class="btn btn-danger">Cancelado</span>
+                                                <span class="btn btn-warning">Cancelado</span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>

@@ -2,9 +2,9 @@
 <html lang="pt-br">
 <?= $this->include('dashboard/partials/header') ?>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini" style="background-color: #e3e3e3;">
 
-    <div class="wrapper">
+    <div class="wrapper" >
         <!-- Navbar -->
         <?php //echo $this->include('dashboard/partials/navbar') ?>
         <!-- /.navbar -->

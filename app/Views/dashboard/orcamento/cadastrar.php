@@ -265,7 +265,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label>Telefone:</label>
-                                <input type="text" name="telefone_contato" id="telefone_contato_fisica" class="form-control" required>
+                                <input type="text" name="telefone_contato_fisica" id="telefone_contato_fisica" class="form-control" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label>Data de Nascimento:</label>

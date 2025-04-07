@@ -16,6 +16,9 @@ class Locacoes extends BaseController
 {
     public function index()
     {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
         $locacoesModel = new LocacoesModel();
         $clientesModel = new Clientes();
 
@@ -502,4 +505,16 @@ class Locacoes extends BaseController
             ]);
         }
     }
+    public function confirmarlocacao($id){
+        $locacaoModel = new LocacoesModel();
+
+        $dados = [
+            'situacao' => 4,
+        ];
+        $locacaoModel->update($id, $dados);
+
+        return redirect()->to('/locacoes')
+            ->with('success', 'Locação atualizada com sucesso!');
+    }
+    
 }

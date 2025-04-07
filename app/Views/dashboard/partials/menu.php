@@ -50,7 +50,7 @@
         
     }
 </style>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #394d7b;">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?= base_url('/home') ?>">
             <img src="<?= PL_BASE_DIST . "/images/logo-b.png" ?>" style="height: 50px;" alt="">
@@ -99,10 +99,10 @@
         </div>
 
 
-        <div class="d-flex gap-2">
+        <!-- <div class="d-flex gap-2">
             <span id="toggleDarkMode" class="btn btn-secondary">
                 <i class="fa-solid fa-moon"></i>
-            </span>
+            </span> -->
 
             <a href="<?= base_url('login/logout') ?>" class="btn btn-danger">
                 <i class="fa-solid fa-sign-out-alt"></i>
