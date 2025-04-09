@@ -20,7 +20,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Email:</label>
-                        <input type="email" name="email" id="email" class="form-control" required value="<?=$cliente['email']?>">
+                        <input type="email" name="email" id="email" class="form-control"  value="<?=$cliente['email']?>">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Telefone:</label>
@@ -89,7 +89,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Email:</label>
-                        <input type="email" name="email" id="email" class="form-control" required value="<?=$cliente['email']?>">
+                        <input type="email" name="email" id="email" class="form-control" value="<?=$cliente['email']?>">
                     </div>
                     <div class="col-md-12 mb-3">
                         <label>Observação:</label>

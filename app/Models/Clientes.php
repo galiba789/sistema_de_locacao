@@ -12,7 +12,7 @@ class Clientes extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id', 'tipo', 'nome', 'razao_social', 'cpf', 'rg', 'nascimento', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'telefone_comercial', 'email', 'telefone_contato','observacao', 'email_contato', 'cargo', 'status', 'created_at', 'updated_at'];
+    protected $allowedFields    = ['id', 'tipo', 'nome', 'razao_social', 'cpf', 'rg', 'nascimento', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'telefone_comercial', 'email', 'telefone_contato','observacao', 'email_contato', 'cargo', 'status', 'created_at', 'updated_at', 'localidade', 'logradouro'];
 
 
     public function getAtivos(){

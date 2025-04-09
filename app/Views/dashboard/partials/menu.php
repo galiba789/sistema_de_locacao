@@ -11,12 +11,15 @@
     .dark-mode .navbar .nav-link {
         color: #ffffff !important;
     }
-    .dark-mode p{
+
+    .dark-mode p {
         color: #ffffff !important;
     }
-    .dark-mode h5{
+
+    .dark-mode h5 {
         color: #ffffff !important;
     }
+
     .nav-link {
         color: #ffffff !important;
     }
@@ -25,9 +28,11 @@
         background-color: #333 !important;
         border-color: #444 !important;
     }
-    .dark-mode .search{
+
+    .dark-mode .search {
         color: #ffffff !important;
     }
+
     .dark-mode .table {
         color: #ffffff !important;
     }
@@ -47,7 +52,7 @@
 
     .dark-footer a {
         color: #ddd !important;
-        
+
     }
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #394d7b;">
@@ -104,47 +109,80 @@
                 <i class="fa-solid fa-moon"></i>
             </span> -->
 
-            <a href="<?= base_url('login/logout') ?>" class="btn btn-danger">
-                <i class="fa-solid fa-sign-out-alt"></i>
+        <?php
+        helper('Notificacao_helper');
+        $notificacoes = getNotificacoes();
+        ?>
+
+        <!-- Notificação com Bootstrap Dropdown -->
+        <li class="nav-item dropdown">
+            <a class="nav-link" href="#" id="notificacaoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-bell"></i>
+                <?php if (!empty($notificacoes)) : ?>
+                    <span class="badge bg-danger"><?= count($notificacoes); ?></span>
+                <?php endif; ?>
             </a>
-        </div>
+
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificacaoDropdown" style="width: 300px;">
+                <li class="dropdown-header">📅 Locações próximas da entrega</li>
+
+                <?php if (!empty($notificacoes)) : ?>
+                    <?php foreach ($notificacoes as $locacao) : ?>
+                        <li >
+                            <a class="dropdown-item" href="<?= base_url('clientes/historico/') . $locacao['cliente_id'] ?>">
+                                <p style="color: #000"><?= esc($locacao['cliente'] ?? 'Cliente') ?></p> 
+                                <small class="text-muted">Entrega em <?= date('d/m/Y', strtotime($locacao['data_entrega'])) ?></small>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <li><span class="dropdown-item text-muted">Sem locações próximas</span></li>
+                <?php endif; ?>
+            </ul>
+        </li>
+
+
+        <a href="<?= base_url('login/logout') ?>" class="btn btn-danger">
+            <i class="fa-solid fa-sign-out-alt"></i>
+        </a>
+    </div>
 
     </div>
 
 </nav>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const toggleDarkModeBtn = document.getElementById("toggleDarkMode");
-    const icon = toggleDarkModeBtn.querySelector("i");
-    const body = document.body;
-    const footer = document.querySelector("footer");
-    const footerDiv = footer.querySelector(".p-3");
+    document.addEventListener("DOMContentLoaded", function() {
+        const toggleDarkModeBtn = document.getElementById("toggleDarkMode");
+        const icon = toggleDarkModeBtn.querySelector("i");
+        const body = document.body;
+        const footer = document.querySelector("footer");
+        const footerDiv = footer.querySelector(".p-3");
 
-    // Verifica se o tema escuro está ativado no localStorage
-    if (localStorage.getItem("darkMode") === "enabled") {
-        body.classList.add("dark-mode");
-        footer.classList.add("dark-footer");
-        footerDiv.classList.remove("bg-primary");
-        footerDiv.classList.add("dark-mode");
-        icon.classList.remove("fa-moon");
-        icon.classList.add("fa-sun");
-    }
-
-    toggleDarkModeBtn.addEventListener("click", function () {
-        body.classList.toggle("dark-mode");
-        footer.classList.toggle("dark-footer");
-        footerDiv.classList.toggle("dark-mode");
-        footerDiv.classList.toggle("bg-primary");
-
-        if (body.classList.contains("dark-mode")) {
-            localStorage.setItem("darkMode", "enabled");
+        // Verifica se o tema escuro está ativado no localStorage
+        if (localStorage.getItem("darkMode") === "enabled") {
+            body.classList.add("dark-mode");
+            footer.classList.add("dark-footer");
+            footerDiv.classList.remove("bg-primary");
+            footerDiv.classList.add("dark-mode");
             icon.classList.remove("fa-moon");
             icon.classList.add("fa-sun");
-        } else {
-            localStorage.setItem("darkMode", "disabled");
-            icon.classList.remove("fa-sun");
-            icon.classList.add("fa-moon");
         }
+
+        toggleDarkModeBtn.addEventListener("click", function() {
+            body.classList.toggle("dark-mode");
+            footer.classList.toggle("dark-footer");
+            footerDiv.classList.toggle("dark-mode");
+            footerDiv.classList.toggle("bg-primary");
+
+            if (body.classList.contains("dark-mode")) {
+                localStorage.setItem("darkMode", "enabled");
+                icon.classList.remove("fa-moon");
+                icon.classList.add("fa-sun");
+            } else {
+                localStorage.setItem("darkMode", "disabled");
+                icon.classList.remove("fa-sun");
+                icon.classList.add("fa-moon");
+            }
+        });
     });
-});
 </script>
