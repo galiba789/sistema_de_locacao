@@ -34,7 +34,7 @@
         justify-content: space-between;
         align-items: center;
     }
-    a{
+    .link{
         color: #ffffff !important;
     }
 </style>
@@ -43,9 +43,9 @@
         <h2 class="text-center">Calendário de Locações</h2>
     
         <div class="navigation mb-3">
-            <a href="<?= base_url("/calendario/index/" . ($mes - 1 < 1 ? 12 : $mes - 1) . '/' . ($mes - 1 < 1 ? $ano -1 : $ano)) ?>" class="btn btn-secondary"> Mês Anterior</a>
+            <a  href="<?= base_url("/calendario/index/" . ($mes - 1 < 1 ? 12 : $mes - 1) . '/' . ($mes - 1 < 1 ? $ano -1 : $ano)) ?>" class="btn btn-secondary link"> Mês Anterior</a>
             <h4><?= ucfirst(strftime('%B de %Y', mktime(0, 0, 0, $mes, 1, $ano))) ?></h4>
-            <a href="<?= base_url("/calendario/index/" . ($mes + 1 > 12 ? 1 : $mes + 1) . '/' . ($mes + 1 > 12 ? $ano +1 : $ano)) ?>" class="btn btn-secondary">Próximo Mês</a>
+            <a href="<?= base_url("/calendario/index/" . ($mes + 1 > 12 ? 1 : $mes + 1) . '/' . ($mes + 1 > 12 ? $ano +1 : $ano)) ?>" class="btn btn-secondary link">Próximo Mês</a>
         </div>
     
         <div class="calendar">
@@ -85,7 +85,7 @@
                                     echo "<div class='locacao bg-warning'>";
                                 }
 
-                                echo "<a href='".base_url()."locacoes/contrato/{$locacao['id']}' target='_blank'>{$locacao['cliente_nome']}</a>";
+                                echo "<a class='link' href='".base_url()."clientes/historico/{$locacao['cliente_id']}' target='_blank'>{$locacao['cliente_nome']}</a>";
                                 echo "</div>";
                             }
                         }

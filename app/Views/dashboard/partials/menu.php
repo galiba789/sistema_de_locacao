@@ -87,6 +87,11 @@
                         <i class="fa-solid fa-calendar-days"></i> Calendário
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('/relatorios') ?>">
+                        <i class="fa fa-list-alt"></i> Relatórios
+                    </a>
+                </li>
 
                 <!-- Dropdown Cadastros -->
                 <li class="nav-item dropdown">

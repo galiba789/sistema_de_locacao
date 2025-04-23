@@ -53,6 +53,7 @@ $routes->post('/locacoes/consulta', 'Locacoes::consulta');
 $routes->post('/locacoes/edita/consulta', 'Locacoes::consulta');
 $routes->post('/locacoes/salvarClientes', 'Locacoes::salvarClientes');
 $routes->post('/locacoes/verificarDisponibilidadeAjax', 'Locacoes::verificarDisponibilidadeAjax');
+$routes->get('/locacoes/pagamento/(:num)', 'Locacoes::pagamento/$1');
 
 $routes->get('/calendario', 'Calendario::index');
 $routes->get('/calendario/index/(:num)/(:num)', 'Calendario::index/$1/$2');
@@ -81,3 +82,5 @@ $routes->post('/usuarios/editar/(:num)', 'Users::editar/$1');
 $routes->get('/usuarios/excluir/(:num)', 'Users::excluir/$1');
 
 $routes->get('/home', 'Home::index');
+
+$routes->get('/relatorios', 'Relaorios::index');

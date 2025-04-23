@@ -61,6 +61,7 @@
                         <th>Valor</th>
                         <th>Detalhe</th>
                         <th>Situação</th>
+                        <th>Pagamento</th>
                         <th>Forma de Pagamento</th>
                     </tr>
                 </thead>
@@ -100,6 +101,13 @@
                                 <?php elseif ($locacao['situacao'] == 5): ?>
                                     <span class="btn btn-warning">Cancelado</span>
                                 <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if($locacao['pagamento'] == 0):?>
+                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id']?>"><span class="btn btn-warning">Pendente</span></a>
+                                <?php elseif($locacao['pagamento'] == 1):?>
+                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id']?>"><span class="btn btn-success">Pago</span></a>
+                                <?php endif;?>
                             </td>
                             <td><?= $locacao['forma_pagamento'] ?></td>
                         </tr>

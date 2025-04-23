@@ -54,7 +54,12 @@
                         <?php endif;?>
                         <td><?= $cliente['email']?></td>
                         
+                        <?php if($cliente['tipo'] == 1):?>
                         <td><?=$cliente['telefone_contato']?></td>
+                        <?php else:?>
+                        <td><?=$cliente['telefone_comercial']?></td>
+                        <?php endif;?>
+
                         <?php if ($cliente['tipo'] == 1):?>
                             <td><?=$cliente['cpf']?></td>
                         <?php endif;?>

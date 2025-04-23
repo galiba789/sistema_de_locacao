@@ -118,7 +118,7 @@
 
                     <div class="col-md-4 mb-3">
                         <label>Telefone de Contato:</label>
-                        <input type="text" name="telefone_contato_cnpj" id="telefone_contato_cnpj" class="form-control" required>
+                        <input type="text" name="telefone_contato_cnpj" id="telefone_contato_cnpj" class="form-control">
                     </div>
 
                     <div class="col-md-4 mb-3">
@@ -168,11 +168,6 @@
 
 <script>
     function buscarEndereco(cep, element) {
-        if (cep === '') {
-            alert('Informe o CEP antes de continuar');
-            element.focus();
-            return;
-        }
 
         $.post('consulta', {
             cep: cep

@@ -517,4 +517,25 @@ class Locacoes extends BaseController
             ->with('success', 'Locação atualizada com sucesso!');
     }
     
+
+    public function pagamento($id) {
+        $locacaoModel = new LocacoesModel();
+        $locacao = $locacaoModel->find($id);
+        if($locacao['pagamento'] == 0){
+            $data = [
+                'pagamento' => 1
+            ];
+            // print_r($data);
+            // exit;
+            $locacaoModel->update($id, $data);
+        } else {
+            $data = [
+                'pagamento' => 0
+            ];
+            $locacaoModel->update($id, $data);
+        }
+
+        return redirect()->to('/locacoes')
+            ->with('success', 'Locação atualizada com sucesso!');
+    }
 }

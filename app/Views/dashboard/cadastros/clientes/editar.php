@@ -157,11 +157,7 @@
 <script>
             function buscarEndereco(cep) {
                 // var cep = $('#cep').val();
-                if (cep == '') {
-                    alert('Informe o CEP antes de continuar');
-                    $('#cep').focus();
-                    return false;
-                }
+           
                 $('#btn_consulta').html('Aguarde...');
                 $.post('consulta', {
                         cep: cep
