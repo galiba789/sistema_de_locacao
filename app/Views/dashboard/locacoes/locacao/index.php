@@ -103,11 +103,11 @@
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <?php if($locacao['pagamento'] == 0):?>
-                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id']?>"><span class="btn btn-warning">Pendente</span></a>
-                                <?php elseif($locacao['pagamento'] == 1):?>
-                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id']?>"><span class="btn btn-success">Pago</span></a>
-                                <?php endif;?>
+                                <?php if ($locacao['pagamento'] == 0): ?>
+                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id'] ?>"><span class="btn btn-warning">Pendente</span></a>
+                                <?php elseif ($locacao['pagamento'] == 1): ?>
+                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id'] ?>"><span class="btn btn-success">Pago</span></a>
+                                <?php endif; ?>
                             </td>
                             <td><?= $locacao['forma_pagamento'] ?></td>
                         </tr>
@@ -132,6 +132,7 @@
 
             tabelaBody.innerHTML = "<tr><td colspan='9' class='text-center'>Carregando... <i class='fas fa-spinner fa-spin'></i></td></tr>";
             const baseUrl = "<?= base_url('locacoes/buscar') ?>";
+            const basePagamentoUrl = "<?= base_url('locacoes/pagamento/') ?>";
             let queryParams = [];
 
             if (tipoSelect.value) {
@@ -187,6 +188,13 @@
                                 badgeHtml = '<span class="btn btn-secondary">Desconhecido</span>';
                         }
 
+                        let pagamento = "";
+                        if (locacao.pagamento == 0) {
+                            pagamento = `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-warning">Pendente</span></a>`;
+                        } else if (locacao.pagamento == 1) {
+                            pagamento = `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-success">Pago</span></a>`;
+                        }
+
 
                         let dataEntrega = locacao.data_entrega ? new Date(locacao.data_entrega).toLocaleDateString('pt-BR') : '';
                         let dataDevolucao = locacao.data_devolucao ? new Date(locacao.data_devolucao).toLocaleDateString('pt-BR') : '';
@@ -207,14 +215,19 @@
                                     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                                         Mais
                                     </button>
-                                    <ul class="dropdown-menu">
+                                   <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') ?>${locacao.id}">Emitir Contrato</a></li>
                                         <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') ?>${locacao.id}">Editar Contrato</a></li>
                                         <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') ?>${locacao.id}">Cancelar Contrato</a></li>
+                                        ${locacao.situacao == 5 
+                                            ? `<li><a class="dropdown-item" href="<?= base_url('locacoes/excluir/') ?>${locacao.id}">Excluir Contrato</a></li>` 
+                                            : ''
+                                        }
                                     </ul>
                                 </div>
                             </td>
                             <td>${badgeHtml}</td>
+                           <td>${pagamento}</td>
                             <td>${locacao.forma_pagamento || ''}</td>
                         </tr>
                     `;

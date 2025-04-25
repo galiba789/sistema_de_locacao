@@ -54,6 +54,7 @@ $routes->post('/locacoes/edita/consulta', 'Locacoes::consulta');
 $routes->post('/locacoes/salvarClientes', 'Locacoes::salvarClientes');
 $routes->post('/locacoes/verificarDisponibilidadeAjax', 'Locacoes::verificarDisponibilidadeAjax');
 $routes->get('/locacoes/pagamento/(:num)', 'Locacoes::pagamento/$1');
+$routes->get('/locacoes/excluir/(:num)', 'Locacoes::excluir/$1');
 
 $routes->get('/calendario', 'Calendario::index');
 $routes->get('/calendario/index/(:num)/(:num)', 'Calendario::index/$1/$2');
@@ -83,4 +84,7 @@ $routes->get('/usuarios/excluir/(:num)', 'Users::excluir/$1');
 
 $routes->get('/home', 'Home::index');
 
-$routes->get('/relatorios', 'Relaorios::index');
+$routes->get('/faturamentos', 'Faturamentos::index');
+$routes->get('/faturamentos/produtos', 'Faturamentos::produtos');
+$routes->get('/faturamentos/categorias', 'Faturamentos::categorias');
+$routes->get('/faturamentos/locacoes', 'Faturamentos::locacoes');

@@ -87,10 +87,16 @@
                         <i class="fa-solid fa-calendar-days"></i> Calendário
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('/relatorios') ?>">
-                        <i class="fa fa-list-alt"></i> Relatórios
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="cadastrosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-list-alt"></i> Relátorios
                     </a>
+                    <ul class="dropdown-menu" aria-labelledby="cadastrosDropdown">
+                        <li><a class="dropdown-item" href="<?= base_url('faturamentos/produtos') ?>"><i class="fa-solid fa-cart-shopping"></i> Produtos</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('faturamentos/categorias') ?>"><i class="fa-solid fa-shop"></i> Categorias</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('faturamentos/locacoes') ?>"><i class="fa-solid fa-clipboard-list"></i> Locações</a></li>
+                    </ul>
                 </li>
 
                 <!-- Dropdown Cadastros -->

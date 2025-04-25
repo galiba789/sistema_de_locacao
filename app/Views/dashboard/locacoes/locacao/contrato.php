@@ -1,3 +1,6 @@
+<div style="font-family: Arial;
+  line-height: 20px;
+  font-size: 14px;">
 <div style="display: flex;justify-content: center;width: 100vw;">
     <img src="<?= PL_BASE_DIST . '/images/play.png' ?>" alt="play" style="width: 150px;">
 </div>
@@ -104,11 +107,11 @@
             <br>
             <b>Valor da Locação: R$ </b><?= $locacao['valor_total'] ?>
             <br>
-            <b>Forma de pagamento: </b><?= $locacao['condicao'] == 1 ? 'A vista' : ' ' ?> , <?= $locacao['forma_pagamento'] ?>
+            <b>Forma de pagamento: </b><?= $locacao['condicao'] == 1 ? 'A vista' : ' ' ?> <?= $locacao['forma_pagamento'] ?>
             <br>
-            <b>Data de retirada: </b><?= date('d/m/Y', strtotime($locacao['data_entrega'])) ?>
+            <b>Data de retirada: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_entrega'])) ?>
             <br>
-            <b>Data de entrega: </b><?= date('d/m/Y', strtotime($locacao['data_devolucao'])) ?>
+            <b>Data de entrega: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_devolucao'])) ?>
             <br>
             <br>
             <br>
@@ -138,4 +141,5 @@
     <p>Telefones: (38) 9147-7706 / (38) 3082-4909</p>
     <p>Rua Juca Macedo, 801 - CEP: 39401-044 – Bairro Funcionários – Montes Claros / MG</p>
     <p>www.playlocacoes.com.br / contato@playlocacoes.com.br</p>
+</div>
 </div>

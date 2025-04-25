@@ -213,12 +213,12 @@ class Locacoes extends BaseController
             return redirect()->back()->with('erro', 'Nenhum produto selecionado.');
         }
 
-        // Verifica a disponibilidade dos produtos
-        $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao, $id, $quantidade_solicitada);
+        // // Verifica a disponibilidade dos produtos
+        // $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao, $id, $quantidade_solicitada);
 
-        if ($verificacao !== true) {
-            return redirect()->back()->with('erro', $verificacao);
-        }
+        // if ($verificacao !== true) {
+        //     return redirect()->back()->with('erro', $verificacao);
+        // }
 
         // Atualizar a locação
         $dadosLocacao = [
@@ -287,6 +287,8 @@ class Locacoes extends BaseController
                     ->join('locacao', 'locacao.id = locacoes_produtos.locacao_id')
                     ->where('locacoes_produtos.produto_id', $produto_id)
                     ->where('locacao.data_entrega <=', $data_devolucao)
+                    ->where('locacao.situacao != ', 4)
+                    ->where('locacao.situacao != ', 5)
                     ->where('locacao.data_devolucao >=', $data_entrega)
                     ->groupBy('locacoes_produtos.produto_id'); 
     
@@ -346,6 +348,19 @@ class Locacoes extends BaseController
 
         $dados = [
             'situacao' => 5,
+        ];
+        $locacaoModel->update($id, $dados);
+
+        return redirect()->to('/locacoes')
+            ->with('success', 'Locação atualizada com sucesso!');
+    }
+    
+    public function excluir($id)
+    {
+        $locacaoModel = new LocacoesModel();
+
+        $dados = [
+            'excluido' => 1,
         ];
         $locacaoModel->update($id, $dados);
 
@@ -413,6 +428,7 @@ class Locacoes extends BaseController
 
         return $this->response->setJSON($locacoes);
     }
+    
     public function consulta()
     {
         $cep = $this->request->getPost('cep');

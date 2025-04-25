@@ -168,7 +168,6 @@
 
 <script>
     function buscarEndereco(cep, element) {
-
         $.post('consulta', {
             cep: cep
         }, function(dados) {
@@ -185,9 +184,6 @@
         }, 'json');
     }
     // Chamar a função ao carregar a página para garantir que os campos estejam corretos
-    window.onload = function() {
-        clientesForm();
-    };
 </script>
 
 
