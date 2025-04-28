@@ -53,7 +53,6 @@ class Faturamentos extends BaseController
 
         $locacaoModel = new LocacoesModel();
         $categorias = $locacaoModel->getCategoriasRelatorio($dataInicio, $dataFim, );
-
         return view('dashboard/faturamento/categorias', [
             'categorias' => $categorias,
             'filtros'    => compact('dataInicio','dataFim'),

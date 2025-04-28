@@ -118,7 +118,6 @@ class LocacoesModel extends Model
         $builder->where('l.situacao !=', 5);
         $builder->where('DATE(l.created_at) >=', $dataInicio);
         $builder->where('DATE(l.created_at) <=', $dataFim);
-        
         $builder->groupBy('c.id')
                 ->orderBy('faturamento_total', 'DESC');
     

@@ -24,7 +24,9 @@ class Produtos extends BaseController
         $itensPorPagina = 10;
 
         // Busca os dados paginados (mantém a variável produtos paginada)
-        $produtos = $produtosModel->paginate($itensPorPagina);
+        $produtos = $produtosModel->orderBy('produtos.id', 'DESC')
+                                    ->paginate($itensPorPagina);
+                                    
 
         // Gera os links de paginação automaticamente
         $paginacao = $produtosModel->pager;
