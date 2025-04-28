@@ -12,7 +12,7 @@ class OrcamentoModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id', 'descricao', 'cliente_id', 'valor_total', 'situacao', 'status', 'data_entrega', 'data_devolucao', 'total_diarias', 'desconto', 'forma_pagamento', 'observacao','acessorios', 'created_at', 'updated_at'];
+    protected $allowedFields    = ['descricao', 'cliente_id', 'valor_total', 'situacao', 'status', 'data_entrega', 'data_devolucao', 'total_diarias', 'desconto', 'pagamento','forma_pagamento', 'observacao','acessorios', 'created_at', 'updated_at'];
 
     public function getAtivos() {
         $query = "SELECT * FROM orcamento WHERE situacao != 5 ORDER BY id DESC";

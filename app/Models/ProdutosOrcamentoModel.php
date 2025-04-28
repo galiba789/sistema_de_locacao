@@ -12,7 +12,7 @@ class ProdutosOrcamentoModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id', 'orcamento_id', 'produto_id', 'quantidade', 'valor_unitario', 'subtotal', 'data_retirada', 'data_devolucao_real', 'created_at', 'updated_at'];
+    protected $allowedFields    = ['orcamento_id', 'produto_id', 'quantidade', 'valor_unitario', 'subtotal', 'data_retirada', 'data_devolucao_real', 'created_at', 'updated_at'];
 
     public function getAtivos(){
         $query = "SELECT * FROM orcamento_produtos WHERE status = 1 ORDER BY id DESC";

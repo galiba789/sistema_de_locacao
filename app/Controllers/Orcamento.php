@@ -82,64 +82,73 @@ class Orcamento extends BaseController
     {
         $orcamentoModel = new OrcamentoModel();
         $orcamentoProdutosModel = new ProdutosOrcamentoModel();
-
+    
         $data_entrega = $this->request->getPost('data_entrega');
         $data_devolucao = $this->request->getPost('data_devolucao');
         $produtos = $this->request->getPost('produto_id');
         $quantidade_solicitada = $this->request->getPost('quantidade');
-
-        // Verifica a disponibilidade dos produtos antes de salvar o orçamento
+    
+        // Validação simples para evitar inserções incorretas
+        if (empty($produtos) || empty($quantidade_solicitada)) {
+            return redirect()->back()->with('erro', 'Produtos e quantidades são obrigatórios.');
+        }
+    
+        // Verifica a disponibilidade dos produtos
         $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao, null, $quantidade_solicitada);
-
         if ($verificacao !== true) {
             return redirect()->back()->with('erro', $verificacao);
         }
-
-        // Inserir orçamento
+    
+        // Dados para salvar no orçamento (não inclui o 'id'!)
         $dadosOrcamento = [
             'cliente_id'      => $this->request->getPost('cliente_id'),
             'situacao'        => $this->request->getPost('situacao'),
             'data_entrega'    => $data_entrega,
             'data_devolucao'  => $data_devolucao,
             'total_diarias'   => $this->request->getPost('total_diarias'),
-            'condicao'        => $this->request->getPost('condicao'),
             'forma_pagamento' => $this->request->getPost('forma_pagamento'),
             'subtotal'        => $this->request->getPost('subtotal'),
             'desconto'        => $this->request->getPost('desconto'),
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
             'acessorios'      => $this->request->getPost('acessorios'),
-            'created_at'      => date('Y/m/d H:i:s'),
+            'created_at'      => date('Y-m-d H:i:s'), // Corrigi o formato da data para MySQL
         ];
-
-        if (!$orcamentoModel->insert($dadosOrcamento)) {
-            return redirect()->back()->with('error', 'Erro ao salvar o orçamento!');
+    
+        if (!$orcamentoModel->save($dadosOrcamento)) {
+            return redirect()->back()->with('erro', 'Erro ao salvar o orçamento.');
         }
-
-        $orcamento_id = $orcamentoModel->insertID(); // Obtém o ID do orçamento recém-criado
-
-        // Inserir os produtos no orçamento
-        $produtoIds = $this->request->getPost('produto_id');
-        $quantidades = $this->request->getPost('quantidade');
+    
+        $orcamento_id = $orcamentoModel->insertID(); // Captura o ID gerado
+    
+        if (!$orcamento_id) {
+            return redirect()->back()->with('erro', 'Erro ao capturar o ID do orçamento.');
+        }
+    
+        // Inserir os produtos vinculados ao orçamento
         $totaisUnitarios = $this->request->getPost('total_unitario');
-
-        foreach ($produtoIds as $index => $produtoId) {
-            if (!empty($produtoId) && !empty($quantidades[$index])) {
+    
+        foreach ($produtos as $index => $produtoId) {
+            if (!empty($produtoId) && isset($quantidade_solicitada[$index])) {
                 $dadosProdutoOrcamento = [
                     'orcamento_id'   => $orcamento_id,
                     'produto_id'     => $produtoId,
-                    'quantidade'     => $quantidades[$index],
-                    'total_unitario' => $totaisUnitarios[$index]
+                    'quantidade'     => $quantidade_solicitada[$index],
+                    'total_unitario' => $totaisUnitarios[$index] ?? 0, // default para evitar erro
                 ];
-                $orcamentoProdutosModel->insert($dadosProdutoOrcamento);
+                if (!$orcamentoProdutosModel->save($dadosProdutoOrcamento)) {
+                    // Se der erro ao inserir um produto, poderia logar ou lidar melhor aqui
+                    return redirect()->back()->with('erro', 'Erro ao salvar produtos do orçamento.');
+                }
             }
         }
-
+    
         // Redireciona para a página de orçamentos
         return redirect()->to('/orcamento')
             ->with('success', 'Orçamento salvo com sucesso!')
             ->with('orcamento_id', $orcamento_id);
     }
+    
 
 
     public function edita($id)
