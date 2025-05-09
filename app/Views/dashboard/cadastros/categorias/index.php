@@ -5,7 +5,7 @@
     <h1>Categorias</h1>   
         <div class="d-flex flex-row-reverse">
             <a href="<?=base_url('/categorias/cadastrar')?>">
-                <button class="btn btn-success "><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button class="btn btn-success "><i class="fa-solid fa-pen"></i>Cadastrar nova categoria</button>
             </a>    
         </div>
 

@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Telefone:</label>
-                        <input type="text" name="telefone_contato" id="telefone_contato" class="form-control" required>
+                        <input type="text" name="telefone_contato" id="telefone_contato" class="form-control">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Data de Nascimento:</label>
@@ -168,6 +168,9 @@
 
 <script>
     function buscarEndereco(cep, element) {
+        // Remove todos os caracteres que não são dígitos
+        cep = cep.replace(/\D/g, '');
+
         $.post('consulta', {
             cep: cep
         }, function(dados) {
@@ -183,6 +186,7 @@
             formContainer.find('[name="localidade"]').val(dados.localidade);
         }, 'json');
     }
+
     // Chamar a função ao carregar a página para garantir que os campos estejam corretos
 </script>
 

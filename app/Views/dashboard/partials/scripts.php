@@ -81,9 +81,9 @@
             reverse: true
         });
         $('#cnpj').mask('00.000.000/0000-00');
-        $('#telefone_contato_cnpj').mask('(00)00000-0000');
-        $('#telefone_contato_fisica').mask('(00)00000-0000');
-        $('#telefone_comercial').mask('(00)00000-0000');
+        $('#telefone_contato_cnpj').mask('(00)0000-0000');
+        $('#telefone_contato_fisica').mask('(00)0000-0000');
+        $('#telefone_comercial').mask('(00)0000-0000');
     });
 
     $('#summernote').summernote({

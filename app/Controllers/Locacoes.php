@@ -88,7 +88,7 @@ class Locacoes extends BaseController
         $produtos = $this->request->getPost('produto_id');
         $quantidade_solicitada = $this->request->getPost('quantidade');
         // Verifica a disponibilidade dos produtos
-        $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao, $locacao_id = null,$quantidade_solicitada);
+        $verificacao = $this->verificarDisponibilidade($produtos, $data_entrega, $data_devolucao, $locacao_id = null, $quantidade_solicitada);
         // print_r($verificacao);
         // exit;
         if ($verificacao !== true) {
@@ -119,6 +119,8 @@ class Locacoes extends BaseController
         $produtoIds = $this->request->getPost('produto_id');
         $quantidades = $this->request->getPost('quantidade');
         $precosDiaria = $this->request->getPost('preco_diaria');
+        // print_r($precosDiaria[0]);
+        // exit;
         $totaisUnitarios = $this->request->getPost('total_unitario');
 
         foreach ($produtoIds as $index => $produtoId) {
@@ -128,7 +130,7 @@ class Locacoes extends BaseController
                     'produto_id'    => $produtoId,
                     'quantidade'    => $quantidades[$index],
                     'preco_diaria'  => $precosDiaria[$index],
-                    'total_unitario' => $totaisUnitarios[$index]
+                    'sub_total' => $totaisUnitarios[$index]
                 ];
                 $produtosLocacoesModel->insert($dadosProdutoLocacao);
             }
@@ -169,7 +171,9 @@ class Locacoes extends BaseController
 
         // Buscar produtos da locação com JOIN para obter os detalhes de cada produto
         $produtosLocacao = $produtosLocacoesModel
-            ->select('locacoes_produtos.*, produtos.nome AS produto_nome, produtos.preco_diaria')
+            ->select('locacoes_produtos.*, 
+                  produtos.nome AS produto_nome, 
+                  produtos.preco_diaria AS preco_produto_original')
             ->join('produtos', 'produtos.id = locacoes_produtos.produto_id', 'left')
             ->where('locacoes_produtos.locacao_id', $id)
             ->findAll();
@@ -182,7 +186,6 @@ class Locacoes extends BaseController
         }
 
         $locacao['produtos'] = $produtosLocacao;
-
 
         // print_r($locacao);
         // exit;
@@ -207,7 +210,7 @@ class Locacoes extends BaseController
         $data_entrega = $this->request->getPost('data_entrega');
         $data_devolucao = $this->request->getPost('data_devolucao');
         $produtos = $this->request->getPost('produto_id') ?? [];
-        $quantidade_solicitada = $this ->request->getPost('quantidade');
+        $quantidade_solicitada = $this->request->getPost('quantidade');
 
         if (!is_array($produtos) || empty($produtos)) {
             return redirect()->back()->with('erro', 'Nenhum produto selecionado.');
@@ -253,6 +256,8 @@ class Locacoes extends BaseController
         // Adicionar os novos produtos corretamente
         foreach ($produtoIds as $index => $produtoId) {
             if (!empty($produtoId) && !empty($quantidades[$index])) {
+                // print_r($precosDiaria[$index]);
+                // exit;
                 $dadosProdutoLocacao = [
                     'locacao_id'     => $id,
                     'produto_id'     => $produtoId,
@@ -274,14 +279,14 @@ class Locacoes extends BaseController
         $locacoesProdutoModel = new LocacoesProdutosModel();
         $data_entrega   = date('Y-m-d H:i:s', strtotime($data_entrega));
         $data_devolucao = date('Y-m-d H:i:s', strtotime($data_devolucao));
-    
+
         foreach ($produtos as $index => $produto_id) {
             $produto_info = $produtosModels->where('id', $produto_id)->get()->getRow();
-    
+
             if ($produto_info) {
                 $nome_produto      = $produto_info->nome;
                 $quantidade_estoque = $produto_info->quantidade;
-    
+
                 $query = $locacoesProdutoModel
                     ->selectSum('locacoes_produtos.quantidade', 'quantidade_alocada')
                     ->join('locacao', 'locacao.id = locacoes_produtos.locacao_id')
@@ -290,19 +295,19 @@ class Locacoes extends BaseController
                     ->where('locacao.situacao != ', 4)
                     ->where('locacao.situacao != ', 5)
                     ->where('locacao.data_devolucao >=', $data_entrega)
-                    ->groupBy('locacoes_produtos.produto_id'); 
-    
+                    ->groupBy('locacoes_produtos.produto_id');
+
                 if ($locacao_id) {
                     $query->where('locacao.id !=', $locacao_id);
                 }
-    
+
                 $result = $query->get()->getRow();
                 $quantidade_alocada = $result ? (int)$result->quantidade_alocada : 0;
                 $quantidade_requerida = $quantidade_solicitada[$index] ?? 1;
                 // print_r($quantidade_requerida);
                 // exit;
                 $quantidade_disponivel = $quantidade_estoque - $quantidade_alocada;
-    
+
                 if ($quantidade_requerida > $quantidade_disponivel) {
                     return "O produto '{$nome_produto}' não está disponível na quantidade solicitada para as datas informadas. Disponível: {$quantidade_disponivel}.";
                 }
@@ -311,7 +316,7 @@ class Locacoes extends BaseController
             }
         }
         return true;
-    }    
+    }
     public function gerarContrato($id)
     {
         $locacoesModel = new LocacoesModel();
@@ -354,7 +359,7 @@ class Locacoes extends BaseController
         return redirect()->to('/locacoes')
             ->with('success', 'Locação atualizada com sucesso!');
     }
-    
+
     public function excluir($id)
     {
         $locacaoModel = new LocacoesModel();
@@ -428,7 +433,7 @@ class Locacoes extends BaseController
 
         return $this->response->setJSON($locacoes);
     }
-    
+
     public function consulta()
     {
         $cep = $this->request->getPost('cep');
@@ -442,7 +447,7 @@ class Locacoes extends BaseController
     {
         $clientesModel = new Clientes();
         $tipo = $this->request->getPost('type');
-    
+
         if ($tipo == 1) {
             $data = [
                 'tipo' => $tipo,
@@ -486,13 +491,13 @@ class Locacoes extends BaseController
         } else {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Tipo inválido de cliente.']);
         }
-    
+
         $clientesModel->insert($data);
         $data['id'] = $clientesModel->insertID(); // Pega o ID gerado
-    
+
         return $this->response->setJSON(['status' => 'success', 'cliente' => $data]);
     }
-    
+
     public function verificarDisponibilidadeAjax()
     {
         $produto_id = $this->request->getPost('produto_id');
@@ -507,21 +512,22 @@ class Locacoes extends BaseController
             ]);
         }
         // Chama a função para verificar a disponibilidade
-        $disponivel = $this->verificarDisponibilidade([$produto_id], $data_entrega, $data_devolucao, $locacao_id = null ,$quantidade_solicitada);
+        $disponivel = $this->verificarDisponibilidade([$produto_id], $data_entrega, $data_devolucao, $locacao_id = null, $quantidade_solicitada);
 
         if ($disponivel === true) {
             return $this->response->setJSON([
                 'status' => 'success',
                 'message' => 'Produto disponível.'
             ]);
-        }else {
+        } else {
             return $this->response->setJSON([
                 'status' => 'error',
                 'message' => $disponivel
             ]);
         }
     }
-    public function confirmarlocacao($id){
+    public function confirmarlocacao($id)
+    {
         $locacaoModel = new LocacoesModel();
 
         $dados = [
@@ -532,12 +538,13 @@ class Locacoes extends BaseController
         return redirect()->to('/locacoes')
             ->with('success', 'Locação atualizada com sucesso!');
     }
-    
 
-    public function pagamento($id) {
+
+    public function pagamento($id)
+    {
         $locacaoModel = new LocacoesModel();
         $locacao = $locacaoModel->find($id);
-        if($locacao['pagamento'] == 0){
+        if ($locacao['pagamento'] == 0) {
             $data = [
                 'pagamento' => 1
             ];

@@ -45,12 +45,21 @@
 
                         <div class="col-md-2 mb-3">
                             <label>Preço Unitário</label>
-                            <input type="number" name="preco_diaria[]" class="form-control preco-diaria" value="<?= $produto['preco_diaria'] ?>" oninput="update_quantidade(this)" min="0" step="0.01">
+                            <input
+                                type="number"
+                                id="preco_diaria_<?= $produto['produto_id'] ?>"
+                                name="preco_diaria[]"
+                                value="<?= $produto['preco_diaria'] ?>"
+                                class="form-control preco-diaria"
+                                oninput="update_quantidade(this)"
+                                min="0"
+                                step="0.01">
                         </div>
+
 
                         <div class="col-md-2 mb-3">
                             <label>Total</label>
-                            <input type="text" name="total_unitario[]" class="form-control total-unitario" value="<?= number_format($produto['quantidade'] * $produto['preco_diaria'], 2) ?>" readonly>
+                            <input type="text" id="preco_diaria[]" name="total_unitario[]" class="form-control total-unitario" value="<?= number_format($produto['quantidade'] * $produto['preco_diaria'], 2) ?>" readonly>
                         </div>
 
                         <div class="col-md-2 mb-3 d-flex gap-2">
@@ -414,10 +423,14 @@
         subtotal *= totalDiarias;
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
-        // Aplica o desconto e calcula o valor total
-        let desconto = parseFloat(document.getElementById("desconto").value) || 0;
+        let descontoStr = document.getElementById("desconto").value;
+
+        // Remove pontos e troca vírgula por ponto
+        let desconto = parseFloat(descontoStr.replace(/\./g, '').replace(',', '.')) || 0;
+
         let valorTotal = subtotal - desconto;
         document.getElementById("valor_total").value = valorTotal.toFixed(2);
+
     };
 
     // Aguarda o carregamento do DOM para adicionar os event listeners
@@ -514,7 +527,7 @@
         if (linhaAtiva) {
             linhaAtiva.querySelector(".produto-id").value = id;
             linhaAtiva.querySelector(".produto-nome").value = nome;
-            linhaAtiva.querySelector(".quantidade").value = quantidade;
+            linhaAtiva.querySelector(".quantidade").value = 1;
             linhaAtiva.querySelector(".preco-diaria").value = preco_diaria;
 
             update_quantidade(linhaAtiva.querySelector(".quantidade"));
@@ -560,7 +573,7 @@
             formContainer.find('[name="localidade"]').val(dados.localidade);
         }, 'json');
     }
-    
+
     document.addEventListener("DOMContentLoaded", function() {
         function verificarDisponibilidade(produtoInput) {
             const produtoId = produtoInput.closest('.produto-item').querySelector('.produto-id').value;

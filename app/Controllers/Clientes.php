@@ -121,11 +121,10 @@ class Clientes extends BaseController
 
     public function update($id){
         $clientesModel = new ModelsClientes();
-        $tipo = $clientesModel->find($id);
+        $cliente = $clientesModel->find($id);
         
-        if ($tipo = 1){
+        if ($cliente['tipo'] == 1){
             $data = [
-                'tipo' => $tipo,
                 'nome' => $this->request->getPost('nome'),
                 'cpf' => $this->request->getPost('cpf'),
                 'rg' => $this->request->getPost('rg'),
@@ -149,9 +148,8 @@ class Clientes extends BaseController
                 return redirect()->back()->withInput()->with('error', 'Erro ao cadastrar cliente.');
             }
 
-        } elseif($tipo = 2) {
+        } elseif($cliente['tipo'] == 2) {
             $data = [
-                'tipo' => $this->request->getPost('tipo'),
                 'razao_social' => $this->request->getPost('razao_social'),
                 'cnpj' => $this->request->getPost('cnpj'),
                 'telefone_comercial' => $this->request->getPost('telefone_comercial'),
@@ -180,7 +178,6 @@ class Clientes extends BaseController
           
         }
     }
-
 
     public function excluir($id){
         if (!session()->get('logged_in')) {

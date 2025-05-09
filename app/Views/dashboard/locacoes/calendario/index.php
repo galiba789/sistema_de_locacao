@@ -38,6 +38,7 @@
         color: #ffffff !important;
     }
 </style>
+
 <div class="content-wrapper">
     <div class="container mt-4">
         <h2 class="text-center">Calendário de Locações</h2>
@@ -58,12 +59,12 @@
                 $primeiroDiaDoMes = date('w', strtotime("$ano-$mes-01"));
                 $totalDiasMes = date('t', strtotime("$ano-$mes-01"));
 
-                // Preenchendo os dias vazios do começo do mês
+                // Preencher os dias vazios no início do mês
                 for ($i = 0; $i < $primeiroDiaDoMes; $i++) {
                     echo "<div class='day'></div>";
                 }
 
-                // Exibindo os dias do mês
+                // Mostrar os dias do mês
                 for ($dia = 1; $dia <= $totalDiasMes; $dia++) {
                     echo "<div class='day'>";
                     echo "<div class='date'>$dia</div>";
@@ -71,21 +72,19 @@
                     if (isset($locacoesPorDia[$dia])) {
                         echo "<div class='locacoes'>";
                         foreach ($locacoesPorDia[$dia] as $locacao) {
-                            // Exibindo somente a data da retirada
-                            $dataRetirada = strtotime($locacao['data_entrega']); // Assumindo que o campo correto é `data_retirada`
-                            if (date('d', $dataRetirada) == $dia) {
-                                // Verificando a situação da locação
-                                if($locacao['situacao'] == 4){
-                                    echo "<div class='locacao bg-danger'>";
-                                } elseif ($locacao['situacao'] == 5){
-                                    echo "<div class='locacao bg-warning'>";
-                                } elseif($locacao['situacao'] == 1){
-                                    echo "<div class='locacao bg-info'>";
-                                } else {
-                                    echo "<div class='locacao bg-warning'>";
-                                }
+                            // Exibe apenas se o dia for o mesmo da retirada
+                            $dataEntrega = strtotime($locacao['data_entrega']);
+                            if (date('j', $dataEntrega) == $dia) {
+                                // Cor de fundo conforme situação
+                                $classe = match ($locacao['situacao']) {
+                                    1 => 'bg-info',
+                                    4 => 'bg-danger',
+                                    5 => 'bg-warning',
+                                    default => 'bg-info',
+                                };
 
-                                echo "<a class='link' href='".base_url()."clientes/historico/{$locacao['cliente_id']}' target='_blank'>{$locacao['cliente_nome']}</a>";
+                                echo "<div class='locacao $classe'>";
+                                echo "<a class='link' href='" . base_url("clientes/historico/{$locacao['cliente_id']}") . "' target='_blank'>{$locacao['cliente_nome']}</a>";
                                 echo "</div>";
                             }
                         }

@@ -30,6 +30,8 @@ $routes->post('/categorias/salvar', 'Categorias::salvar');
 $routes->get('/categorias/edita/(:num)', 'Categorias::edita/$1');
 $routes->post('/categorias/editar/(:num)', 'Categorias::editar/$1');
 $routes->get('/categorias/excluir/(:num)', 'Categorias::excluir/$1');
+$routes->post('categorias/salvar-ajax', 'Categorias::salvarAjax');
+
 
 $routes->get('/produtos', 'Produtos::index');
 $routes->get('/produtos/cadastrar', 'Produtos::cadastrar');
@@ -38,6 +40,7 @@ $routes->get('/produtos/edita/(:num)', 'Produtos::edita/$1');
 $routes->post('/produtos/editar/(:num)', 'Produtos::editar/$1');
 $routes->get('/produtos/excluir/(:num)', 'Produtos::excluir/$1');
 $routes->get('produtos/buscar', 'Produtos::buscar');
+$routes->post('produtos/salvarCategoria', 'Produtos::salvarCategoria');
 
 
 $routes->get('/locacoes', 'Locacoes::index');

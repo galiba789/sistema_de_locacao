@@ -25,8 +25,8 @@ class Produtos extends BaseController
 
         // Busca os dados paginados (mantém a variável produtos paginada)
         $produtos = $produtosModel->orderBy('produtos.id', 'DESC')
-                                    ->paginate($itensPorPagina);
-                                    
+            ->paginate($itensPorPagina);
+
 
         // Gera os links de paginação automaticamente
         $paginacao = $produtosModel->pager;
@@ -157,4 +157,41 @@ class Produtos extends BaseController
         return $this->response->setJSON($produtos);
     }
 
+    public function salvarCategoria()
+    {
+        if (!session()->get('logged_in')) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Usuário não logado']);
+        }
+
+        $categoriasModel = new CategoriaModel();
+
+        $dadosRecebidos = $this->request->getJSON(true); // Pega o JSON enviado
+
+        if (!isset($dadosRecebidos['nome']) || empty(trim($dadosRecebidos['nome']))) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Nome da categoria é obrigatório']);
+        }
+
+        $nome = trim($dadosRecebidos['nome']);
+
+        // Você pode colocar uma validação extra para não cadastrar nomes duplicados, se quiser
+
+        $data = [
+            'nome' => $nome,
+            'ativo' => 1 // Se você usa controle de ativo/inativo
+        ];
+
+        $id = $categoriasModel->insert($data);
+
+        if (is_int($id) || is_numeric($id)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'categoria' => [
+                    'id' => $id,
+                    'nome' => $nome
+                ]
+            ]);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Erro ao salvar a categoria']);
+        }
+    }
 }

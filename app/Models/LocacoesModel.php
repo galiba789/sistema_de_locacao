@@ -24,15 +24,13 @@ class LocacoesModel extends Model
     public function getAtivosPorMes($mes, $ano)
     {
         $primeiroDia = "$ano-$mes-01";
-        $ultimoDia = date('Y-m-t', strtotime($primeiroDia));
-
+        $ultimoDia = date('Y-m-t 23:59:59', strtotime($primeiroDia)); // Incluir até o final do dia
+    
         return $this->where('situacao !=', 5)
             ->where('situacao !=', 4)
             ->where('excluido !=', 1)
-            ->groupStart()
+            ->where('data_entrega >=', $primeiroDia)
             ->where('data_entrega <=', $ultimoDia)
-            ->where('data_devolucao >=', $primeiroDia)
-            ->groupEnd()
             ->findAll();
     }
 

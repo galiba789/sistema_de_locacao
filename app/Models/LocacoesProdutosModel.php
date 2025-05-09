@@ -12,7 +12,7 @@ class LocacoesProdutosModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id', 'locacao_id', 'produto_id', 'quantidade', 'valor_unitario', 'subtotal', 'data_retirada', 'data_devolucao_real', 'created_at', 'updated_at'];
+    protected $allowedFields    = ['id', 'locacao_id', 'produto_id', 'quantidade', 'preco_diaria', 'subtotal', 'data_retirada', 'data_devolucao_real', 'created_at', 'updated_at'];
 
    public function getByLocacaoId($id)
    {
