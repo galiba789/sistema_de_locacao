@@ -32,7 +32,7 @@ class Home extends BaseController
             ->select("DATE_FORMAT(created_at, '%m') as mes, 
                       DATE_FORMAT(created_at, '%M') as nome_mes, 
                       SUM(valor_total) as total")
-            ->where('situacao', 4)
+            ->where('situacao !=', 5)
             ->groupBy('mes') 
             ->groupBy('nome_mes') 
             ->orderBy('mes', 'ASC')

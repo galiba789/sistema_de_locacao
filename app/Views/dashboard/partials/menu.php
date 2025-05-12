@@ -140,7 +140,7 @@
                 <?php if (!empty($notificacoes)) : ?>
                     <?php foreach ($notificacoes as $locacao) : ?>
                         <li >
-                            <a class="dropdown-item" href="<?= base_url('clientes/historico/') . $locacao['cliente_id'] ?>">
+                            <a class="dropdown-item" href="<?= base_url('locacoes/resumo/') . $locacao['id'] ?>">
                                 <p style="color: #000"><?= esc($locacao['cliente'] ?? 'Cliente') ?></p> 
                                 <small class="text-muted">Entrega em <?= date('d/m/Y', strtotime($locacao['data_entrega'])) ?></small>
                             </a>

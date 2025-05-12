@@ -24,7 +24,7 @@ class Produtos extends BaseController
         $itensPorPagina = 10;
 
         // Busca os dados paginados (mantém a variável produtos paginada)
-        $produtos = $produtosModel->orderBy('produtos.id', 'DESC')
+        $produtos = $produtosModel->orderBy('produtos.id', 'DESC')->where('produtos.status !=', 0)
             ->paginate($itensPorPagina);
 
 
@@ -135,7 +135,7 @@ class Produtos extends BaseController
         $produtosModel->find($id);
 
         $dados = [
-            'status' => 0,
+            'status' => 1,
         ];
 
         $produtosModel->update($id, $dados);

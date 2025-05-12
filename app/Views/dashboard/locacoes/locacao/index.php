@@ -70,7 +70,7 @@
                         <tr>
                             <td><?= $locacao['id'] ?></td>
                             <td><?= date("d/m/Y H:i:s", strtotime($locacao['created_at'])) ?> <br></td>
-                            <td><a href="clientes/historico/<?= $locacao['cliente_id'] ?>"><?= $locacao['cliente_nome'] ?></a></td>
+                            <td><a href="<?=base_url()?>locacoes/resumo/<?= $locacao['id'] ?>"><?= $locacao['cliente_nome'] ?></a></td>
                             <td>
                                 <?= date("d/m/Y H:i:s", strtotime($locacao['data_entrega'])) ?> <br>
                                 <?= date("d/m/Y H:i:s", strtotime($locacao['data_devolucao'])) ?>
@@ -207,7 +207,7 @@
                         <tr>
                             <td>${locacao.id || ''}</td>
                             <td>${locacao.created_at || ''}</td>
-                            <td><a href="clientes/historico/${locacao.cliente_id}">${locacao.cliente_nome || locacao.cliente_razao_social}</a></td>
+                            <td><a href="locacoes/resumo/${locacao.id}">${locacao.cliente_nome || locacao.cliente_razao_social}</a></td>
                             <td>${locacao.data_entrega }<br>${locacao.data_devolucao}</td>
                             <td>${valorTotal}</td>
                             <td>

@@ -561,4 +561,60 @@ class Locacoes extends BaseController
         return redirect()->to('/locacoes')
             ->with('success', 'Locação atualizada com sucesso!');
     }
+
+    public function resumo($id){
+        $produtosModel = new ProdutosModel();
+        $locacoesModel = new LocacoesModel();
+        $produtosLocacoesModel = new LocacoesProdutosModel();
+        $clientesModel = new Clientes();
+
+           // Obtém os dados da locação
+           $locacao = $locacoesModel->find($id);
+        //    if (!$locacao) {
+        //        return redirect()->to('/locacoes')->with('error', 'Locação não encontrada.');
+        //    }
+           $locacao = $locacoesModel
+               ->select('locacao.*, clientes.nome AS cliente_nome, clientes.razao_social, clientes.tipo AS cliente_tipo')
+               ->join('clientes', 'clientes.id = locacao.cliente_id', 'left')
+               ->where('locacao.id', $id)
+               ->first();
+   
+           // Define corretamente o nome do cliente considerando o tipo
+           if ($locacao) {
+               $locacao['cliente_nome'] = $locacao['cliente_tipo'] == 1 ? $locacao['cliente_nome'] : $locacao['razao_social'];
+           }
+   
+   
+           // Buscar produtos da locação com JOIN para obter os detalhes de cada produto
+           $produtosLocacao = $produtosLocacoesModel
+               ->select('locacoes_produtos.*, 
+                     produtos.nome AS produto_nome, 
+                     produtos.preco_diaria AS preco_produto_original')
+               ->join('produtos', 'produtos.id = locacoes_produtos.produto_id', 'left')
+               ->where('locacoes_produtos.locacao_id', $id)
+               ->findAll();
+   
+           // Se um produto foi removido, definir nome como "Produto removido"
+           foreach ($produtosLocacao as &$produtoLocacao) {
+               if (!$produtoLocacao['produto_nome']) {
+                   $produtoLocacao['produto_nome'] = 'Produto removido';
+               }
+           }
+   
+           $locacao['produtos'] = $produtosLocacao;
+   
+           // print_r($locacao);
+           // exit;
+           $produtos = $produtosModel->getAtivos();
+   
+   
+   
+           $data = [
+               'locacao' => $locacao,
+               'clientes' => $clientesModel->getAtivos(),
+               'produtos' => $produtos
+           ];
+   
+           return view('/dashboard/locacoes/locacao/resumo', $data);
+    }
 }
