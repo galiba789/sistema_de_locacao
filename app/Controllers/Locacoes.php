@@ -342,7 +342,6 @@ class Locacoes extends BaseController
             'cliente' => $cliente,
 
         ];
-
         return view('dashboard/locacoes/locacao/contrato', $dados);
     }
 
