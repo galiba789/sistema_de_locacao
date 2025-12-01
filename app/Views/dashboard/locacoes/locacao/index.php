@@ -86,6 +86,7 @@
                                         <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') . $locacao['id'] ?>">Emitir Contrato</a></li>
                                         <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') . $locacao['id'] ?>">Editar Contrato</a></li>
                                         <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') . $locacao['id'] ?>">Cancelar Contrato</a></li>
+                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/anexos/') . $locacao['id'] ?>">Anexar</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -104,9 +105,9 @@
                             </td>
                             <td>
                                 <?php if ($locacao['pagamento'] == 0): ?>
-                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id'] ?>"><span class="btn btn-warning">Pendente</span></a>
+                                    <span class="btn btn-warning">Pendente</span>
                                 <?php elseif ($locacao['pagamento'] == 1): ?>
-                                    <a href="<?= base_url('locacoes/pagamento/') . $locacao['id'] ?>"><span class="btn btn-success">Pago</span></a>
+                                    <span class="btn btn-success">Pago</span>
                                 <?php endif; ?>
                             </td>
                             <td><?= $locacao['forma_pagamento'] ?></td>

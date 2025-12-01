@@ -60,6 +60,9 @@ $routes->get('/locacoes/pagamento/(:num)', 'Locacoes::pagamento/$1');
 $routes->get('/locacoes/excluir/(:num)', 'Locacoes::excluir/$1');
 $routes->get('/locacoes/resumo/(:num)', 'Locacoes::resumo/$1');
 
+$routes->get('locacoes/anexos/(:num)', 'Pagamentos::index/$1');
+$routes->post('locacoes/anexos/salvar/(:num)', 'Pagamentos::salvar/$1');
+
 $routes->get('/calendario', 'Calendario::index');
 $routes->get('/calendario/index/(:num)/(:num)', 'Calendario::index/$1/$2');
 
