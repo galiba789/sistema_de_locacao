@@ -108,10 +108,17 @@
             <b>Valor da Locação: R$ </b><?= $locacao['valor_total'] ?>
             <br>
             <b>Forma de pagamento: </b><?= $locacao['condicao'] == 1 ? 'A vista' : ' ' ?> <?= $locacao['forma_pagamento'] ?>
-            <br>
-            <b>Data de retirada: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_entrega'])) ?>
-            <br>
-            <b>Data de entrega: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_devolucao'])) ?>
+            <?php if($locacao['entrega_tipo'] == 'entrega'): ?>
+                <br>
+                <b>Data da entrega: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_entrega'])) ?>
+                <br>
+                <b>Data da Devolução: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_devolucao'])) ?>
+            <?php else:?>
+                <br>
+                <b>Data de Retirada: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_entrega'])) ?>
+                <br>
+                <b>Data de Entrega: </b><?= date('d/m/Y H:i:s', strtotime($locacao['data_devolucao'])) ?>
+            <?php endif;?>    
             <br>
             <br>
             <br>

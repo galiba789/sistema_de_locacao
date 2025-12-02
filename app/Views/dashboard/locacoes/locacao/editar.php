@@ -98,14 +98,22 @@
                     <input type="text" id="total_diarias" name="total_diarias" class="form-control" value="<?= $locacao['total_diarias'] ?>">
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-3 mb-3">
                     <label for="condicao">Condição de pagamento</label>
                     <select name="condicao" id="condicao" class="form-control">
                         <option value="1">Á vista</option>
                     </select>
                 </div>
 
-                <div class="col-md-6 mb-3">
+                  <div class="col-md-6 mb-3">
+                    <label for="entrega_tipo">Formas de entrega:</label>
+                    <select class="form-control" id="entrega_tipo" name="entrega_tipo">
+                        <option value="retirada" <?= $locacao['entrega_tipo']== 'retirada' ? 'selected': '' ?>>Retirada</option>
+                        <option value="entrega" <?= $locacao['entrega_tipo']== 'entrega'? 'selected' : '' ?>>Entrega</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 mb-3">
                     <label for="forma_pagamento">Forma de pagamento:</label>
                     <select class="form-control" id="forma_pagamento" name="forma_pagamento">
                         <option value="Pix" <?= $locacao['forma_pagamento'] == 'Pix' ? 'selected' : ' ' ?>>Pix</option>

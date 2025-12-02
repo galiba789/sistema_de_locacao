@@ -12,7 +12,7 @@ class LocacoesModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id', 'descricao', 'cliente_id', 'valor_total', 'situacao', 'status', 'data_entrega', 'data_devolucao', 'total_diarias', 'desconto', 'forma_pagamento', 'pagamento', 'observacao', 'acessorios', 'created_at', 'situacao', 'updated_at'];
+    protected $allowedFields    = ['id', 'descricao', 'cliente_id', 'valor_total', 'situacao', 'status', 'data_entrega', 'data_devolucao', 'total_diarias', 'desconto', 'forma_pagamento', 'pagamento', 'observacao', 'acessorios', 'created_at', 'situacao', 'updated_at', 'entrega_tipo'];
 
     public function getAtivos()
     {

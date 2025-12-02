@@ -106,6 +106,7 @@ class Locacoes extends BaseController
             'forma_pagamento' => $this->request->getPost('forma_pagamento'),
             'subtotal'        => $this->request->getPost('subtotal'),
             'desconto'        => $this->request->getPost('desconto'),
+            'entrega_tipo'    => $this->request->getPost('entrega_tipo'),
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
             'acessorios'      => $this->request->getPost('acessorios'),
@@ -237,6 +238,7 @@ class Locacoes extends BaseController
             'valor_total'     => $this->request->getPost('valor_total'),
             'observacao'      => $this->request->getPost('observacao'),
             'acessorios'      => $this->request->getPost('acessorios'),
+            'entrega_tipo'    => $this->request->getPost('entrega_tipo'),
             'created_at' => date('Y/m/d H:i:s'),
         ];
 
