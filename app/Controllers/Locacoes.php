@@ -376,47 +376,58 @@ class Locacoes extends BaseController
 
     public function buscar()
     {
-        $tipo = $this->request->getGet('tipo');
         $palavra = $this->request->getGet('palavra');
         $situacao = $this->request->getGet('situacao');
 
         $locacoesModel = new LocacoesModel();
-        $builder = $locacoesModel->select('locacao.*, clientes.nome as cliente_nome, clientes.razao_social as cliente_razao_social')
+        $builder = $locacoesModel
+            ->select('locacao.*, clientes.nome as cliente_nome, clientes.razao_social as cliente_razao_social')
             ->join('clientes', 'clientes.id = locacao.cliente_id');
 
-        // Filtrar locações canceladas apenas se a opção foi selecionada
+        // Situação
         if (!empty($situacao)) {
             $builder->where('locacao.situacao', $situacao);
         } else {
             $builder->where('locacao.situacao !=', 5); // Excluir canceladas por padrão
         }
 
-        // Filtros de busca por palavra-chave
+        // ------ BUSCA AUTOMÁTICA ------
         if (!empty($palavra)) {
-            switch ($tipo) {
-                case '1': // Buscar por Data
-                    if (strtotime($palavra)) {
-                        $builder->where('DATE(locacao.created_at)', date('Y-m-d', strtotime($palavra)));
-                    }
-                    break;
-                case '2': // Buscar por Nome do Cliente
-                    $builder->like('clientes.nome', $palavra);
-                    break;
-                case '3': // Buscar por Razão Social
-                    $builder->like('clientes.razao_social', $palavra);
-                    break;
-                case '4': // Buscar por Código da Locação
-                    $builder->where('locacao.id', $palavra);
-                    break;
+
+            // TRIM
+            $palavra = trim($palavra);
+
+            // Detectar se é número (ID)
+            if (is_numeric($palavra)) {
+                $builder->groupStart()
+                    ->where('locacao.id', $palavra)
+                    ->orLike('clientes.nome', $palavra)
+                    ->orLike('clientes.razao_social', $palavra)
+                    ->groupEnd();
+            }
+            // Detectar se é data válida
+            elseif (strtotime($palavra)) {
+                $dataFormatada = date('Y-m-d', strtotime($palavra));
+
+                $builder->groupStart()
+                    ->like('DATE(locacao.created_at)', $dataFormatada)
+                    ->orLike('DATE(locacao.data_entrega)', $dataFormatada)
+                    ->orLike('DATE(locacao.data_devolucao)', $dataFormatada)
+                    ->groupEnd();
+            }
+            // Texto (nome/razão/social)
+            else {
+                $builder->groupStart()
+                    ->like('clientes.nome', $palavra)
+                    ->orLike('clientes.razao_social', $palavra)
+                    ->groupEnd();
             }
         }
 
-        // Ordenar em ordem crescente pela data de criação
         $builder->orderBy('locacao.created_at', 'DESC');
-
         $locacoes = $builder->findAll();
 
-        // Formatação de datas e valores
+        // FORMATAÇÃO
         foreach ($locacoes as &$locacao) {
             if (isset($locacao['created_at'])) {
                 $locacao['created_at'] = date('d/m/Y H:i:s', strtotime($locacao['created_at']));
@@ -434,6 +445,7 @@ class Locacoes extends BaseController
 
         return $this->response->setJSON($locacoes);
     }
+
 
     public function consulta()
     {
@@ -530,10 +542,20 @@ class Locacoes extends BaseController
     public function confirmarlocacao($id)
     {
         $locacaoModel = new LocacoesModel();
+        $locacoes = $locacaoModel->find($id);
 
+        if($locacoes['situacao'] == 4){
+            $dados = [
+                'situacao' => 1,
+            ];
+            
+        }
         $dados = [
             'situacao' => 4,
         ];
+
+
+        
         $locacaoModel->update($id, $dados);
 
         return redirect()->to('/locacoes')
@@ -563,59 +585,60 @@ class Locacoes extends BaseController
             ->with('success', 'Locação atualizada com sucesso!');
     }
 
-    public function resumo($id){
+    public function resumo($id)
+    {
         $produtosModel = new ProdutosModel();
         $locacoesModel = new LocacoesModel();
         $produtosLocacoesModel = new LocacoesProdutosModel();
         $clientesModel = new Clientes();
 
-           // Obtém os dados da locação
-           $locacao = $locacoesModel->find($id);
+        // Obtém os dados da locação
+        $locacao = $locacoesModel->find($id);
         //    if (!$locacao) {
         //        return redirect()->to('/locacoes')->with('error', 'Locação não encontrada.');
         //    }
-           $locacao = $locacoesModel
-               ->select('locacao.*, clientes.nome AS cliente_nome, clientes.razao_social, clientes.tipo AS cliente_tipo')
-               ->join('clientes', 'clientes.id = locacao.cliente_id', 'left')
-               ->where('locacao.id', $id)
-               ->first();
-   
-           // Define corretamente o nome do cliente considerando o tipo
-           if ($locacao) {
-               $locacao['cliente_nome'] = $locacao['cliente_tipo'] == 1 ? $locacao['cliente_nome'] : $locacao['razao_social'];
-           }
-   
-   
-           // Buscar produtos da locação com JOIN para obter os detalhes de cada produto
-           $produtosLocacao = $produtosLocacoesModel
-               ->select('locacoes_produtos.*, 
+        $locacao = $locacoesModel
+            ->select('locacao.*, clientes.nome AS cliente_nome, clientes.razao_social, clientes.tipo AS cliente_tipo')
+            ->join('clientes', 'clientes.id = locacao.cliente_id', 'left')
+            ->where('locacao.id', $id)
+            ->first();
+
+        // Define corretamente o nome do cliente considerando o tipo
+        if ($locacao) {
+            $locacao['cliente_nome'] = $locacao['cliente_tipo'] == 1 ? $locacao['cliente_nome'] : $locacao['razao_social'];
+        }
+
+
+        // Buscar produtos da locação com JOIN para obter os detalhes de cada produto
+        $produtosLocacao = $produtosLocacoesModel
+            ->select('locacoes_produtos.*, 
                      produtos.nome AS produto_nome, 
                      produtos.preco_diaria AS preco_produto_original')
-               ->join('produtos', 'produtos.id = locacoes_produtos.produto_id', 'left')
-               ->where('locacoes_produtos.locacao_id', $id)
-               ->findAll();
-   
-           // Se um produto foi removido, definir nome como "Produto removido"
-           foreach ($produtosLocacao as &$produtoLocacao) {
-               if (!$produtoLocacao['produto_nome']) {
-                   $produtoLocacao['produto_nome'] = 'Produto removido';
-               }
-           }
-   
-           $locacao['produtos'] = $produtosLocacao;
-   
-           // print_r($locacao);
-           // exit;
-           $produtos = $produtosModel->getAtivos();
-   
-   
-   
-           $data = [
-               'locacao' => $locacao,
-               'clientes' => $clientesModel->getAtivos(),
-               'produtos' => $produtos
-           ];
-   
-           return view('/dashboard/locacoes/locacao/resumo', $data);
+            ->join('produtos', 'produtos.id = locacoes_produtos.produto_id', 'left')
+            ->where('locacoes_produtos.locacao_id', $id)
+            ->findAll();
+
+        // Se um produto foi removido, definir nome como "Produto removido"
+        foreach ($produtosLocacao as &$produtoLocacao) {
+            if (!$produtoLocacao['produto_nome']) {
+                $produtoLocacao['produto_nome'] = 'Produto removido';
+            }
+        }
+
+        $locacao['produtos'] = $produtosLocacao;
+
+        // print_r($locacao);
+        // exit;
+        $produtos = $produtosModel->getAtivos();
+
+
+
+        $data = [
+            'locacao' => $locacao,
+            'clientes' => $clientesModel->getAtivos(),
+            'produtos' => $produtos
+        ];
+
+        return view('/dashboard/locacoes/locacao/resumo', $data);
     }
 }

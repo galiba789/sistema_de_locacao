@@ -14,7 +14,7 @@
         <h1>Locações</h1>
         <div class="card p-3">
             <div class="row g-2 align-items-end">
-                <div class="col-md-2">
+                <!-- <div class="col-md-2">
                     <label for="tipo" class="form-label search">Tipo</label>
                     <select id="tipo" class="form-control">
                         <option value="">Selecione</option>
@@ -23,8 +23,8 @@
                         <option value="3">Razão Social</option>
                         <option value="4">Código</option>
                     </select>
-                </div>
-                <div class="col-md-3">
+                </div> -->
+                <div class="col-md-6">
                     <label for="palavra" class="form-label search">Palavra-chave</label>
                     <input type="text" id="palavra" class="form-control" placeholder="Digite sua busca">
                 </div>
@@ -70,7 +70,7 @@
                         <tr>
                             <td><?= $locacao['id'] ?></td>
                             <td><?= date("d/m/Y H:i:s", strtotime($locacao['created_at'])) ?> <br></td>
-                            <td><a href="<?=base_url()?>locacoes/resumo/<?= $locacao['id'] ?>"><?= $locacao['cliente_nome'] ?></a></td>
+                            <td><a href="<?= base_url() ?>locacoes/resumo/<?= $locacao['id'] ?>"><?= $locacao['cliente_nome'] ?></a></td>
                             <td>
                                 <?= date("d/m/Y H:i:s", strtotime($locacao['data_entrega'])) ?> <br>
                                 <?= date("d/m/Y H:i:s", strtotime($locacao['data_devolucao'])) ?>
@@ -98,7 +98,7 @@
                                 <?php elseif ($locacao['situacao'] == 3): ?>
                                     <a href="<?= base_url('locacoes/confirmar/') . $locacao['id'] ?>" class="btn btn-info">Atrasado</a>
                                 <?php elseif ($locacao['situacao'] == 4): ?>
-                                    <span class="btn btn-danger">Finalizada</span>
+                                   <a href="<?= base_url('locacoes/confirmar/') . $locacao['id'] ?>" class="btn btn-danger"> Finalizada</a>
                                 <?php elseif ($locacao['situacao'] == 5): ?>
                                     <span class="btn btn-warning">Cancelado</span>
                                 <?php endif; ?>
@@ -132,18 +132,17 @@
         function buscarLocacoes() {
 
             tabelaBody.innerHTML = "<tr><td colspan='9' class='text-center'>Carregando... <i class='fas fa-spinner fa-spin'></i></td></tr>";
+
             const baseUrl = "<?= base_url('locacoes/buscar') ?>";
             const basePagamentoUrl = "<?= base_url('locacoes/pagamento/') ?>";
             let queryParams = [];
 
-            if (tipoSelect.value) {
-                queryParams.push(`tipo=${encodeURIComponent(tipoSelect.value)}`);
-            }
-
+            // Buscar sempre pelo texto digitado
             if (palavraInput.value.trim()) {
                 queryParams.push(`palavra=${encodeURIComponent(palavraInput.value.trim())}`);
             }
 
+            // Situação continua opcional
             if (situacaoSelect.value) {
                 queryParams.push(`situacao=${encodeURIComponent(situacaoSelect.value)}`);
             }
@@ -151,14 +150,8 @@
             const url = queryParams.length > 0 ? `${baseUrl}?${queryParams.join('&')}` : baseUrl;
 
             fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Erro HTTP: ${response.status}`);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log("Dados recebidos:", data);
                     tabelaBody.innerHTML = "";
 
                     if (!data || data.length === 0) {
@@ -167,7 +160,6 @@
                     }
 
                     let rows = data.map(locacao => {
-                        console.log(locacao);
                         let badgeHtml = "";
                         switch (parseInt(locacao.situacao)) {
                             case 1:
@@ -185,68 +177,43 @@
                             case 5:
                                 badgeHtml = '<span class="btn btn-danger">Cancelado</span>';
                                 break;
-                            default:
-                                badgeHtml = '<span class="btn btn-secondary">Desconhecido</span>';
                         }
 
-                        let pagamento = "";
-                        if (locacao.pagamento == 0) {
-                            pagamento = `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-warning">Pendente</span></a>`;
-                        } else if (locacao.pagamento == 1) {
-                            pagamento = `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-success">Pago</span></a>`;
-                        }
-
-
-                        let dataEntrega = locacao.data_entrega ? new Date(locacao.data_entrega).toLocaleDateString('pt-BR') : '';
-                        let dataDevolucao = locacao.data_devolucao ? new Date(locacao.data_devolucao).toLocaleDateString('pt-BR') : '';
-                        let valorTotal = locacao.valor_total ? parseFloat(locacao.valor_total).toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL'
-                        }) : 'R$ 0,00';
+                        let pagamento = locacao.pagamento == 1 ?
+                            `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-success">Pago</span></a>` :
+                            `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-warning">Pendente</span></a>`;
 
                         return `
-                        <tr>
-                            <td>${locacao.id || ''}</td>
-                            <td>${locacao.created_at || ''}</td>
-                            <td><a href="locacoes/resumo/${locacao.id}">${locacao.cliente_nome || locacao.cliente_razao_social}</a></td>
-                            <td>${locacao.data_entrega }<br>${locacao.data_devolucao}</td>
-                            <td>${valorTotal}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                                        Mais
-                                    </button>
-                                   <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') ?>${locacao.id}">Emitir Contrato</a></li>
-                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') ?>${locacao.id}">Editar Contrato</a></li>
-                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') ?>${locacao.id}">Cancelar Contrato</a></li>
-                                        ${locacao.situacao == 5 
-                                            ? `<li><a class="dropdown-item" href="<?= base_url('locacoes/excluir/') ?>${locacao.id}">Excluir Contrato</a></li>` 
-                                            : ''
-                                        }
-                                    </ul>
-                                </div>
-                            </td>
-                            <td>${badgeHtml}</td>
-                           <td>${pagamento}</td>
-                            <td>${locacao.forma_pagamento || ''}</td>
-                        </tr>
-                    `;
+                    <tr>
+                        <td>${locacao.id}</td>
+                        <td>${locacao.created_at}</td>
+                        <td><a href="locacoes/resumo/${locacao.id}">${locacao.cliente_nome || locacao.cliente_razao_social}</a></td>
+                        <td>${locacao.data_entrega}<br>${locacao.data_devolucao}</td>
+                        <td>${parseFloat(locacao.valor_total).toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">Mais</button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') ?>${locacao.id}">Emitir Contrato</a></li>
+                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') ?>${locacao.id}">Editar Contrato</a></li>
+                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') ?>${locacao.id}">Cancelar Contrato</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td>${badgeHtml}</td>
+                        <td>${pagamento}</td>
+                        <td>${locacao.forma_pagamento || ''}</td>
+                    </tr>
+                `;
                     }).join('');
 
                     tabelaBody.innerHTML = rows;
-
-                    // Reativar os dropdowns após atualizar o conteúdo
-                    var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-                    dropdownElementList.map(function(dropdownToggleEl) {
-                        return new bootstrap.Dropdown(dropdownToggleEl);
-                    });
                 })
                 .catch(error => {
-                    console.error("Erro na busca:", error);
-                    tabelaBody.innerHTML = `<tr><td colspan='9' class='text-center text-danger'>Erro ao buscar dados: ${error.message}</td></tr>`;
+                    tabelaBody.innerHTML = `<tr><td colspan='9' class='text-center text-danger'>Erro: ${error.message}</td></tr>`;
                 });
         }
+
 
         // Eventos
         if (buscarBtn) {
