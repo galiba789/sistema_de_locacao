@@ -34,8 +34,8 @@
                   <th>Produto</th>
                   <th>Qtd. Locações</th>
                   <th>Total Diárias</th>
-                  <th>Preço Diária</th>
                   <th>Faturamento</th>
+                  <th>Valor Médio da Diaria</th>
                 </tr>
               </thead>
               <tbody>
@@ -44,8 +44,9 @@
                     <td><?= esc($p->produto) ?></td>
                     <td><?= esc($p->total_locacoes) ?></td>
                     <td><?= esc($p->total_diarias) ?></td>
-                    <td>R$ <?= number_format($p->preco_diaria,2,',','.') ?></td>
                     <td>R$ <?= number_format($p->faturamento_real,2,',','.') ?></td>
+                    <td>R$ <?= number_format($p->preco_diaria,2,',','.') ?></td>
+                
                   </tr>
                 <?php endforeach; ?>
               </tbody>

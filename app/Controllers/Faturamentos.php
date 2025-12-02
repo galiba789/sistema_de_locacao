@@ -40,6 +40,7 @@ class Faturamentos extends BaseController
 
         $produtos = $locacaoModel->getProdutosRelatorio($dataInicio, $dataFim, );
 
+        
         return view('dashboard/faturamento/produtos', [
             'produtos'   => $produtos,
             'filtros'    => compact('dataInicio','dataFim'),

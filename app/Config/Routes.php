@@ -95,3 +95,5 @@ $routes->get('/faturamentos', 'Faturamentos::index');
 $routes->get('/faturamentos/produtos', 'Faturamentos::produtos');
 $routes->get('/faturamentos/categorias', 'Faturamentos::categorias');
 $routes->get('/faturamentos/locacoes', 'Faturamentos::locacoes');
+
+$routes->get('/configuracoes', 'Configs::index');

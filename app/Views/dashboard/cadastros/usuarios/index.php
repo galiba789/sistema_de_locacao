@@ -1,14 +1,24 @@
-<?= $this->extend('dashboard/layout');?>
-<?= $this->section('content-wrapper');?>
+<?= $this->extend('dashboard/layout'); ?>
+<?= $this->section('content-wrapper'); ?>
 
 <div class="content-wrapper">
-<div class="container mt-4">
-    <h1>Usuarios</h1>   
-        <div class="d-flex flex-row-reverse">
-            <a href="<?=base_url('/usuarios/cadastrar')?>">
-                <button class="btn btn-success "><i class="fa-solid fa-magnifying-glass"></i></button>
-            </a>    
+    <div class="container mt-4">
+        <h1>Usuarios</h1>
+
+        <div class="d-flex justify-content-between mb-3">
+
+            <!-- Botão Voltar (esquerda) -->
+            <a href="<?= base_url('/configuracoes') ?>" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+
+            <!-- Botão Cadastrar (direita) -->
+            <a href="<?= base_url('/usuarios/cadastrar') ?>" class="btn btn-success">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+
         </div>
+
 
         <div class="table-responsive mt-4">
             <table class="table table-bordered table-striped">
@@ -21,32 +31,32 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($usuarios as $usuario):?>
-                    <tr>
-                            <td><?= $usuario['id']?></td>
-                            <td><?= $usuario['nome']?></td>
-                            <td><?= $usuario['email']?></td>
+                    <?php foreach ($usuarios as $usuario): ?>
+                        <tr>
+                            <td><?= $usuario['id'] ?></td>
+                            <td><?= $usuario['nome'] ?></td>
+                            <td><?= $usuario['email'] ?></td>
                             <td>
-                                <a href="<?=base_url('usuarios/edita/'). $usuario['id']?>">
+                                <a href="<?= base_url('usuarios/edita/') . $usuario['id'] ?>">
                                     <button class="btn btn-warning btn-sm">Editar</button>
                                 </a>
-                                <a href="<?=base_url('usuarios/excluir/'). $usuario['id']?>">
+                                <a href="<?= base_url('usuarios/excluir/') . $usuario['id'] ?>">
                                     <button class="btn btn-danger btn-sm">Excluir</button>
                                 </a>
                             </td>
                         </tr>
-                        <?php endforeach; ?>
+                    <?php endforeach; ?>
                     <!-- Outras linhas podem ser adicionadas aqui -->
                 </tbody>
             </table>
         </div>
 
         <div class="d-flex justify-content-center">
-            <?php echo $paginacao->links('default', 'custom_pager')?>
+            <?php echo $paginacao->links('default', 'custom_pager') ?>
         </div>
 
     </div>
 </div>
 
 
-<?= $this->endSection();?>
+<?= $this->endSection(); ?>

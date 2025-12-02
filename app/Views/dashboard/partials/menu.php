@@ -108,7 +108,7 @@
                         <li><a class="dropdown-item" href="<?= base_url('/clientes') ?>"><i class="fa-solid fa-user"></i> Clientes</a></li>
                         <li><a class="dropdown-item" href="<?= base_url('/categorias') ?>"><i class="fa-solid fa-shop"></i> Categorias</a></li>
                         <li><a class="dropdown-item" href="<?= base_url('/produtos') ?>"><i class="fa-solid fa-cart-shopping"></i> Produtos</a></li>
-                        <li><a class="dropdown-item" href="<?= base_url('/usuarios') ?>"><i class="fa-solid fa-user-plus"></i> Usuarios</a></li>
+                        <!-- <li><a class="dropdown-item" href="<?= base_url('/usuarios') ?>"><i class="fa-solid fa-user-plus"></i> Usuarios</a></li> -->
                     </ul>
                 </li>
             </ul>
@@ -125,42 +125,45 @@
         $notificacoes = getNotificacoes();
         ?>
 
-        <!-- Notificação com Bootstrap Dropdown -->
+<!-- Notificação com Bootstrap Dropdown -->
         <li class="nav-item dropdown">
             <a class="nav-link" href="#" id="notificacaoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-bell"></i>
                 <?php if (!empty($notificacoes)) : ?>
                     <span class="badge bg-danger"><?= count($notificacoes); ?></span>
-                <?php endif; ?>
-            </a>
-
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificacaoDropdown" style="width: 300px;">
-                <li class="dropdown-header">📅 Locações próximas da entrega</li>
-
-                <?php if (!empty($notificacoes)) : ?>
-                    <?php foreach ($notificacoes as $locacao) : ?>
-                        <li >
-                            <a class="dropdown-item" href="<?= base_url('locacoes/resumo/') . $locacao['id'] ?>">
-                                <p style="color: #000"><?= esc($locacao['cliente'] ?? 'Cliente') ?></p> 
-                                <small class="text-muted">Entrega em <?= date('d/m/Y', strtotime($locacao['data_entrega'])) ?></small>
+                    <?php endif; ?>
+                </a>
+                
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificacaoDropdown" style="width: 300px;">
+                    <li class="dropdown-header">📅 Locações próximas da entrega</li>
+                    
+                    <?php if (!empty($notificacoes)) : ?>
+                        <?php foreach ($notificacoes as $locacao) : ?>
+                            <li>
+                                <a class="dropdown-item" href="<?= base_url('locacoes/resumo/') . $locacao['id'] ?>">
+                                    <p style="color: #000"><?= esc($locacao['cliente'] ?? 'Cliente') ?></p>
+                                    <small class="text-muted">Entrega em <?= date('d/m/Y', strtotime($locacao['data_entrega'])) ?></small>
                             </a>
                         </li>
-                    <?php endforeach; ?>
-                <?php else : ?>
-                    <li><span class="dropdown-item text-muted">Sem locações próximas</span></li>
-                <?php endif; ?>
-            </ul>
-        </li>
-
-
-        <a href="<?= base_url('login/logout') ?>" class="btn btn-danger">
-            <i class="fa-solid fa-sign-out-alt"></i>
-        </a>
-    </div>
-
-    </div>
-
-</nav>
+                        <?php endforeach; ?>
+                        <?php else : ?>
+                            <li><span class="dropdown-item text-muted">Sem locações próximas</span></li>
+                            <?php endif; ?>
+                        </ul>
+                        </li>
+                        
+                        
+                        <a href="<?= base_url('/configuracoes') ?>" class="btn btn-secondary m-2">
+                            <i class="fa-solid fa-gear"></i>
+                        </a>
+                        <a href="<?= base_url('login/logout') ?>" class="btn btn-danger">
+                            <i class="fa-solid fa-sign-out-alt"></i>
+                        </a>
+                    </div>
+                    
+                </div>
+                
+            </nav>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const toggleDarkModeBtn = document.getElementById("toggleDarkMode");
