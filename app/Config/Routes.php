@@ -104,3 +104,10 @@ $routes->post('/pagamentos/cadastro', 'Pagamentos::cadastro');
 $routes->get('/pagamentos/edita/(:num)', 'Pagamentos::edita/$1');
 $routes->post('/pagamentos/editar/(:num)', 'Pagamentos::editar/$1');
 $routes->get('/pagamentos/excluir/(:num)', 'Pagamentos::excluir/$1');
+
+$routes->get('/condicao', 'CondicaoPagamento::index');
+$routes->get('/condicao/cadastrar', 'CondicaoPagamento::cadastrar');
+$routes->post('/condicao/salvar', 'CondicaoPagamento::salvar');
+$routes->get('/condicao/edita/(:num)', 'CondicaoPagamento::edita/$1');
+$routes->post('/condicao/editar/(:num)', 'CondicaoPagamento::editar/$1');
+$routes->get('/condicao/excluir/(:num)', 'CondicaoPagamento::excluir/$1');

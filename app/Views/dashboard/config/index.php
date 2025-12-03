@@ -66,7 +66,7 @@
                     </div>
 
                     <div class="card-body">
-                        <a href="<?= base_url('condicoes') ?>" class="btn btn-outline-secondary">
+                        <a href="<?= base_url('condicao') ?>" class="btn btn-outline-secondary">
                             <i class="fas fa-list"></i> Gerenciar Condições de Pagamento
                         </a>
                     </div>
