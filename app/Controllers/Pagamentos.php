@@ -5,11 +5,12 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\AnexosModel;
 use App\Models\LocacoesModel;
+use App\Models\PagamentosModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Pagamentos extends BaseController
 {
-    public function index($id_locacao)
+    public function Anexos($id_locacao)
     {
         if (!session()->get('logged_in')) {
             return redirect()->to('/');
@@ -72,5 +73,94 @@ class Pagamentos extends BaseController
         $locacoesModel->update($id_locacao, $data);
 
         return redirect()->back()->with('success', 'Comprovante enviado com sucesso!');
+    }
+
+    public function index() {
+
+        $pagamentosModel = new PagamentosModel();
+        
+        $pagamentos = $pagamentosModel->where('excluido', 0)->orderBy('id', 'DESC')
+            ->paginate(10);
+
+        $paginacao = $pagamentosModel->pager;
+
+        $data = [
+            'pagamentos' => $pagamentos,
+            'paginacao' => $paginacao
+        ];
+
+        return view('dashboard/cadastros/pagamentos/index', $data);
+    }
+
+    public function cadastrar() {
+
+        return view('dashboard/cadastros/pagamentos/cadastrar');
+    }
+
+    public function cadastro(){
+
+        $pagamentosModel = new PagamentosModel();
+
+        $nome = $this->request->getPost('nome');
+
+        $data = [
+            'nome' => $nome,
+            'ativo' => 1
+        ];
+
+        $pagamentosModel->insert($data);
+
+        return redirect()->to('pagamentos/')->with('Success', 'Cadastro feito com sucesso');
+    }
+
+
+    public function edita($id)
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+        $pagamentosModel = new PagamentosModel();
+
+        $data = [
+            'pagamento' => $pagamentosModel->find($id),
+        ];
+
+        return view('/dashboard/cadastros/pagamentos/editar', $data);
+    }
+
+    public function editar($id)
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+        $pagamentosModel = new PagamentosModel();
+
+        $data = [
+            'nome' => $this->request->getPost('nome'),
+        ];
+
+        $id = $pagamentosModel->update($id, $data);
+        if ($id) {
+            return redirect()->to('/pagamentos')->with('success', 'Cliente cadastrada com sucesso!');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Erro ao cadastrar cliente.');
+        }
+    }
+
+    public function excluir($id)
+    {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/');
+        }
+        $pagamentosModel = new PagamentosModel();
+        $pagamentosModel->find($id);
+
+        $dados = [
+            'ativo' => 0,
+            'excluido' => 1
+        ];
+
+        $pagamentosModel->update($id, $dados);
+        return redirect()->to('/pagamentos')->with('success', 'Cliente desativado com sucesso.');
     }
 }

@@ -60,7 +60,7 @@ $routes->get('/locacoes/pagamento/(:num)', 'Locacoes::pagamento/$1');
 $routes->get('/locacoes/excluir/(:num)', 'Locacoes::excluir/$1');
 $routes->get('/locacoes/resumo/(:num)', 'Locacoes::resumo/$1');
 
-$routes->get('locacoes/anexos/(:num)', 'Pagamentos::index/$1');
+$routes->get('locacoes/anexos/(:num)', 'Pagamentos::Anexos/$1');
 $routes->post('locacoes/anexos/salvar/(:num)', 'Pagamentos::salvar/$1');
 
 $routes->get('/calendario', 'Calendario::index');
@@ -97,3 +97,10 @@ $routes->get('/faturamentos/categorias', 'Faturamentos::categorias');
 $routes->get('/faturamentos/locacoes', 'Faturamentos::locacoes');
 
 $routes->get('/configuracoes', 'Configs::index');
+
+$routes->get('/pagamentos', 'Pagamentos::index');
+$routes->get('/pagamentos/cadastrar', 'Pagamentos::cadastrar');
+$routes->post('/pagamentos/cadastro', 'Pagamentos::cadastro');
+$routes->get('/pagamentos/edita/(:num)', 'Pagamentos::edita/$1');
+$routes->post('/pagamentos/editar/(:num)', 'Pagamentos::editar/$1');
+$routes->get('/pagamentos/excluir/(:num)', 'Pagamentos::excluir/$1');
