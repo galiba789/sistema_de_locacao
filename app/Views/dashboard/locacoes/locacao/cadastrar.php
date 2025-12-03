@@ -68,7 +68,7 @@
                     <label for="situacao">Situação</label>
                     <select name="situacao" id="situacao" class="form-control">
                         <option value="">Selecionar</option>
-                        <option value="1" selected >Agendado</option>
+                        <option value="1" selected>Agendado</option>
                         <option value="2">Pendente</option>
                         <option value="3">Atrasado</option>
                         <option value="4">Finalizado</option>
@@ -91,7 +91,9 @@
                 <div class="col-md-3 mb-3">
                     <label for="condicao">Condição de pagamento</label>
                     <select name="condicao" id="condicao" class="form-control">
-                        <option value="1">Á vista</option>
+                        <?php foreach ($condicoes as $condicao): ?>
+                            <option value="<?= $condicao['nome'] ?>"><?= $condicao['nome'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -102,14 +104,13 @@
                         <option value="Entrega">Entrega</option>
                     </select>
                 </div>
-               
+
                 <div class="col-md-3 mb-3">
                     <label for="forma_pagamento">Forma de pagamento:</label>
                     <select class="form-control" id="forma_pagamento" name="forma_pagamento">
-                        <option value="Pix">Pix</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão">Cartão</option>
-                        <option value="Boleto">Boleto</option>
+                        <?php foreach ($pagamentos as $pagamento): ?>
+                            <option value="<?= $pagamento['nome'] ?>"><?= $pagamento['nome'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -663,6 +664,81 @@
                 .catch(error => console.error("Erro na requisição:", error));
         });
     });
+
+    function filtrarProdutos() {
+        var input = document.getElementById('buscarProdutos').value.toLowerCase();
+        var rows = document.querySelectorAll('#listaProdutos tr');
+
+        rows.forEach(function(row) {
+            // Evita erro caso a linha não tenha células
+            if (!row.cells[1]) return;
+
+            var nome = row.cells[1].textContent.toLowerCase();
+            row.style.display = nome.includes(input) ? '' : 'none';
+        });
+    }
+
+
+    function selecionarProduto(id, nome, quantidade, preco) {
+
+        // Prioriza o bloco salvo quando o botão foi clicado; se não existir, usa o último item
+        var alvo = window.produtoItemTarget || document.querySelector('#produtos-container .produto-item:last-child');
+
+        if (!alvo) {
+            console.warn('Nenhum bloco .produto-item encontrado para preencher os dados.');
+            return;
+        }
+
+        // Campos dentro do bloco alvo
+        var inputId = alvo.querySelector('.produto-id');
+        var inputNome = alvo.querySelector('.produto-nome');
+        var inputQuantidade = alvo.querySelector('.quantidade');
+        var inputPreco = alvo.querySelector('.preco-diaria');
+        var inputTotal = alvo.querySelector('.total-unitario');
+
+        if (inputId) inputId.value = id;
+        if (inputNome) inputNome.value = nome;
+
+        // Preencher quantidade e preço se fornecidos (senão, mantém o valor atual)
+        if (typeof quantidade !== 'undefined' && quantidade !== null && inputQuantidade) {
+            // converte para número e coloca no input (se quiser para preenchimento automático, else 1)
+            var q = Number(quantidade) || 0;
+            inputQuantidade.value = q;
+        }
+
+        if (typeof preco !== 'undefined' && preco !== null && inputPreco) {
+            // garante número com ponto decimal
+            var p = parseFloat(String(preco).replace(',', '.')) || 0;
+            inputPreco.value = p;
+        }
+
+        // Atualiza total: quantidade * preco (se ambos existirem)
+        if (inputQuantidade && inputPreco && inputTotal) {
+            var qVal = Number(inputQuantidade.value) || 0;
+            var pVal = parseFloat(String(inputPreco.value).replace(',', '.')) || 0;
+            var total = qVal * pVal;
+            // formata com 2 casas
+            inputTotal.value = total.toFixed(2).replace('.', ','); // usa vírgula se preferir real BR
+        }
+
+        // fecha modal (se estiver usando bootstrap 5)
+        var modalEl = document.getElementById('ProdutosModal');
+        if (modalEl) {
+            var modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+            else {
+                // se não houver instância (inconsistência) tenta criar e fechar
+                try {
+                    var tmp = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    tmp.hide();
+                } catch (e) {
+                    /* silêncio */ }
+            }
+        }
+
+        // limpa referência para evitar preenchimentos futuros indesejados
+        window.produtoItemTarget = null;
+    }
 </script>
 
 <?= $this->endSection() ?>

@@ -99,6 +99,7 @@ $routes->get('/faturamentos/locacoes', 'Faturamentos::locacoes');
 $routes->get('/configuracoes', 'Configs::index');
 
 $routes->get('/pagamentos', 'Pagamentos::index');
+$routes->get('/pagamentos/anexos/(:num)', 'Pagamentos::Anexos/$1');
 $routes->get('/pagamentos/cadastrar', 'Pagamentos::cadastrar');
 $routes->post('/pagamentos/cadastro', 'Pagamentos::cadastro');
 $routes->get('/pagamentos/edita/(:num)', 'Pagamentos::edita/$1');

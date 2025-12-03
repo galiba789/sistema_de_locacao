@@ -4,9 +4,11 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\Clientes;
+use App\Models\CondicaoPagamentoModel;
 use App\Models\ConsultasCep;
 use App\Models\LocacoesModel;
 use App\Models\LocacoesProdutosModel;
+use App\Models\PagamentosModel;
 use App\Models\ProdutosModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -69,10 +71,14 @@ class Locacoes extends BaseController
     {
         $clienteModels = new Clientes();
         $produtosModels = new ProdutosModel();
+        $condicoesPagamentosModel = new CondicaoPagamentoModel();
+        $formasPagamentoModel = new PagamentosModel();
 
         $data = [
             'clientes' => $clienteModels->getAtivos(),
             'produtos' => $produtosModels->getAtivos(),
+            'condicoes' => $condicoesPagamentosModel->where('excluido', 0)->findAll(),
+            'pagamentos' => $formasPagamentoModel->where('excluido', 0)->findAll()
         ];
 
         return view('dashboard/locacoes/locacao/cadastrar', $data);
@@ -152,6 +158,8 @@ class Locacoes extends BaseController
         $locacoesModel = new LocacoesModel();
         $produtosLocacoesModel = new LocacoesProdutosModel();
         $clientesModel = new Clientes();
+        $condicoesPagamentosModel = new CondicaoPagamentoModel();
+        $formasPagamentoModel = new PagamentosModel();
 
         // Obtém os dados da locação
         $locacao = $locacoesModel->find($id);
@@ -197,7 +205,9 @@ class Locacoes extends BaseController
         $data = [
             'locacao' => $locacao,
             'clientes' => $clientesModel->getAtivos(),
-            'produtos' => $produtos
+            'produtos' => $produtos,
+             'condicoes' => $condicoesPagamentosModel->where('excluido', 0)->findAll(),
+            'pagamentos' => $formasPagamentoModel->where('excluido', 0)->findAll()
         ];
 
         return view('/dashboard/locacoes/locacao/editar', $data);
