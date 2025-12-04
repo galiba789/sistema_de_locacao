@@ -50,7 +50,7 @@ class Calendario extends BaseController
             $dia = date('j', $dataEntrega);
             $locacoesPorDia[$dia][] = $locacao;
         }
-    
+         
         $data = [
             'mes' => $mes,
             'ano' => $ano,

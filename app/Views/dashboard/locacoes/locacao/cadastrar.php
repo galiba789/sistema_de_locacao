@@ -476,6 +476,17 @@
     }
 
     // Função para adicionar um novo produto à lista
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-selecionar-produto');
+        if (!btn) return;
+        const linha = btn.closest('.produto-item');
+        if (!linha) return;
+        // salva a linha alvo em dois lugares (compatibilidade)
+        window.produtoItemTarget = linha;
+        linhaAtiva = linha;
+        // não abrimos o modal aqui porque você já usa data-bs-toggle no botão
+    });
+
     function addProduto() {
         var container = document.getElementById('produtos-container');
         var lastRow = container.querySelector('.produto-item:last-child');
@@ -485,29 +496,52 @@
             return;
         }
 
-        var produtoNome = lastRow.querySelector('.produto-nome').value.trim();
-        var produtoId = lastRow.querySelector('.produto-id').value.trim();
-        var quantidade = lastRow.querySelector('.quantidade').value.trim();
-        var precoDiaria = lastRow.querySelector('.preco-diaria').value.trim();
+        var produtoNome = (lastRow.querySelector('.produto-nome') || {}).value || '';
+        var produtoId = (lastRow.querySelector('.produto-id') || {}).value || '';
+        var quantidade = (lastRow.querySelector('.quantidade') || {}).value || '';
+        var precoDiaria = (lastRow.querySelector('.preco-diaria') || {}).value || '';
 
+        // validação: exige que a linha atual esteja preenchida antes de criar nova
         if (!produtoNome || !produtoId || !isValidNumber(quantidade) || !isValidNumber(precoDiaria)) {
             alert('Preencha todos os campos antes de adicionar outro produto.');
             return;
         }
 
+        // clona a linha (structure + attributes), mas NÃO precisamos copiar listeners graças à delegação
         var newRow = lastRow.cloneNode(true);
 
-        // Limpa os valores dos inputs na nova linha
-        newRow.querySelector('.produto-nome').value = '';
-        newRow.querySelector('.produto-id').value = '';
-        newRow.querySelector('.quantidade').value = '';
-        newRow.querySelector('.preco-diaria').value = '';
-        newRow.querySelector('.total-unitario').value = '';
+        // limpa valores da nova linha
+        var elNome = newRow.querySelector('.produto-nome');
+        if (elNome) elNome.value = '';
+
+        var elId = newRow.querySelector('.produto-id');
+        if (elId) elId.value = '';
+
+        var elQt = newRow.querySelector('.quantidade');
+        if (elQt) {
+            elQt.value = '';
+            elQt.removeAttribute('data-temp');
+        }
+
+        var elPreco = newRow.querySelector('.preco-diaria');
+        if (elPreco) elPreco.value = '';
+
+        var elTotal = newRow.querySelector('.total-unitario');
+        if (elTotal) elTotal.value = '';
+
+        // Se houver inputs com id duplicado (ex.: id="preco_diaria[]") é melhor remover id e deixar apenas name.
+        // Mantive conforme seu HTML, mas se tiver id's duplicados troque por atributos name[] apenas.
+
         container.appendChild(newRow);
 
+        // marca a nova linha como ativa (boa UX: abrir modal nela se o usuário abrir)
         linhaAtiva = newRow;
+        window.produtoItemTarget = newRow;
+
+        // recalcula totais
         window.calcularTotais();
     }
+
 
     // Função para remover um produto da lista
     function removeProduto(button) {
@@ -520,35 +554,6 @@
             alert('É necessário pelo menos um produto na lista.');
         }
         window.calcularTotais();
-    }
-
-    // Função para selecionar um produto e preencher os campos na linha ativa
-    function selecionarProduto(id, nome, quantidade, preco_diaria) {
-        if (linhaAtiva) {
-            linhaAtiva.querySelector(".produto-id").value = id;
-            linhaAtiva.querySelector(".produto-nome").value = nome;
-            linhaAtiva.querySelector(".quantidade").value = 1;
-            linhaAtiva.querySelector(".preco-diaria").value = preco_diaria;
-
-            update_quantidade(linhaAtiva.querySelector(".quantidade"));
-
-            var modal = bootstrap.Modal.getInstance(document.getElementById('ProdutosModal'));
-            modal.hide();
-        }
-    }
-
-    // Função para selecionar um cliente e preencher os campos correspondentes
-    function selecionarCliente(id, nome) {
-        var clienteIdInput = document.getElementById('cliente_id');
-        var clienteNomeInput = document.getElementById('cliente_nome');
-
-        if (clienteIdInput && clienteNomeInput) {
-            clienteIdInput.value = id;
-            clienteNomeInput.value = nome;
-
-            var modal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
-            modal.hide();
-        }
     }
 
     function buscarEndereco(cep, element) {
@@ -680,16 +685,13 @@
 
 
     function selecionarProduto(id, nome, quantidade, preco) {
-
-        // Prioriza o bloco salvo quando o botão foi clicado; se não existir, usa o último item
-        var alvo = window.produtoItemTarget || document.querySelector('#produtos-container .produto-item:last-child');
+        var alvo = window.produtoItemTarget || linhaAtiva || document.querySelector('#produtos-container .produto-item:last-child');
 
         if (!alvo) {
             console.warn('Nenhum bloco .produto-item encontrado para preencher os dados.');
             return;
         }
 
-        // Campos dentro do bloco alvo
         var inputId = alvo.querySelector('.produto-id');
         var inputNome = alvo.querySelector('.produto-nome');
         var inputQuantidade = alvo.querySelector('.quantidade');
@@ -699,35 +701,33 @@
         if (inputId) inputId.value = id;
         if (inputNome) inputNome.value = nome;
 
-        // Preencher quantidade e preço se fornecidos (senão, mantém o valor atual)
         if (typeof quantidade !== 'undefined' && quantidade !== null && inputQuantidade) {
-            // converte para número e coloca no input (se quiser para preenchimento automático, else 1)
             var q = Number(quantidade) || 0;
             inputQuantidade.value = q;
         }
 
         if (typeof preco !== 'undefined' && preco !== null && inputPreco) {
-            // garante número com ponto decimal
             var p = parseFloat(String(preco).replace(',', '.')) || 0;
             inputPreco.value = p;
         }
 
-        // Atualiza total: quantidade * preco (se ambos existirem)
+        // calcula total desta linha
         if (inputQuantidade && inputPreco && inputTotal) {
             var qVal = Number(inputQuantidade.value) || 0;
             var pVal = parseFloat(String(inputPreco.value).replace(',', '.')) || 0;
             var total = qVal * pVal;
-            // formata com 2 casas
-            inputTotal.value = total.toFixed(2).replace('.', ','); // usa vírgula se preferir real BR
+            inputTotal.value = total.toFixed(2).replace('.', ',');
         }
 
-        // fecha modal (se estiver usando bootstrap 5)
+        // força recalcular totais gerais
+        window.calcularTotais();
+
+        // fecha modal bootstrap se existir
         var modalEl = document.getElementById('ProdutosModal');
         if (modalEl) {
             var modal = bootstrap.Modal.getInstance(modalEl);
             if (modal) modal.hide();
             else {
-                // se não houver instância (inconsistência) tenta criar e fechar
                 try {
                     var tmp = bootstrap.Modal.getOrCreateInstance(modalEl);
                     tmp.hide();
@@ -738,6 +738,7 @@
 
         // limpa referência para evitar preenchimentos futuros indesejados
         window.produtoItemTarget = null;
+        linhaAtiva = null;
     }
 </script>
 

@@ -27,7 +27,6 @@ class LocacoesModel extends Model
         $ultimoDia = date('Y-m-t 23:59:59', strtotime($primeiroDia)); // Incluir até o final do dia
     
         return $this->where('situacao !=', 5)
-            ->where('situacao !=', 4)
             ->where('excluido !=', 1)
             ->where('data_entrega >=', $primeiroDia)
             ->where('data_entrega <=', $ultimoDia)

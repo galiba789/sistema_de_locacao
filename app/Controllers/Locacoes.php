@@ -559,10 +559,12 @@ class Locacoes extends BaseController
                 'situacao' => 1,
             ];
             
+        } else{
+            $dados = [
+                'situacao' => 4,
+            ];
+
         }
-        $dados = [
-            'situacao' => 4,
-        ];
 
 
         

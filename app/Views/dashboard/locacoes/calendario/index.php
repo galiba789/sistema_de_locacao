@@ -77,14 +77,14 @@
                             if (date('j', $dataEntrega) == $dia) {
                                 // Cor de fundo conforme situação
                                 $classe = match ($locacao['situacao']) {
-                                    1 => 'bg-info',
-                                    4 => 'bg-danger',
-                                    5 => 'bg-warning',
-                                    default => 'bg-info',
+                                    '1' => 'bg-info',
+                                    '4' => 'bg-success',
+                                    '5' => 'bg-warning',
+                                    default => 'bg-secondary'
                                 };
-
+                                
                                 echo "<div class='locacao $classe'>";
-                                echo "<a class='link' href='" . base_url("clientes/historico/{$locacao['cliente_id']}") . "' target='_blank'>{$locacao['cliente_nome']}</a>";
+                                echo "<a class='link' href='" . base_url("locacoes/contrato/{$locacao['id']}") . "' target='_blank'>{$locacao['cliente_nome']}</a>";
                                 echo "</div>";
                             }
                         }
