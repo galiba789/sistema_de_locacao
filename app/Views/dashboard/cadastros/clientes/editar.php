@@ -98,21 +98,15 @@
 
                     <h3 class="col-md-12 mb-3">Contato da empresa:</h3>
 
-                    <div class="col-md-4 mb-3">
-                        <label>Email de Contato:</label>
-                        <input type="email" name="email_contato" id="email_contato" class="form-control" value="<?= $cliente['email_contato'] ?>">
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label>Telefone de Contato:</label>
-                        <input type="text" name="telefone_contato_cnpj" id="telefone_contato_cnpj" class="form-control"  value="<?= $cliente['telefone_contato'] ?>">
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label>Cargo:</label>
+                    <div class="col-md-6 mb-3">
+                        <label>Nome do contato</label>
                         <input type="text" name="cargo" id="cargo" class="form-control" value="<?= $cliente['cargo'] ?>">
                     </div>
 
+                    <div class="col-md-6 mb-3">
+                        <label>Telefone de Contato (whatsapp):</label>
+                        <input type="text" name="whatsapp" id="whatsapp" class="form-control" value="<?= $cliente['whatsapp'] ?>">
+                    </div>
                     <h3 class="col-md-12 mb-3">Endereço:</h3>
 
                     <div class="col-md-4 mb-3">

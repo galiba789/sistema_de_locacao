@@ -20,7 +20,7 @@
             </li>
             
             <li class="nav-item" role="presentation">
-                <button class="nav-link text-dark" id="whtasapp-tab" data-bs-toggle="tab" data-bs-target="#whatsapp" type="button">Whatsapp</button>
+                <button class="nav-link text-dark" id="whtasapp-tab" data-bs-toggle="tab" data-bs-target="#whatsapp_config" type="button">Whatsapp</button>
             </li>
         </ul>
 
@@ -80,7 +80,7 @@
             <!-- ============================
               ABA 4 – Whatsapp
             ============================= -->
-            <div class="tab-pane fade" id="whatsapp" role="tabpanel">
+            <div class="tab-pane fade" id="whatsapp_config" role="tabpanel">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <h5 class="mb-0">Whatsapp</h5>

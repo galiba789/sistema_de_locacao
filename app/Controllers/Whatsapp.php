@@ -24,8 +24,11 @@ class Whatsapp extends BaseController
     {
         $instances = $this->whatsapp->getAll();
 
+        $selecionada = $this->whatsapp->where('selecionada', 1)->first();
+
         $data = [
-            'instances' => $instances
+            'instances' => $instances,
+            'selecionada' => $selecionada
         ];
         return view('dashboard/cadastros/whatsapp/index', $data);
     }

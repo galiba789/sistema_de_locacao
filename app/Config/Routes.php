@@ -120,3 +120,4 @@ $routes->get('/whatsapp/check_status/(:any)', 'Whatsapp::check_status/$1');
 $routes->get('/whatsapp/excluir/(:any)', 'Whatsapp::excluir/$1');
 $routes->get('/whatsapp/desconectar/(:any)', 'Whatsapp::desconectar/$1');
 $routes->post('/whatsapp/set_instancia', 'Whatsapp::set_instancia');
+$routes->get('/whatsapp/teste', 'Whatsapp::teste');

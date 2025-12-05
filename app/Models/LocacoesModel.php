@@ -124,8 +124,8 @@ class LocacoesModel extends Model
         ", false); 
         $builder->join('clientes c', 'c.id = l.cliente_id');
         $builder->where('l.situacao !=', 5);
-        $builder->where('DATE(l.created_at) >=', $dataInicio);
-        $builder->where('DATE(l.created_at) <=', $dataFim);
+        $builder->where('DATE(l.data_entrega) >=', $dataInicio);
+        $builder->where('DATE(l.data_devolucao) <=', $dataFim);
         $builder->orderBy('l.id', 'DESC');
     
         if (!is_null($status) && ($status === '0' || $status === '1')) {

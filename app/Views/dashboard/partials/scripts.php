@@ -46,24 +46,41 @@
     $("#telefone_contato").bind('input propertychange', function() {
         var texto = $(this).val();
 
+        // Apenas números
         texto = texto.replace(/[^\d]/g, '');
 
-        if (texto.length > 0) {
-            texto = "(" + texto;
-
-            if (texto.length > 3) {
-                texto = [texto.slice(0, 3), ")", texto.slice(3)].join('');
-            }
-            if (texto.length >= 9 && texto.length <= 12) {
-                texto = [texto.slice(0, 8), "-", texto.slice(8)].join('');
-            } else if (texto.length > 12)
-                texto = [texto.slice(0, 9), "-", texto.slice(9)].join('');
-
-            if (texto.length > 14)
-                texto = texto.substr(0, 14);
+        // Garante o +55 no começo SEMPRE
+        if (!texto.startsWith("55")) {
+            texto = "55" + texto;
         }
-        $(this).val(texto);
+
+        // Remove o 55 para aplicar o formato do restante
+        var numero = texto.substring(2);
+
+        var ddd = numero.substring(0, 2);
+        var parte1 = numero.substring(2, 7);
+        var parte2 = numero.substring(7, 11);
+
+        var formatado = "+55 ";
+
+        if (ddd.length > 0) {
+            formatado += "(" + ddd;
+        }
+        if (ddd.length == 2) {
+            formatado += ") ";
+        }
+
+        if (parte1.length > 0) {
+            formatado += parte1;
+        }
+
+        if (parte2.length > 0) {
+            formatado += "-" + parte2;
+        }
+
+        $(this).val(formatado);
     });
+
     $(document).ready(function() {
         $('#cpf').mask('000.000.000-00');
         $('#cep').mask('00000-000');
@@ -83,6 +100,7 @@
         $('#cnpj').mask('00.000.000/0000-00');
         $('#telefone_contato_cnpj').mask('(00)0000-0000');
         $('#telefone_contato_fisica').mask('(00)0000-0000');
+        $('#whatsapp').mask('+55(00)00000-0000');
         $('#telefone_comercial').mask('(00)0000-0000');
     });
 

@@ -42,7 +42,7 @@
                         <tr>
                             <td><?= $locacao->id ?></td>
                             <td><?= esc($locacao->cliente_nome) ?></td>
-                            <td><?= date('d/m/Y', strtotime($locacao->created_at)) ?></td>
+                            <td><?= date('d/m/Y', strtotime($locacao->data_entrega)) ?></td>
                             <td>
                                 <?= $locacao->pagamento == 1 ? '<span class="badge bg-success">Paga</span>' : '<span class="badge bg-warning text-dark">Pendente</span>' ?>
                             </td>

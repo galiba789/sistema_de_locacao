@@ -22,21 +22,15 @@
                         <i class="fa fa-plus"></i> Nova Instância
                     </button>
 
-                    <a href="whatsapp/teste">
-                        <button class="btn btn-success">
-                            <i class="fa fa-plus"></i> enviar mensagem
-                        </button>
-                    </a>
-
                 </div>
             </div>
 
             <div class="card-body">
-
-                <div id="instanciaSelecionada" class="mb-3 alert alert-info" style="display:none;">
-                    <strong>Instância selecionada:</strong> <span id="instanciaNome"></span>
-                </div>
-
+                <?php if($selecionada):?>    
+                    <div id="instanciaSelecionada" class="mb-3 alert alert-info">
+                        <strong>Instância selecionada:</strong> <?= $selecionada['nome_instance'] ?>
+                    </div>
+                <?php endif;?>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -178,8 +172,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         const select = document.getElementById('instance');
         const confirmarBtn = document.getElementById('confirmarInstancia');
-        const displayDiv = document.getElementById('instanciaSelecionada');
-        const displayNome = document.getElementById('instanciaNome');
 
         // Função para fechar modal (Bootstrap 5)
         function fecharModal() {
@@ -191,6 +183,7 @@
         // Ao confirmar seleção
         confirmarBtn.addEventListener('click', function() {
             const id = select.value;
+
             const nome = select.options[select.selectedIndex]?.dataset.nome;
 
             if (!id) {
@@ -199,17 +192,7 @@
             }
 
             // Exibe a instância selecionada
-            displayNome.textContent = nome;
-            displayDiv.style.display = 'block';
-
-            // Fecha modal
-            fecharModal();
-
-            // Salva no localStorage
-            localStorage.setItem('instanciaSelecionada', JSON.stringify({
-                id,
-                nome
-            }));
+           
 
             // AGORA ENVIA O FORMULÁRIO
             document.querySelector('#selecionarInstanciaModal form').submit();

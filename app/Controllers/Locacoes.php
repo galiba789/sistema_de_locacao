@@ -10,6 +10,7 @@ use App\Models\LocacoesModel;
 use App\Models\LocacoesProdutosModel;
 use App\Models\PagamentosModel;
 use App\Models\ProdutosModel;
+use App\Models\WhatsappModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 date_default_timezone_set('America/Sao_Paulo');
@@ -88,6 +89,9 @@ class Locacoes extends BaseController
     {
         $locacoesModel = new LocacoesModel();
         $produtosLocacoesModel = new LocacoesProdutosModel();
+        $clientesModel = new Clientes();
+        $whatsappModel = new WhatsappModel();
+
 
         $data_entrega = $this->request->getPost('data_entrega');
         $data_devolucao = $this->request->getPost('data_devolucao');
@@ -146,6 +150,19 @@ class Locacoes extends BaseController
         if (!$locacaoId) {
             return redirect()->back()->with('error', 'Erro ao salvar locação!');
         }
+
+        // ENVIO DA MENSAGEM PARA O WHATSAPP
+        $cliente = $clientesModel->find($this->request->getPost('cliente_id'));
+
+        if ($cliente['tipo'] == 1){
+            $mensagem = "Olá ". $cliente['nome']." o contrato de sua locação ja foi cadastrado.";
+            $telefone = $cliente['telefone_contato'];
+        } else {
+            $mensagem = "Olá ". $cliente['cargo']." o contrato da sua locação já foi cadastrado";   
+            $telefone = $cliente['whatsapp'];
+        }
+
+        $whatsappModel->enviarMensagem($telefone, $mensagem);
 
         // Redireciona para /locacoes e passa o ID da locação recém-criada
         return redirect()->to('/locacoes')
@@ -499,8 +516,7 @@ class Locacoes extends BaseController
                 'email' => $this->request->getPost('email'),
                 'obs' => $this->request->getPost('obs'),
                 // Contato da empresa
-                'email_contato' => $this->request->getPost('email_contato'),
-                'telefone_contato' => $this->request->getPost('telefone_contato_cnpj'),
+                'whatsapp' => $this->request->getPost('whatsapp'),
                 'cargo' => $this->request->getPost('cargo'),
                 // Endereço
                 'cep' => $this->request->getPost('cep'),

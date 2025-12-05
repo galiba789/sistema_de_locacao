@@ -274,7 +274,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label>Telefone:</label>
-                                <input type="text" name="telefone_contato_fisica" id="telefone_contato_fisica" class="form-control" required>
+                                <input type="text" name="telefone_contato" id="telefone_contato" class="form-control" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label>Data de Nascimento:</label>
@@ -342,18 +342,17 @@
                                 <input type="text" name="obs" id="obs_juridica" class="form-control">
                             </div>
                             <h3 class="col-md-12 mb-3">Contato da empresa:</h3>
-                            <div class="col-md-4 mb-3">
-                                <label>Email de Contato:</label>
-                                <input type="email" name="email_contato" id="email_contato" class="form-control">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label>Telefone de Contato:</label>
-                                <input type="text" name="telefone_contato_cnpj" id="telefone_contato_cnpj" class="form-control" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label>Cargo:</label>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Nome do contato</label>
                                 <input type="text" name="cargo" id="cargo" class="form-control">
                             </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Telefone de Contato (Whatsap):</label>
+                                <input type="text" name="whatsapp" id="whatsapp" class="form-control">
+                            </div>
+
                             <h3 class="col-md-12 mb-3">Endereço:</h3>
                             <div class="col-md-4 mb-3">
                                 <label>CEP:</label>
@@ -732,7 +731,8 @@
                     var tmp = bootstrap.Modal.getOrCreateInstance(modalEl);
                     tmp.hide();
                 } catch (e) {
-                    /* silêncio */ }
+                    /* silêncio */
+                }
             }
         }
 

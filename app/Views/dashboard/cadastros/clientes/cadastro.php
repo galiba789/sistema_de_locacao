@@ -111,20 +111,16 @@
 
                     <h3 class="col-md-12 mb-3">Contato da empresa:</h3>
 
-                    <div class="col-md-4 mb-3">
-                        <label>Email de Contato:</label>
-                        <input type="email" name="email_contato" id="email_contato" class="form-control">
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label>Telefone de Contato:</label>
-                        <input type="text" name="telefone_contato_cnpj" id="telefone_contato_cnpj" class="form-control">
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label>Cargo:</label>
+                    <div class="col-md-6 mb-3">
+                        <label>Nome do contato</label>
                         <input type="text" name="cargo" id="cargo" class="form-control">
                     </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Telefone de Contato (Whatsap):</label>
+                        <input type="text" name="whatsapp" id="whatsapp" class="form-control">
+                    </div>
+
 
                     <h3 class="col-md-12 mb-3">Endereço:</h3>
 
