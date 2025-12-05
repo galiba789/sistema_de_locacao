@@ -81,3 +81,6 @@ defined('EXIT__AUTO_MAX')      || define('EXIT__AUTO_MAX', 125);    // highest a
 define('PL_BASE', 'https://gestao.playlocacoes.com.br');
 define('PL_BASE_PUBlIC', PL_BASE.'/public_html');
 define('PL_BASE_DIST', PL_BASE. '/dist');
+define('API_KEY', "dGVzdGUxMjM=");
+define('EVOLUTION_API_URL', 'http://109.199.101.31:8082');
+define('ENCRYPTION_KEY', '748124541544-aD');

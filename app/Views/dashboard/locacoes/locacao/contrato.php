@@ -49,9 +49,9 @@
             </tbody>
         </table>
         <div style="display: block;margin: 20px 0;">
-            <strong>Acessorios da locação:</strong>
+            <strong>Observação da locação:</strong>
             <br>
-            <p><?=$locacao['acessorios']?></p>
+            <p><?=$locacao['observacao']?></p>
         </div>
         <div style="display: block;margin: 20px 0;">
             <strong>1. 2</strong> O locatário não poderá, sem prévia autorização do locador, sublocar, emprestar, ou ceder o bem objeto da locação.

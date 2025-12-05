@@ -18,6 +18,10 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link text-dark" id="condicao-tab" data-bs-toggle="tab" data-bs-target="#condicao" type="button">Condições de Pagamento</button>
             </li>
+            
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-dark" id="whtasapp-tab" data-bs-toggle="tab" data-bs-target="#whatsapp" type="button">Whatsapp</button>
+            </li>
         </ul>
 
         <div class="tab-content mt-4">
@@ -68,6 +72,23 @@
                     <div class="card-body">
                         <a href="<?= base_url('condicao') ?>" class="btn btn-outline-secondary">
                             <i class="fas fa-list"></i> Gerenciar Condições de Pagamento
+                        </a>
+                    </div>
+                </div>
+            </div>
+           
+            <!-- ============================
+              ABA 4 – Whatsapp
+            ============================= -->
+            <div class="tab-pane fade" id="whatsapp" role="tabpanel">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <h5 class="mb-0">Whatsapp</h5>
+                    </div>
+
+                    <div class="card-body">
+                        <a href="<?= base_url('whatsapp') ?>" class="btn btn-outline-secondary">
+                            <i class="fas fa-list"></i> Gerenciar Bot do whatsapp
                         </a>
                     </div>
                 </div>

@@ -112,3 +112,11 @@ $routes->post('/condicao/salvar', 'CondicaoPagamento::salvar');
 $routes->get('/condicao/edita/(:num)', 'CondicaoPagamento::edita/$1');
 $routes->post('/condicao/editar/(:num)', 'CondicaoPagamento::editar/$1');
 $routes->get('/condicao/excluir/(:num)', 'CondicaoPagamento::excluir/$1');
+
+$routes->get('/whatsapp', 'Whatsapp::index');
+$routes->post('/whatsapp/criar', 'Whatsapp::criar');
+$routes->get('/whatsapp/conectar/(:any)', 'Whatsapp::conectar/$1');
+$routes->get('/whatsapp/check_status/(:any)', 'Whatsapp::check_status/$1');
+$routes->get('/whatsapp/excluir/(:any)', 'Whatsapp::excluir/$1');
+$routes->get('/whatsapp/desconectar/(:any)', 'Whatsapp::desconectar/$1');
+$routes->post('/whatsapp/set_instancia', 'Whatsapp::set_instancia');
