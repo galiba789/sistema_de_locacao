@@ -77,11 +77,11 @@
                         <i class="fa-solid fa-clipboard-list"></i> Locações
                     </a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('/orcamento') ?>">
                         <i class="fa fa-clipboard"></i> Orçamento
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('/calendario') ?>">
                         <i class="fa-solid fa-calendar-days"></i> Calendário

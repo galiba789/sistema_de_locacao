@@ -429,15 +429,21 @@
         });
 
         // Multiplica o subtotal pelo total de diárias
-        subtotal *= totalDiarias;
+           subtotal *= totalDiarias;
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
         let descontoStr = document.getElementById("desconto").value;
+        let desconto = descontoStr
+            .replace(/[^\d,.-]/g, '')   // remove tudo menos números, vírgula, ponto e hífen
+            .replace(/\./g, '')         // remove separador de milhar
+            .replace(',', '.');         // troca vírgula por ponto
 
         // Remove pontos e troca vírgula por ponto
-        let desconto = parseFloat(descontoStr.replace(/\./g, '').replace(',', '.')) || 0;
-
         let valorTotal = subtotal - desconto;
+        console.log(valorTotal);
+        console.log(desconto);
+        console.log(subtotal);
+        
         document.getElementById("valor_total").value = valorTotal.toFixed(2);
 
     };

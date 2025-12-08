@@ -25,7 +25,7 @@ class LocacoesModel extends Model
     {
         $primeiroDia = "$ano-$mes-01";
         $ultimoDia = date('Y-m-t 23:59:59', strtotime($primeiroDia)); // Incluir até o final do dia
-    
+
         return $this->where('situacao !=', 5)
             ->where('excluido !=', 1)
             ->where('data_entrega >=', $primeiroDia)
@@ -55,10 +55,10 @@ class LocacoesModel extends Model
     }
 
 
-  public function getProdutosRelatorio(string $dataInicio, string $dataFim)
-{
-    $builder = $this->db->table('locacoes_produtos lp');
-    $builder->select("
+    public function getProdutosRelatorio(string $dataInicio, string $dataFim)
+    {
+        $builder = $this->db->table('locacoes_produtos lp');
+        $builder->select("
         p.id,
         p.nome AS produto,
         p.preco_diaria,
@@ -66,50 +66,50 @@ class LocacoesModel extends Model
         SUM(lp.quantidade * l.total_diarias) AS total_diarias,
         SUM(lp.quantidade * p.preco_diaria * l.total_diarias) AS faturamento_real
     ", false);
-    $builder->join('locacao l', 'l.id = lp.locacao_id');
-    $builder->join('produtos p', 'p.id = lp.produto_id');
-    $builder->where('l.situacao !=', 5);
-    $builder->where('DATE(l.created_at) >=', $dataInicio);
-    $builder->where('DATE(l.created_at) <=', $dataFim);
-    $builder->groupBy('p.id')
+        $builder->join('locacao l', 'l.id = lp.locacao_id');
+        $builder->join('produtos p', 'p.id = lp.produto_id');
+        $builder->where('l.situacao !=', 5);
+        $builder->where('DATE(l.created_at) >=', $dataInicio);
+        $builder->where('DATE(l.created_at) <=', $dataFim);
+        $builder->groupBy('p.id')
             ->orderBy('faturamento_real', 'DESC');
 
-    return $builder->get()->getResult();
-}
+        return $builder->get()->getResult();
+    }
 
 
 
-    
+
     public function getCategoriasRelatorio(string $dataInicio, string $dataFim, ?string $status = null)
-{
-    $builder = $this->db->table('locacoes_produtos lp');
-    $builder->select("
+    {
+        $builder = $this->db->table('locacoes_produtos lp');
+        $builder->select("
         c.id,
         c.nome AS categoria,
         COUNT(DISTINCT lp.locacao_id) AS total_locacoes,
         SUM(lp.quantidade * l.total_diarias) AS total_diarias,
         SUM(lp.quantidade * p.preco_diaria * l.total_diarias) AS faturamento_total
     ", false);
-    
-    $builder->join('locacao l', 'l.id = lp.locacao_id');
-    $builder->join('produtos p', 'p.id = lp.produto_id');
-    $builder->join('categoria c', 'c.id = p.categoria_id', 'left');
 
-    $builder->where('l.situacao !=', 5);
-    $builder->where('DATE(l.created_at) >=', $dataInicio);
-    $builder->where('DATE(l.created_at) <=', $dataFim);
+        $builder->join('locacao l', 'l.id = lp.locacao_id');
+        $builder->join('produtos p', 'p.id = lp.produto_id');
+        $builder->join('categoria c', 'c.id = p.categoria_id', 'left');
 
-    if ($status !== null) {
-        $builder->where('l.situacao', $status);
-    }
+        $builder->where('l.situacao !=', 5);
+        $builder->where('DATE(l.created_at) >=', $dataInicio);
+        $builder->where('DATE(l.created_at) <=', $dataFim);
 
-    $builder->groupBy('c.id')
+        if ($status !== null) {
+            $builder->where('l.situacao', $status);
+        }
+
+        $builder->groupBy('c.id')
             ->orderBy('faturamento_total', 'DESC');
 
-    return $builder->get()->getResult();
-}
+        return $builder->get()->getResult();
+    }
 
-    
+
 
     public function getLocacoesPorPeriodo($dataInicio, $dataFim, $status = null)
     {
@@ -121,38 +121,37 @@ class LocacoesModel extends Model
                 ELSE c.razao_social
             END AS cliente_nome,
             c.tipo AS tipo_cliente
-        ", false); 
+        ", false);
         $builder->join('clientes c', 'c.id = l.cliente_id');
         $builder->where('l.situacao !=', 5);
         $builder->where('DATE(l.data_entrega) >=', $dataInicio);
-        $builder->where('DATE(l.data_devolucao) <=', $dataFim);
-        $builder->orderBy('l.id', 'DESC');
-    
+        $builder->where('DATE(l.data_entrega) <=', $dataFim);
+        $builder->orderBy('l.data_entrega', 'DESC');
+
         if (!is_null($status) && ($status === '0' || $status === '1')) {
             $builder->where('l.pagamento', $status);
         }
-    
-        return $builder->get()->getResult();
-    }    
-    public function getFaturamentoProximasEntregasHome($dias)
-{
-    $hoje = date('Y-m-d');
-    $limite = date('Y-m-d', strtotime("+{$dias} days"));
 
-    return $this->select("
+        return $builder->get()->getResult();
+    }
+    public function getFaturamentoProximasEntregasHome($dias)
+    {
+        $hoje = date('Y-m-d');
+        $limite = date('Y-m-d', strtotime("+{$dias} days"));
+
+        return $this->select("
         DATE_FORMAT(locacao.data_entrega, '%m') as mes, 
         DATE_FORMAT(locacao.data_entrega, '%M') as nome_mes, 
         SUM(locacao.valor_total) as total
     ")
-    ->join('clientes', 'clientes.id = locacao.cliente_id')
-    ->where('locacao.data_entrega <=', $limite)
-    ->where('locacao.data_entrega >=', $hoje)
-    ->where('locacao.situacao !=', 5) // Status diferente de 5
-    ->where('locacao.status', 1) // Status ativo
-    ->groupBy('mes') 
-    ->groupBy('nome_mes') 
-    ->orderBy('mes', 'ASC')
-    ->findAll();
-}
-
+            ->join('clientes', 'clientes.id = locacao.cliente_id')
+            ->where('locacao.data_entrega <=', $limite)
+            ->where('locacao.data_entrega >=', $hoje)
+            ->where('locacao.situacao !=', 5) // Status diferente de 5
+            ->where('locacao.status', 1) // Status ativo
+            ->groupBy('mes')
+            ->groupBy('nome_mes')
+            ->orderBy('mes', 'ASC')
+            ->findAll();
+    }
 }
