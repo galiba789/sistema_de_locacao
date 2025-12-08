@@ -89,22 +89,6 @@ class WhatsappModel extends Model
         return $this->sendToEvolution($numero, $mensagem, $instanciaNome);
     }
 
-    public function confirmaChamado($numero)
-    {
-        // Pega instância selecionada
-        $instancia = $this->where('selecionada', 1)->first();
-
-        if (!$instancia) {
-            log_message('error', 'Nenhuma instância de WhatsApp selecionada.');
-            return false;
-        }
-
-        $instanciaNome = $instancia['nome_url'];
-
-        $mensagem = "Olá! Seu Contrato foi registrado.\n";
-
-        return $this->sendToEvolution($numero, $mensagem, $instanciaNome);
-    }
 
 
     // ============================================================

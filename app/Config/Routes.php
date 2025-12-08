@@ -59,6 +59,7 @@ $routes->post('/locacoes/verificarDisponibilidadeAjax', 'Locacoes::verificarDisp
 $routes->get('/locacoes/pagamento/(:num)', 'Locacoes::pagamento/$1');
 $routes->get('/locacoes/excluir/(:num)', 'Locacoes::excluir/$1');
 $routes->get('/locacoes/resumo/(:num)', 'Locacoes::resumo/$1');
+$routes->get('/locacoes/lembretes', 'Locacoes::lembretes');
 
 $routes->get('locacoes/anexos/(:num)', 'Pagamentos::Anexos/$1');
 $routes->post('locacoes/anexos/salvar/(:num)', 'Pagamentos::salvar/$1');

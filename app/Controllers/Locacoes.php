@@ -152,17 +152,21 @@ class Locacoes extends BaseController
         }
 
         // ENVIO DA MENSAGEM PARA O WHATSAPP
-        $cliente = $clientesModel->find($this->request->getPost('cliente_id'));
+        $zap = $whatsappModel->where('selecionada', 1)->findAll();
 
-        if ($cliente['tipo'] == 1){
-            $mensagem = "Olá ". $cliente['nome']." o contrato de sua locação ja foi cadastrado.";
-            $telefone = $cliente['telefone_contato'];
-        } else {
-            $mensagem = "Olá ". $cliente['cargo']." o contrato da sua locação já foi cadastrado";   
-            $telefone = $cliente['whatsapp'];
+        if($zap){
+            $cliente = $clientesModel->find($this->request->getPost('cliente_id'));
+    
+            if ($cliente['tipo'] == 1) {
+                $mensagem = "Olá " . $cliente['nome'] . " o contrato de sua locação ja foi cadastrado.";
+                $telefone = $cliente['telefone_contato'];
+            } else {
+                $mensagem = "Olá " . $cliente['cargo'] . " o contrato da sua locação já foi cadastrado";
+                $telefone = $cliente['whatsapp'];
+            }
+    
+            $whatsappModel->enviarMensagem($telefone, $mensagem);
         }
-
-        $whatsappModel->enviarMensagem($telefone, $mensagem);
 
         // Redireciona para /locacoes e passa o ID da locação recém-criada
         return redirect()->to('/locacoes')
@@ -223,7 +227,7 @@ class Locacoes extends BaseController
             'locacao' => $locacao,
             'clientes' => $clientesModel->getAtivos(),
             'produtos' => $produtos,
-             'condicoes' => $condicoesPagamentosModel->where('excluido', 0)->findAll(),
+            'condicoes' => $condicoesPagamentosModel->where('excluido', 0)->findAll(),
             'pagamentos' => $formasPagamentoModel->where('excluido', 0)->findAll()
         ];
 
@@ -570,20 +574,18 @@ class Locacoes extends BaseController
         $locacaoModel = new LocacoesModel();
         $locacoes = $locacaoModel->find($id);
 
-        if($locacoes['situacao'] == 4){
+        if ($locacoes['situacao'] == 4) {
             $dados = [
                 'situacao' => 1,
             ];
-            
-        } else{
+        } else {
             $dados = [
                 'situacao' => 4,
             ];
-
         }
 
 
-        
+
         $locacaoModel->update($id, $dados);
 
         return redirect()->to('/locacoes')
@@ -668,5 +670,58 @@ class Locacoes extends BaseController
         ];
 
         return view('/dashboard/locacoes/locacao/resumo', $data);
+    }
+
+    public function lembretes()
+    {
+        $locacoesModel = new LocacoesModel();
+        $whats = new WhatsappModel();
+        $clientesModel = new Clientes();
+
+        $hoje = date('Y-m-d H:i:s');
+        $zap = $whats->where('selecionada', 1)->findAll();
+        // Locações para lembrar retirada
+        $retiradas = $locacoesModel
+            ->where('data_entrega', '0000-00-00')
+            ->whereNotIn('situacao', [4, 5])
+            ->findAll();
+
+        print_r($retiradas);
+        exit;
+
+        if ($zap) {
+            foreach ($retiradas as $loc) {
+                $cliente = $clientesModel->find($loc['cliente_id']);
+                if ($cliente['tipo'] == 1) {
+                    $telefone = $cliente['telefone_contato'];
+                } else {
+                    $telefone = $cliente['whatsapp'];
+                }
+
+                $mensagem = "Olá! Lembrando que sua locação deve ser retirada HOJE ({$loc['data_retirada']}).";
+                $whats->enviarMensagem($telefone, $mensagem);
+            }
+        }
+
+        // Locações para lembrar devolução
+        $devolucoes = $locacoesModel
+            ->where('data_devolucao', $hoje)
+            ->whereNotIn('situacao', [4, 5])
+            ->findAll();
+        if ($zap) {
+            foreach ($devolucoes as $loc) {
+                $cliente = $clientesModel->find($loc['cliente_id']);
+                if ($cliente['tipo'] == 1) {
+                    $telefone = $cliente['telefone_contato'];
+                } else {
+                    $telefone = $cliente['whatsapp'];
+                }
+
+                $mensagem = "Olá! A devolução da sua locação é HOJE ({$loc['data_devolucao']}).";
+                $whats->enviarMensagem($telefone, $mensagem);
+            }
+        }
+
+        return "Lembretes enviados.";
     }
 }

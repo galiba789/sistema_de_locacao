@@ -43,6 +43,8 @@ class Pagamentos extends BaseController
         $whatsappModel = new WhatsappModel();
         $ClientesModel = new Clientes();
 
+        $zap = $whatsappModel->where('selecionada', 1)->findAll();
+
         // Verifica se a locação existe
         $locacao = $locacoesModel->find($id_locacao);
 
@@ -77,17 +79,18 @@ class Pagamentos extends BaseController
             'pagamento' => 1,
         ];
 
-        
-        if ($cliente['tipo'] == 1){
-            $mensagem = "Olá ". $cliente['nome']." o pagamento de sua locação foi confirmada";
-            $telefone = $cliente['telefone_contato'];
-        } else {
-            $mensagem = "Olá ". $cliente['cargo']." o pagamento de sua locação foi confirmada";   
-            $telefone = $cliente['whatsapp'];
+        if($zap){
+            if ($cliente['tipo'] == 1){
+                $mensagem = "Olá ". $cliente['nome']." o pagamento de sua locação foi confirmada";
+                $telefone = $cliente['telefone_contato'];
+            } else {
+                $mensagem = "Olá ". $cliente['cargo']." o pagamento de sua locação foi confirmada";   
+                $telefone = $cliente['whatsapp'];
+            }
+            
+            $whatsappModel->enviarMensagem($telefone, $mensagem);
+            
         }
-        
-        $whatsappModel->enviarMensagem($telefone, $mensagem);
-        
         $locacoesModel->update($id_locacao, $data);
         return redirect()->back()->with('success', 'Comprovante enviado com sucesso!');
     }
