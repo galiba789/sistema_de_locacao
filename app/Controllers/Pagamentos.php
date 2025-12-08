@@ -4,8 +4,10 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\AnexosModel;
+use App\Models\Clientes;
 use App\Models\LocacoesModel;
 use App\Models\PagamentosModel;
+use App\Models\WhatsappModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Pagamentos extends BaseController
@@ -21,7 +23,7 @@ class Pagamentos extends BaseController
 
         $locacao = $locacoesModel->find($id_locacao);
         $anexos = $anexoModel->where('locacao_id', $id_locacao)->findAll();
-        
+
         $data = [
             'locacao' => $locacao,
             'anexos' => $anexos
@@ -29,7 +31,7 @@ class Pagamentos extends BaseController
 
         return view('dashboard/locacoes/Anexos/index', $data);
     }
-    
+
     public function salvar($id_locacao)
     {
         if (!session()->get('logged_in')) {
@@ -38,13 +40,18 @@ class Pagamentos extends BaseController
 
         $anexosModel   = new AnexosModel();
         $locacoesModel = new LocacoesModel();
+        $whatsappModel = new WhatsappModel();
+        $ClientesModel = new Clientes();
 
         // Verifica se a locação existe
         $locacao = $locacoesModel->find($id_locacao);
+
         if (!$locacao) {
             return redirect()->back()->with('error', 'Locação não encontrada.');
         }
-        
+
+        $cliente = $ClientesModel->find($locacao['cliente_id']);
+
         // Arquivo enviado
         $file = $this->request->getFile('comprovante');
 
@@ -67,18 +74,29 @@ class Pagamentos extends BaseController
 
         $data = [
             'situacao' => 4,
-            'pagamento' => 1, 
+            'pagamento' => 1,
         ];
 
+        
+        if ($cliente['tipo'] == 1){
+            $mensagem = "Olá ". $cliente['nome']." o pagamento de sua locação foi confirmada";
+            $telefone = $cliente['telefone_contato'];
+        } else {
+            $mensagem = "Olá ". $cliente['cargo']." o pagamento de sua locação foi confirmada";   
+            $telefone = $cliente['whatsapp'];
+        }
+        
+        $whatsappModel->enviarMensagem($telefone, $mensagem);
+        
         $locacoesModel->update($id_locacao, $data);
-
         return redirect()->back()->with('success', 'Comprovante enviado com sucesso!');
     }
 
-    public function index() {
+    public function index()
+    {
 
         $pagamentosModel = new PagamentosModel();
-        
+
         $pagamentos = $pagamentosModel->where('excluido', 0)->orderBy('id', 'DESC')
             ->paginate(10);
 
@@ -92,12 +110,14 @@ class Pagamentos extends BaseController
         return view('dashboard/cadastros/pagamentos/index', $data);
     }
 
-    public function cadastrar() {
+    public function cadastrar()
+    {
 
         return view('dashboard/cadastros/pagamentos/cadastrar');
     }
 
-    public function cadastro(){
+    public function cadastro()
+    {
 
         $pagamentosModel = new PagamentosModel();
 
