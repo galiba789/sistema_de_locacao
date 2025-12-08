@@ -678,11 +678,11 @@ class Locacoes extends BaseController
         $whats = new WhatsappModel();
         $clientesModel = new Clientes();
 
-        $hoje = date('Y-m-d H:i:s');
+        $hoje = date('Y-m-d');
         $zap = $whats->where('selecionada', 1)->findAll();
         // Locações para lembrar retirada
         $retiradas = $locacoesModel
-            ->where('data_entrega', '0000-00-00')
+            ->where('DATE(data_entrega)', $hoje)
             ->whereNotIn('situacao', [4, 5])
             ->findAll();
 
@@ -705,7 +705,7 @@ class Locacoes extends BaseController
 
         // Locações para lembrar devolução
         $devolucoes = $locacoesModel
-            ->where('data_devolucao', $hoje)
+            ->where('DATE(data_devolucao)', $hoje)
             ->whereNotIn('situacao', [4, 5])
             ->findAll();
         if ($zap) {

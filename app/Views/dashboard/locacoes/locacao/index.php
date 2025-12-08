@@ -76,7 +76,7 @@
                                 <?= date("d/m/Y H:i:s", strtotime($locacao['data_devolucao'])) ?>
                             </td>
 
-                            <td>R$ <?= $locacao['valor_total'] ?></td>
+                            <td>R$ <?= 'R$ ' . number_format($locacao['valor_total'], 2, ',', '.'); ?></td>
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -180,8 +180,8 @@
                         }
 
                         let pagamento = locacao.pagamento == 1 ?
-                            `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-success">Pago</span></a>` :
-                            `<a href="${basePagamentoUrl}${locacao.id}"><span class="btn btn-warning">Pendente</span></a>`;
+                            `<span class="btn btn-success">Pago</span>` :
+                            `<span class="btn btn-warning">Pendente</span>`;
 
                         return `
                     <tr>
@@ -197,10 +197,11 @@
                                     <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') ?>${locacao.id}">Emitir Contrato</a></li>
                                     <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') ?>${locacao.id}">Editar Contrato</a></li>
                                     <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') ?>${locacao.id}">Cancelar Contrato</a></li>
+                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/anexos/') ?>${locacao.id}">Anexar</a></li>
                                 </ul>
                             </div>
                         </td>
-                        <td>${badgeHtml}</td>
+                        <td><a href="<?= base_url('locacoes/confirmar/') ?>${locacao.id}">${badgeHtml}</a></td>
                         <td>${pagamento}</td>
                         <td>${locacao.forma_pagamento || ''}</td>
                     </tr>
