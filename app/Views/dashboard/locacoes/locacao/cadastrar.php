@@ -418,17 +418,13 @@
             row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
             subtotal += totalUnitario;
         });
-
-        // Multiplica o subtotal pelo total de diárias
-        subtotal *= totalDiarias;
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
         let descontoStr = document.getElementById("desconto").value;
-
+        let desconto = descontoStr.toFixed(2);
         // Remove pontos e troca vírgula por ponto
-        let desconto = parseFloat(descontoStr.replace(/\./g, '').replace(',', '.')) || 0;
-
         let valorTotal = subtotal - desconto;
+    
         document.getElementById("valor_total").value = valorTotal.toFixed(2);
     };
 

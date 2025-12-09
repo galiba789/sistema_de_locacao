@@ -428,21 +428,16 @@
             subtotal += totalUnitario;
         });
 
-        // Multiplica o subtotal pelo total de diárias
-           subtotal *= totalDiarias;
+        // Multiplica o subtotal pelo total de diário
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
         let descontoStr = document.getElementById("desconto").value;
-        let desconto = descontoStr
-            .replace(/[^\d,.-]/g, '')   // remove tudo menos números, vírgula, ponto e hífen
-            .replace(/\./g, '')         // remove separador de milhar
-            .replace(',', '.');         // troca vírgula por ponto
-
+        let desconto = descontoStr.toFixed(2);
         // Remove pontos e troca vírgula por ponto
         let valorTotal = subtotal - desconto;
-        console.log(valorTotal);
         console.log(desconto);
         console.log(subtotal);
+        console.log(valorTotal);
         
         document.getElementById("valor_total").value = valorTotal.toFixed(2);
 
