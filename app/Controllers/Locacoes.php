@@ -154,9 +154,9 @@ class Locacoes extends BaseController
         // ENVIO DA MENSAGEM PARA O WHATSAPP
         $zap = $whatsappModel->where('selecionada', 1)->findAll();
 
-        if($zap){
+        if ($zap) {
             $cliente = $clientesModel->find($this->request->getPost('cliente_id'));
-    
+
             if ($cliente['tipo'] == 1) {
                 $mensagem = "Olá " . $cliente['nome'] . " o contrato de sua locação ja foi cadastrado.";
                 $telefone = $cliente['telefone_contato'];
@@ -164,7 +164,7 @@ class Locacoes extends BaseController
                 $mensagem = "Olá " . $cliente['cargo'] . " o contrato da sua locação já foi cadastrado";
                 $telefone = $cliente['whatsapp'];
             }
-    
+
             $whatsappModel->enviarMensagem($telefone, $mensagem);
         }
 
@@ -678,17 +678,19 @@ class Locacoes extends BaseController
         $whats = new WhatsappModel();
         $clientesModel = new Clientes();
 
-        $hoje = date('Y-m-d');
+        // $hoje = date('Y-m-d');
+        $hoje = '2025-12-08';
+    
         $zap = $whats->where('selecionada', 1)->findAll();
-        // Locações para lembrar retirada
+
+
         $retiradas = $locacoesModel
-            ->where('DATE(data_entrega)', $hoje)
+            ->where('data_entrega >=', $hoje . ' 00:00:00')
+            ->where('data_entrega <=', $hoje . ' 23:59:59')
             ->whereNotIn('situacao', [4, 5])
             ->findAll();
 
-        print_r($retiradas);
-        exit;
-
+ 
         if ($zap) {
             foreach ($retiradas as $loc) {
                 $cliente = $clientesModel->find($loc['cliente_id']);
@@ -698,14 +700,15 @@ class Locacoes extends BaseController
                     $telefone = $cliente['whatsapp'];
                 }
 
-                $mensagem = "Olá! Lembrando que sua locação deve ser retirada HOJE ({$loc['data_retirada']}).";
+                $mensagem = "Olá! Lembrando que sua locação deve ser retirada HOJE ".date("d/m/Y H:i:s", strtotime($loc['data_entrega']));;
                 $whats->enviarMensagem($telefone, $mensagem);
             }
         }
 
         // Locações para lembrar devolução
         $devolucoes = $locacoesModel
-            ->where('DATE(data_devolucao)', $hoje)
+            ->where('data_devolucao >=', $hoje . ' 00:00:00')
+            ->where('data_devolucao <=', $hoje . ' 23:59:59')
             ->whereNotIn('situacao', [4, 5])
             ->findAll();
         if ($zap) {
@@ -717,7 +720,7 @@ class Locacoes extends BaseController
                     $telefone = $cliente['whatsapp'];
                 }
 
-                $mensagem = "Olá! A devolução da sua locação é HOJE ({$loc['data_devolucao']}).";
+                $mensagem = "Olá! A devolução da sua locação é HOJE ".date("d/m/Y H:i:s", strtotime($loc['data_devolucao']));
                 $whats->enviarMensagem($telefone, $mensagem);
             }
         }

@@ -39,7 +39,6 @@
                     </tr>
 
                     <?php foreach ($locacao_produtos as $locacao_produto): ?>
-
                         <tr>
                             <td style="text-align: center;"><?= $locacao_produto['numero_serie'] ?></td>
                             <td><?= $locacao_produto['nome'] ?> <br> <?= $locacao_produto['acessorios'] ?></td>
