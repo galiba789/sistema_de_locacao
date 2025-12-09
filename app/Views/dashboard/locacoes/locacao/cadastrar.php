@@ -221,7 +221,7 @@
                                     <td><?= $produto['quantidade'] ?></td>
                                     <td><?= $produto['preco_diaria'] ?></td>
                                     <td>
-                                        <button class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="selecionarProduto('<?= $produto['id'] ?>', '<?= $produto['nome'] ?>', '<?= $produto['quantidade'] ?>', '<?= $produto['preco_diaria'] ?>')">
+                                        <button class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="selecionarProduto('<?= $produto['id'] ?>', '<?= $produto['nome'] ?>', 1, '<?= $produto['preco_diaria'] ?>')">
                                             Adicionar
                                         </button>
                                     </td>
@@ -406,27 +406,37 @@
     let linhaAtiva = null;
 
     // Define a função calcularTotais de forma global para que todas as funções possam usá-la
+    function limpaValor(valor) {
+        if (!valor) return 0;
+        return parseFloat(
+            valor.toString().replace(/\./g, '').replace(',', '.')
+        ) || 0;
+    }
+
     window.calcularTotais = function() {
-        let totalDiarias = parseFloat(document.getElementById("total_diarias").value) || 0;
+        let totalDiarias = limpaValor(document.getElementById("total_diarias").value);
         let subtotal = 0;
 
-        // Percorre todas as linhas de produtos e calcula o total unitário de cada
         document.querySelectorAll(".produto-item").forEach(row => {
-            let quantidade = parseFloat(row.querySelector(".quantidade").value) || 0;
-            let precoDiaria = parseFloat(row.querySelector(".preco-diaria").value) || 0;
+            let quantidade = limpaValor(row.querySelector(".quantidade").value);
+            let precoDiaria = limpaValor(row.querySelector(".preco-diaria").value);
+
             let totalUnitario = quantidade * precoDiaria;
             row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
+
             subtotal += totalUnitario;
         });
+
+        // Multiplica pelo total de diárias
+        subtotal = subtotal * totalDiarias;
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
-        let descontoStr = document.getElementById("desconto").value;
-        let desconto = descontoStr.toFixed(2);
-        // Remove pontos e troca vírgula por ponto
+        let desconto = limpaValor(document.getElementById("desconto").value);
+
         let valorTotal = subtotal - desconto;
-    
         document.getElementById("valor_total").value = valorTotal.toFixed(2);
     };
+
 
     // Aguarda o carregamento do DOM para adicionar os event listeners
     document.addEventListener("DOMContentLoaded", function() {

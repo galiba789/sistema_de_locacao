@@ -235,7 +235,7 @@
                                     <td><?= $produto['quantidade'] ?></td>
                                     <td><?= $produto['preco_diaria'] ?></td>
                                     <td>
-                                        <button class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="selecionarProduto('<?= $produto['id'] ?>', '<?= $produto['nome'] ?>', '<?= $produto['quantidade'] ?>', '<?= $produto['preco_diaria'] ?>')">
+                                        <button class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="selecionarProduto('<?= $produto['id'] ?>', '<?= $produto['nome'] ?>', 1, '<?= $produto['preco_diaria'] ?>')">
                                             Adicionar
                                         </button>
                                     </td>
@@ -423,22 +423,25 @@
         document.querySelectorAll(".produto-item").forEach(row => {
             let quantidade = parseFloat(row.querySelector(".quantidade").value) || 0;
             let precoDiaria = parseFloat(row.querySelector(".preco-diaria").value) || 0;
+    
             let totalUnitario = quantidade * precoDiaria;
             row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
             subtotal += totalUnitario;
+            subtotal = subtotal *totalDiarias;
         });
 
         // Multiplica o subtotal pelo total de diário
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
-        let descontoStr = document.getElementById("desconto").value;
-        let desconto = descontoStr.toFixed(2);
-        // Remove pontos e troca vírgula por ponto
+        let descontoStr = parseFloat(document.getElementById("desconto").value);
+        let desconto = parseFloat(descontoStr);        
+
+    
+            console.log(desconto);
+            console.log(subtotal);
+            // console.log(valorTotal);
+
         let valorTotal = subtotal - desconto;
-        console.log(desconto);
-        console.log(subtotal);
-        console.log(valorTotal);
-        
         document.getElementById("valor_total").value = valorTotal.toFixed(2);
 
     };
@@ -485,7 +488,7 @@
         return /^[0-9]+(\.[0-9]+)?$/.test(value) && parseFloat(value) >= 0;
     }
 
-     document.addEventListener('click', function(e) {
+    document.addEventListener('click', function(e) {
         const btn = e.target.closest('.btn-selecionar-produto');
         if (!btn) return;
         const linha = btn.closest('.produto-item');
@@ -716,8 +719,8 @@
         });
     }
 
-   
-  function selecionarProduto(id, nome, quantidade, preco) {
+
+    function selecionarProduto(id, nome, quantidade, preco) {
         var alvo = window.produtoItemTarget || linhaAtiva || document.querySelector('#produtos-container .produto-item:last-child');
 
         if (!alvo) {
@@ -765,7 +768,8 @@
                     var tmp = bootstrap.Modal.getOrCreateInstance(modalEl);
                     tmp.hide();
                 } catch (e) {
-                    /* silêncio */ }
+                    /* silêncio */
+                }
             }
         }
 

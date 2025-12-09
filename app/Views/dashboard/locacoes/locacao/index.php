@@ -76,7 +76,7 @@
                                 <?= date("d/m/Y H:i:s", strtotime($locacao['data_devolucao'])) ?>
                             </td>
 
-                            <td>R$ <?= 'R$ ' . number_format($locacao['valor_total'], 2, ',', '.'); ?></td>
+                            <td><?= 'R$ ' . number_format($locacao['valor_total'], 2, ',', '.'); ?></td>
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
