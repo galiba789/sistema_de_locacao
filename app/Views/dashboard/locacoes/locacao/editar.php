@@ -680,13 +680,13 @@
             let formData = new FormData(this);
 
             // Aqui, você pode garantir que ambos os campos de telefone sejam tratados
-            let telefoneFisica = document.getElementById("telefone_contato_fisica").value;
-            let telefoneJuridica = document.getElementById("telefone_contato_cnpj").value;
+            let telefoneFisica = document.getElementById("telefone_contato").value;
+            let telefoneJuridica = document.getElementById("whatsapp").value;
 
             if (telefoneFisica) {
                 formData.append("telefone_contato", telefoneFisica);
             } else if (telefoneJuridica) {
-                formData.append("telefone_contato", telefoneJuridica);
+                formData.append("whatsapp", telefoneJuridica);
             }
 
             fetch("<?= base_url('locacoes/salvarClientes') ?>", {
