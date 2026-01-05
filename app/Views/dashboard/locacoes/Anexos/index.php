@@ -38,10 +38,7 @@
                     <input type="file" name="comprovante" id="comprovante" class="form-control" required>
                 </div>
 
-                <div class="d-flex justify-content-between mt-3">
-                    <button type="submit" class="btn btn-success">Enviar Comprovante</button>
-                    <a href="<?= base_url('locacoes') ?>" class="btn btn-secondary">Voltar</a>
-                </div>
+                <a href="<?= base_url('locacoes?page=' . $page) ?>" class="btn btn-secondary">Voltar</a>
             </form>
         </div>
     </div>

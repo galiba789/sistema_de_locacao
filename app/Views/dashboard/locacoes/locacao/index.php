@@ -86,7 +86,7 @@
                                         <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') . $locacao['id'] ?>">Emitir Contrato</a></li>
                                         <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') . $locacao['id'] ?>">Editar Contrato</a></li>
                                         <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') . $locacao['id'] ?>">Cancelar Contrato</a></li>
-                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/anexos/') . $locacao['id'] ?>">Anexar</a></li>
+                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/anexos/') . $locacao['id']. '?page='.$paginacao->getCurrentPage() ?>">Anexar</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -118,6 +118,7 @@
             <div class="d-flex justify-content-center">
                 <?php echo $paginacao->links('default', 'custom_pager') ?>
             </div>
+            
         </div>
     </div>
 </div>

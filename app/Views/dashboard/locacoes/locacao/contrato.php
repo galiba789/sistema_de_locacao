@@ -1,10 +1,10 @@
 <div style="font-family: Arial;
   line-height: 20px;
   font-size: 12px;">
-    <div style="display: flex;justify-content: center;">
+    <div style="display: flex;justify-content: center; margin-right:40px;">
         <img src="<?= PL_BASE_DIST . '/images/play.png' ?>" alt="play" style="width: 150px;">
     </div>
-    <div style="margin: 0; margin-top: -12px;color: #779EE5;font-family: calibri;font-size: 14px;font-weight: bold;text-align: center;">
+    <div style="margin: 0; margin-top: -12px;color: #779EE5;font-family: calibri;font-size: 14px;font-weight: bold;text-align: center;margin-right:40px; ">
         <p>Aluguel de Equipamentos Eletrônicos</p>
     </div>
     <div style="width: 850px; margin: 0px auto;">
@@ -154,7 +154,7 @@
             </div>
         </div>
     </div>
-    <div style="margin: 0;margin-top: 50px;color: #779EE5;font-family: calibri;font-size: 12px;font-weight: bold;text-align: center;">
+    <div style="line-height:5px ;margin: 0;margin-top: 50px;color: #779EE5;font-family: calibri;font-size: 12px;font-weight: bold;text-align: center;">
         <p>PLAYCOM TECNOLOGIA LTDA</p>
         <p>Telefones: (38) 9147-7706 / (38) 3082-4909</p>
         <p>Rua Juca Macedo, 801 - CEP: 39401-044 – Bairro Funcionários – Montes Claros / MG</p>

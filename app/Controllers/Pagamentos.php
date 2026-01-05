@@ -18,6 +18,8 @@ class Pagamentos extends BaseController
             return redirect()->to('/');
         }
 
+        $page = $this->request->getVar('page');
+
         $locacoesModel = new LocacoesModel();
         $anexoModel = new AnexosModel();
 
@@ -26,7 +28,8 @@ class Pagamentos extends BaseController
 
         $data = [
             'locacao' => $locacao,
-            'anexos' => $anexos
+            'anexos' => $anexos,
+            'page' => $page
         ];
 
         return view('dashboard/locacoes/Anexos/index', $data);

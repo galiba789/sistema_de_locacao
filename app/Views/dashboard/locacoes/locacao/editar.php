@@ -415,34 +415,33 @@
     let linhaAtiva = null;
 
     // Define a função calcularTotais de forma global para que todas as funções possam usá-la
-    window.calcularTotais = function() {
-        let totalDiarias = parseFloat(document.getElementById("total_diarias").value) || 0;
+    indow.calcularTotais = function() {
+        let totalDiarias = limpaValor(document.getElementById("total_diarias").value);
         let subtotal = 0;
 
-        // Percorre todas as linhas de produtos e calcula o total unitário de cada
         document.querySelectorAll(".produto-item").forEach(row => {
-            let quantidade = parseFloat(row.querySelector(".quantidade").value) || 0;
-            let precoDiaria = parseFloat(row.querySelector(".preco-diaria").value) || 0;
-    
+            let quantidade = limpaValor(row.querySelector(".quantidade").value);
+            let precoDiaria = limpaValor(row.querySelector(".preco-diaria").value);
+
             let totalUnitario = quantidade * precoDiaria;
             row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
+
             subtotal += totalUnitario;
-            subtotal = subtotal *totalDiarias;
         });
 
-        // Multiplica o subtotal pelo total de diário
+        // Multiplica pelo total de diárias
+        subtotal = subtotal * totalDiarias;
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
-        let descontoStr = parseFloat(document.getElementById("desconto").value);
-        let desconto = parseFloat(descontoStr);        
-
-    
-            console.log(desconto);
-            console.log(subtotal);
-            // console.log(valorTotal);
-
+        let desconto = limpaValor(document.getElementById("desconto").value);
+       
         let valorTotal = subtotal - desconto;
-        document.getElementById("valor_total").value = valorTotal.toFixed(2);
+
+        document.getElementById("valor_total").value =
+            valorTotal.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
 
     };
 

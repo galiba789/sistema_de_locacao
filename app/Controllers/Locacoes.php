@@ -35,7 +35,7 @@ class Locacoes extends BaseController
         // Busca os dados paginados (mantém a variável locacoes paginada)
         $locacoes = $locacoesModel
             ->where('situacao !=', 5)
-            ->orderBy('locacao.created_at', 'DESC')
+            ->orderBy('locacao.id', 'DESC')
             ->paginate($itensPorPagina);
 
         // Gera os links de paginação automaticamente
@@ -595,6 +595,7 @@ class Locacoes extends BaseController
 
     public function pagamento($id)
     {
+        $pagina = $this->request->getVar('page') ?? 1;
         $locacaoModel = new LocacoesModel();
         $locacao = $locacaoModel->find($id);
         if ($locacao['pagamento'] == 0) {
@@ -611,7 +612,7 @@ class Locacoes extends BaseController
             $locacaoModel->update($id, $data);
         }
 
-        return redirect()->to('/locacoes')
+        return redirect()->to('/locacoes?page='.$pagina)
             ->with('success', 'Locação atualizada com sucesso!');
     }
 

@@ -432,9 +432,15 @@
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
         let desconto = limpaValor(document.getElementById("desconto").value);
-
+       
         let valorTotal = subtotal - desconto;
-        document.getElementById("valor_total").value = valorTotal.toFixed(2);
+
+        document.getElementById("valor_total").value =
+            valorTotal.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
     };
 
 
