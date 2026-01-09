@@ -413,16 +413,15 @@
         ) || 0;
     }
 
-    window.calcularTotais = function() {
+        window.calcularTotais = function() {
         let totalDiarias = limpaValor(document.getElementById("total_diarias").value);
         let subtotal = 0;
 
         document.querySelectorAll(".produto-item").forEach(row => {
             let quantidade = limpaValor(row.querySelector(".quantidade").value);
-            let precoDiaria = limpaValor(row.querySelector(".preco-diaria").value);
-
+            let precoDiaria = row.querySelector(".preco-diaria").value;
             let totalUnitario = quantidade * precoDiaria;
-            row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
+            row.querySelector(".total-unitario").value = totalUnitario;
 
             subtotal += totalUnitario;
         });
@@ -436,10 +435,7 @@
         let valorTotal = subtotal - desconto;
 
         document.getElementById("valor_total").value =
-            valorTotal.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            valorTotal.toFixed(2)
 
     };
 

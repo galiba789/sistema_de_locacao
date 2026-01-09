@@ -415,16 +415,15 @@
     let linhaAtiva = null;
 
     // Define a função calcularTotais de forma global para que todas as funções possam usá-la
-    indow.calcularTotais = function() {
+    window.calcularTotais = function() {
         let totalDiarias = limpaValor(document.getElementById("total_diarias").value);
         let subtotal = 0;
 
         document.querySelectorAll(".produto-item").forEach(row => {
             let quantidade = limpaValor(row.querySelector(".quantidade").value);
-            let precoDiaria = limpaValor(row.querySelector(".preco-diaria").value);
-
+            let precoDiaria = row.querySelector(".preco-diaria").value;
             let totalUnitario = quantidade * precoDiaria;
-            row.querySelector(".total-unitario").value = totalUnitario.toFixed(2);
+            row.querySelector(".total-unitario").value = totalUnitario;
 
             subtotal += totalUnitario;
         });
@@ -438,10 +437,7 @@
         let valorTotal = subtotal - desconto;
 
         document.getElementById("valor_total").value =
-            valorTotal.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            valorTotal.toFixed(2)
 
     };
 
@@ -471,15 +467,22 @@
         var quantidade = row.querySelector('.quantidade').value.trim();
         var valor_unitario = row.querySelector('.preco-diaria').value.trim();
         var totalField = row.querySelector('.total-unitario');
-
+        
         if (!isValidNumber(quantidade) || !isValidNumber(valor_unitario)) {
             totalField.value = '';
             return;
         }
-
+        
         var total = parseFloat(quantidade) * parseFloat(valor_unitario);
-        totalField.value = total.toFixed(2);
+        totalField.value = total;
         window.calcularTotais();
+    }
+
+    function limpaValor(valor) {
+        if (!valor) return 0;
+        return parseFloat(
+            valor.toString().replace(/\./g, '').replace(',', '.')
+        ) || 0;
     }
 
     // Função de validação para números

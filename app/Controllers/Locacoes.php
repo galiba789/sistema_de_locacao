@@ -273,6 +273,8 @@ class Locacoes extends BaseController
             'created_at' => date('Y/m/d H:i:s'),
         ];
 
+        // print_r($this->request->getPost('valor_total'));exit;
+
         $locacoesModel->update($id, $dadosLocacao);
 
         // Atualizar produtos da locação
@@ -455,7 +457,7 @@ class Locacoes extends BaseController
             }
         }
 
-        $builder->orderBy('locacao.created_at', 'DESC');
+        $builder->orderBy('locacao.data_entrega', 'DESC');
         $locacoes = $builder->findAll();
 
         // FORMATAÇÃO
