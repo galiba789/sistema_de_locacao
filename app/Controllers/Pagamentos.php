@@ -82,20 +82,44 @@ class Pagamentos extends BaseController
             'pagamento' => 1,
         ];
 
-        if($zap){
-            if ($cliente['tipo'] == 1){
-                $mensagem = "Olá ". $cliente['nome']." o pagamento de sua locação foi confirmada";
+        if ($zap) {
+            if ($cliente['tipo'] == 1) {
+                $mensagem = "Olá " . $cliente['nome'] . " o pagamento de sua locação foi confirmada";
                 $telefone = $cliente['telefone_contato'];
             } else {
-                $mensagem = "Olá ". $cliente['cargo']." o pagamento de sua locação foi confirmada";   
+                $mensagem = "Olá " . $cliente['cargo'] . " o pagamento de sua locação foi confirmada";
                 $telefone = $cliente['whatsapp'];
             }
-            
+
             $whatsappModel->enviarMensagem($telefone, $mensagem);
-            
         }
         $locacoesModel->update($id_locacao, $data);
         return redirect()->back()->with('success', 'Comprovante enviado com sucesso!');
+    }
+
+    public function removerAnexo($id_anexo)
+    {
+        if (!session()->get('logged_in')) {
+            return $this->response->setJSON(['status' => 'erro']);
+        }
+
+        $anexosModel = new AnexosModel();
+
+        $anexo = $anexosModel->find($id_anexo);
+
+        if (!$anexo) {
+            return $this->response->setJSON(['status' => 'erro']);
+        }
+
+        $caminho = FCPATH . 'uploads/comprovantes/' . $anexo['anexo'];
+
+        if (file_exists($caminho)) {
+            unlink($caminho);
+        }
+
+        $anexosModel->delete($id_anexo);
+
+        return $this->response->setJSON(['status' => 'ok']);
     }
 
     public function index()

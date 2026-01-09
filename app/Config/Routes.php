@@ -63,6 +63,7 @@ $routes->get('/locacoes/lembretes', 'Locacoes::lembretes');
 
 $routes->get('locacoes/anexos/(:num)', 'Pagamentos::Anexos/$1');
 $routes->post('locacoes/anexos/salvar/(:num)', 'Pagamentos::salvar/$1');
+$routes->post('locacoes/anexos/removerAnexo/(:num)', 'Pagamentos::removerAnexo/$1');
 
 $routes->get('/calendario', 'Calendario::index');
 $routes->get('/calendario/index/(:num)/(:num)', 'Calendario::index/$1/$2');
