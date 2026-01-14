@@ -84,25 +84,39 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') . $locacao['id'] ?>">Emitir Contrato</a></li>
-                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') . $locacao['id'] ?>">Editar Contrato</a></li>
+                                        <li><a class="dropdown-item" href="<?= site_url('locacoes/edita/' . $locacao['id'] . '?page=' . ($_GET['page'] ?? 1)) ?>">Editar Contrato</a></li>
                                         <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') . $locacao['id'] ?>">Cancelar Contrato</a></li>
-                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/anexos/') . $locacao['id']. '?page='.$paginacao->getCurrentPage() ?>">Anexar</a></li>
+                                        <li><a class="dropdown-item" href="<?= base_url('locacoes/anexos/') . $locacao['id'] . '?page=' . $paginacao->getCurrentPage() ?>">Anexar</a></li>
                                     </ul>
                                 </div>
                             </td>
+                            <?php
+                            $situacao = (int) $locacao['situacao'];
+                            ?>
+
                             <td>
-                                <?php if ($locacao['situacao'] == 1): ?>
-                                    <a href="<?= base_url('locacoes/confirmar/') . $locacao['id'] ?>" class="btn btn-info">Agendado</a>
-                                <?php elseif ($locacao['situacao'] == 2): ?>
-                                    <a href="<?= base_url('locacoes/confirmar/') . $locacao['id'] ?>" class="btn btn-info">Pendente</a>
-                                <?php elseif ($locacao['situacao'] == 3): ?>
-                                    <a href="<?= base_url('locacoes/confirmar/') . $locacao['id'] ?>" class="btn btn-info">Atrasado</a>
-                                <?php elseif ($locacao['situacao'] == 4): ?>
-                                   <a href="<?= base_url('locacoes/confirmar/') . $locacao['id'] ?>" class="btn btn-danger"> Finalizada</a>
-                                <?php elseif ($locacao['situacao'] == 5): ?>
-                                    <span class="btn btn-warning">Cancelado</span>
+                                <?php if ($situacao !== 5): ?>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-confirmar <?= $situacao === 4 ? 'btn-danger' : 'btn-info' ?>"
+                                        data-id="<?= $locacao['id'] ?>"
+                                        data-situacao="<?= $situacao ?>">
+
+                                        <?php
+                                        echo match ($situacao) {
+                                            1 => 'Agendado',
+                                            2 => 'Pendente',
+                                            3 => 'Atrasado',
+                                            4 => 'Finalizada',
+                                        };
+                                        ?>
+                                    </button>
+                                <?php else: ?>
+                                    <span class="btn btn-warning btn-sm">Cancelado</span>
                                 <?php endif; ?>
                             </td>
+
+
                             <td>
                                 <?php if ($locacao['pagamento'] == 0): ?>
                                     <span class="btn btn-warning">Pendente</span>
@@ -118,120 +132,249 @@
             <div class="d-flex justify-content-center">
                 <?php echo $paginacao->links('default', 'custom_pager') ?>
             </div>
-            
+
         </div>
     </div>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+
         const buscarBtn = document.getElementById("buscar-btn");
         const palavraInput = document.getElementById("palavra");
-        const tipoSelect = document.getElementById("tipo");
         const situacaoSelect = document.getElementById("situacao");
         const tabelaBody = document.getElementById("tabela-locacoes");
 
+        const baseBuscarUrl = "<?= base_url('locacoes/buscar') ?>";
+        const baseConfirmarUrl = "<?= base_url('locacoes/confirmar/') ?>";
+
         function buscarLocacoes() {
 
-            tabelaBody.innerHTML = "<tr><td colspan='9' class='text-center'>Carregando... <i class='fas fa-spinner fa-spin'></i></td></tr>";
+            tabelaBody.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center">
+                    Carregando... <i class="fas fa-spinner fa-spin"></i>
+                </td>
+            </tr>
+        `;
 
-            const baseUrl = "<?= base_url('locacoes/buscar') ?>";
-            const basePagamentoUrl = "<?= base_url('locacoes/pagamento/') ?>";
             let queryParams = [];
 
-            // Buscar sempre pelo texto digitado
             if (palavraInput.value.trim()) {
                 queryParams.push(`palavra=${encodeURIComponent(palavraInput.value.trim())}`);
             }
 
-            // Situação continua opcional
             if (situacaoSelect.value) {
                 queryParams.push(`situacao=${encodeURIComponent(situacaoSelect.value)}`);
             }
 
-            const url = queryParams.length > 0 ? `${baseUrl}?${queryParams.join('&')}` : baseUrl;
+            const url = queryParams.length ?
+                `${baseBuscarUrl}?${queryParams.join('&')}` :
+                baseBuscarUrl;
 
             fetch(url)
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
+
                     tabelaBody.innerHTML = "";
 
                     if (!data || data.length === 0) {
-                        tabelaBody.innerHTML = "<tr><td colspan='9' class='text-center'>Nenhuma locação encontrada</td></tr>";
+                        tabelaBody.innerHTML = `
+                        <tr>
+                            <td colspan="9" class="text-center">
+                                Nenhuma locação encontrada
+                            </td>
+                        </tr>
+                    `;
                         return;
                     }
 
-                    let rows = data.map(locacao => {
-                        let badgeHtml = "";
-                        switch (parseInt(locacao.situacao)) {
+                    const rows = data.map(locacao => {
+
+                        const situacao = parseInt(locacao.situacao, 10);
+
+                        /* ===== STATUS / BOTÃO ===== */
+                        let statusLabel = '';
+                        let statusClass = '';
+
+                        switch (situacao) {
                             case 1:
-                                badgeHtml = '<span class="btn btn-info">Agendado</span>';
+                                statusLabel = 'Agendado';
+                                statusClass = 'btn-info';
                                 break;
                             case 2:
-                                badgeHtml = '<span class="btn btn-warning">Pendente</span>';
+                                statusLabel = 'Pendente';
+                                statusClass = 'btn-warning';
                                 break;
                             case 3:
-                                badgeHtml = '<span class="btn btn-warning">Atrasado</span>';
+                                statusLabel = 'Atrasado';
+                                statusClass = 'btn-warning';
                                 break;
                             case 4:
-                                badgeHtml = '<span class="btn btn-danger">Finalizada</span>';
+                                statusLabel = 'Finalizada';
+                                statusClass = 'btn-danger';
                                 break;
                             case 5:
-                                badgeHtml = '<span class="btn btn-danger">Cancelado</span>';
+                                statusLabel = 'Cancelado';
+                                statusClass = 'btn-warning';
                                 break;
                         }
 
-                        let pagamento = locacao.pagamento == 1 ?
-                            `<span class="btn btn-success">Pago</span>` :
-                            `<span class="btn btn-warning">Pendente</span>`;
+                        let statusHtml = '';
+
+                        if (situacao !== 5) {
+                            statusHtml = `
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-confirmar ${statusClass}"
+                                data-id="${locacao.id}"
+                                data-situacao="${situacao}">
+                                ${statusLabel}
+                            </button>
+                        `;
+                        } else {
+                            statusHtml = `
+                            <span class="btn btn-sm btn-warning">
+                                Cancelado
+                            </span>
+                        `;
+                        }
+
+                        /* ===== PAGAMENTO ===== */
+                        const pagamento = locacao.pagamento == 1 ?
+                            `<span class="btn btn-success btn-sm">Pago</span>` :
+                            `<span class="btn btn-warning btn-sm">Pendente</span>`;
 
                         return `
-                    <tr>
-                        <td>${locacao.id}</td>
-                        <td>${locacao.created_at}</td>
-                        <td><a href="locacoes/resumo/${locacao.id}">${locacao.cliente_nome || locacao.cliente_razao_social}</a></td>
-                        <td>${locacao.data_entrega}<br>${locacao.data_devolucao}</td>
-                        <td>${parseFloat(locacao.valor_total).toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
-                        <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">Mais</button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" target="_blank" href="<?= base_url('locacoes/contrato/') ?>${locacao.id}">Emitir Contrato</a></li>
-                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/edita/') ?>${locacao.id}">Editar Contrato</a></li>
-                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/cancelar/') ?>${locacao.id}">Cancelar Contrato</a></li>
-                                    <li><a class="dropdown-item" href="<?= base_url('locacoes/anexos/') ?>${locacao.id}">Anexar</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td><a href="<?= base_url('locacoes/confirmar/') ?>${locacao.id}">${badgeHtml}</a></td>
-                        <td>${pagamento}</td>
-                        <td>${locacao.forma_pagamento || ''}</td>
-                    </tr>
-                `;
+                        <tr>
+                            <td>${locacao.id}</td>
+                            <td>${locacao.created_at}</td>
+                            <td>
+                                <a href="locacoes/resumo/${locacao.id}">
+                                    ${locacao.cliente_nome || locacao.cliente_razao_social}
+                                </a>
+                            </td>
+                            <td>
+                                ${locacao.data_entrega}<br>
+                                ${locacao.data_devolucao}
+                            </td>
+                            <td>
+                                ${parseFloat(locacao.valor_total)
+                                    .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button"
+                                        class="btn btn-primary btn-sm dropdown-toggle"
+                                        data-bs-toggle="dropdown">
+                                        Mais
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" target="_blank"
+                                               href="<?= base_url('locacoes/contrato/') ?>${locacao.id}">
+                                                Emitir Contrato
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               href="<?= base_url('locacoes/edita/') ?>${locacao.id}">
+                                                Editar Contrato
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               href="<?= base_url('locacoes/cancelar/') ?>${locacao.id}">
+                                                Cancelar Contrato
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               href="<?= base_url('locacoes/anexos/') ?>${locacao.id}">
+                                                Anexar
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td>${statusHtml}</td>
+                            <td>${pagamento}</td>
+                            <td>${locacao.forma_pagamento || ''}</td>
+                        </tr>
+                    `;
                     }).join('');
 
                     tabelaBody.innerHTML = rows;
                 })
                 .catch(error => {
-                    tabelaBody.innerHTML = `<tr><td colspan='9' class='text-center text-danger'>Erro: ${error.message}</td></tr>`;
+                    tabelaBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center text-danger">
+                            Erro: ${error.message}
+                        </td>
+                    </tr>
+                `;
                 });
         }
 
+        /* ===== EVENTOS DE BUSCA ===== */
+        buscarBtn?.addEventListener("click", buscarLocacoes);
 
-        // Eventos
-        if (buscarBtn) {
-            buscarBtn.addEventListener("click", function() {
+        palavraInput?.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
                 buscarLocacoes();
-            });
-        }
+            }
+        });
 
-        if (palavraInput) {
-            palavraInput.addEventListener("keypress", function(e) {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    buscarLocacoes();
-                }
-            });
-        }
+        /* ===== CONFIRMAÇÃO VIA AJAX (DELEGAÇÃO) ===== */
+        document.addEventListener("click", function(e) {
+
+            if (!e.target.classList.contains("btn-confirmar")) return;
+
+            const button = e.target;
+            const id = button.dataset.id;
+
+            const textoOriginal = button.innerText;
+            button.disabled = true;
+            button.innerText = "...";
+
+            fetch(`${baseConfirmarUrl}${id}`, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+
+                    if (!data.success) {
+                        alert(data.message || "Erro ao atualizar");
+                        button.innerText = textoOriginal;
+                        return;
+                    }
+
+                    if (data.situacao == 4) {
+                        button.classList.remove("btn-info", "btn-warning");
+                        button.classList.add("btn-danger");
+                        button.innerText = "Finalizada";
+                    } else {
+                        button.classList.remove("btn-danger");
+                        button.classList.add("btn-info");
+                        button.innerText = "Agendado";
+                    }
+
+                    button.dataset.situacao = data.situacao;
+                })
+                .catch(() => {
+                    alert("Erro ao atualizar locação");
+                    button.innerText = textoOriginal;
+                })
+                .finally(() => {
+                    button.disabled = false;
+                });
+        });
+
     });
 </script>
+
 <?= $this->endSection(); ?>

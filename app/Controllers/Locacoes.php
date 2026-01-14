@@ -222,13 +222,13 @@ class Locacoes extends BaseController
         $produtos = $produtosModel->getAtivos();
 
 
-
         $data = [
             'locacao' => $locacao,
             'clientes' => $clientesModel->getAtivos(),
             'produtos' => $produtos,
             'condicoes' => $condicoesPagamentosModel->where('excluido', 0)->findAll(),
-            'pagamentos' => $formasPagamentoModel->where('excluido', 0)->findAll()
+            'pagamentos' => $formasPagamentoModel->where('excluido', 0)->findAll(),
+            'page'    => $this->request->getGet('page'),
         ];
 
         return view('/dashboard/locacoes/locacao/editar', $data);
@@ -304,7 +304,9 @@ class Locacoes extends BaseController
             }
         }
 
-        return redirect()->to('/locacoes')
+        $page = $this->request->getPost('page');
+
+        return redirect()->to(site_url('locacoes?page=' . $page))
             ->with('success', 'Locação atualizada com sucesso!');
     }
 
@@ -571,27 +573,33 @@ class Locacoes extends BaseController
             ]);
         }
     }
+
     public function confirmarlocacao($id)
     {
-        $locacaoModel = new LocacoesModel();
-        $locacoes = $locacaoModel->find($id);
-
-        if ($locacoes['situacao'] == 4) {
-            $dados = [
-                'situacao' => 1,
-            ];
-        } else {
-            $dados = [
-                'situacao' => 4,
-            ];
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
         }
 
+        $locacaoModel = new LocacoesModel();
+        $locacao = $locacaoModel->find($id);
 
+        if (!$locacao) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Locação não encontrada'
+            ]);
+        }
 
-        $locacaoModel->update($id, $dados);
+        $novaSituacao = ($locacao['situacao'] == 4) ? 1 : 4;
 
-        return redirect()->to('/locacoes')
-            ->with('success', 'Locação atualizada com sucesso!');
+        $locacaoModel->update($id, [
+            'situacao' => $novaSituacao
+        ]);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'situacao' => $novaSituacao
+        ]);
     }
 
 
@@ -614,7 +622,7 @@ class Locacoes extends BaseController
             $locacaoModel->update($id, $data);
         }
 
-        return redirect()->to('/locacoes?page='.$pagina)
+        return redirect()->to('/locacoes?page=' . $pagina)
             ->with('success', 'Locação atualizada com sucesso!');
     }
 
@@ -683,7 +691,7 @@ class Locacoes extends BaseController
 
         // $hoje = date('Y-m-d');
         $hoje = '2025-12-08';
-    
+
         $zap = $whats->where('selecionada', 1)->findAll();
 
 
@@ -693,7 +701,7 @@ class Locacoes extends BaseController
             ->whereNotIn('situacao', [4, 5])
             ->findAll();
 
- 
+
         if ($zap) {
             foreach ($retiradas as $loc) {
                 $cliente = $clientesModel->find($loc['cliente_id']);
@@ -703,7 +711,7 @@ class Locacoes extends BaseController
                     $telefone = $cliente['whatsapp'];
                 }
 
-                $mensagem = "Olá! Lembrando que sua locação deve ser retirada HOJE ".date("d/m/Y H:i:s", strtotime($loc['data_entrega']));;
+                $mensagem = "Olá! Lembrando que sua locação deve ser retirada HOJE " . date("d/m/Y H:i:s", strtotime($loc['data_entrega']));;
                 $whats->enviarMensagem($telefone, $mensagem);
             }
         }
@@ -723,7 +731,7 @@ class Locacoes extends BaseController
                     $telefone = $cliente['whatsapp'];
                 }
 
-                $mensagem = "Olá! A devolução da sua locação é HOJE ".date("d/m/Y H:i:s", strtotime($loc['data_devolucao']));
+                $mensagem = "Olá! A devolução da sua locação é HOJE " . date("d/m/Y H:i:s", strtotime($loc['data_devolucao']));
                 $whats->enviarMensagem($telefone, $mensagem);
             }
         }

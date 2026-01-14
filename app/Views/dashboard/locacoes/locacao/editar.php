@@ -146,6 +146,7 @@
                     <textarea type="text" name="observacao" id="observacao" class="form-control"><?= $locacao['observacao'] ?></textarea>
                 </div>
             </div>
+            <input type="hidden" name="page" id="page" value="<?= esc($page) ?>">
             <button type="submit" class="btn btn-primary mt-3">Salvar Locação</button>
         </form>
     </div>
@@ -402,7 +403,6 @@
                             </div>
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary mt-3">Salvar</button>
                 </form>
             </div>
@@ -433,7 +433,7 @@
         document.getElementById("subtotal").value = subtotal.toFixed(2);
 
         let desconto = limpaValor(document.getElementById("desconto").value);
-       
+
         let valorTotal = subtotal - desconto;
 
         document.getElementById("valor_total").value =
@@ -467,12 +467,12 @@
         var quantidade = row.querySelector('.quantidade').value.trim();
         var valor_unitario = row.querySelector('.preco-diaria').value.trim();
         var totalField = row.querySelector('.total-unitario');
-        
+
         if (!isValidNumber(quantidade) || !isValidNumber(valor_unitario)) {
             totalField.value = '';
             return;
         }
-        
+
         var total = parseFloat(quantidade) * parseFloat(valor_unitario);
         totalField.value = total;
         window.calcularTotais();
