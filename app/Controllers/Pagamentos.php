@@ -104,8 +104,14 @@ class Pagamentos extends BaseController
         }
 
         $anexosModel = new AnexosModel();
+        $locacaoModel = new LocacoesModel();
 
         $anexo = $anexosModel->find($id_anexo);
+        $data = [
+            'pagamento' => 0
+        ];
+
+        $locacaoModel->update($anexo['locacao_id'], $data);
 
         if (!$anexo) {
             return $this->response->setJSON(['status' => 'erro']);

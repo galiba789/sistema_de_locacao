@@ -148,7 +148,7 @@
         const baseConfirmarUrl = "<?= base_url('locacoes/confirmar/') ?>";
 
         function buscarLocacoes() {
-
+            salvarFiltros();
             tabelaBody.innerHTML = `
             <tr>
                 <td colspan="9" class="text-center">
@@ -316,6 +316,13 @@
                 });
         }
 
+        function salvarFiltros() {
+            localStorage.setItem('locacoes_filtro', JSON.stringify({
+                palavra: palavraInput.value,
+                situacao: situacaoSelect.value
+            }));
+        }
+
         /* ===== EVENTOS DE BUSCA ===== */
         buscarBtn?.addEventListener("click", buscarLocacoes);
 
@@ -373,6 +380,26 @@
                     button.disabled = false;
                 });
         });
+
+        function restaurarFiltros() {
+            const filtros = localStorage.getItem('locacoes_filtro');
+
+            if (!filtros) return;
+
+            const dados = JSON.parse(filtros);
+
+            if (dados.palavra) {
+                palavraInput.value = dados.palavra;
+            }
+
+            if (dados.situacao) {
+                situacaoSelect.value = dados.situacao;
+            }
+
+            // Se quiser que a busca rode automaticamente ao voltar:
+            buscarLocacoes();
+        }
+        restaurarFiltros();
 
     });
 </script>
